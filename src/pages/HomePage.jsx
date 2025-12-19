@@ -18,7 +18,7 @@ const services = [
   {
     title: "Membership",
     description:
-      "Neque porro quisquam est qui dolorem ipsum.",
+      "Neque porro quisquam est qui dolorem ipsum",
     image: membershipImg,
     bgImage: memberBg,
   },
@@ -98,7 +98,7 @@ const HomePage = () => {
           <div 
             key={service.title} 
             className="service-card"
-            style={{ backgroundImage: `url(${service.bgImage})` }}
+            style={{ backgroundImage: `url(${service.bgImage})`, height: '430px' }}
             data-aos="fade-up"
             data-aos-delay={index * 100}
           >
@@ -106,7 +106,7 @@ const HomePage = () => {
               <img src={service.image} alt={service.title} />
             </div>
             <h3>{service.title}</h3>
-            <p>{service.description}</p>
+            <p className="service-description">{service.description}</p>
             <p className="service-small">
               Sed ut perspiciatis unde omnis iste natus error sit voluptatem
               accusantium doloremque laudantium, totam rem aperiam, eaque ipsa

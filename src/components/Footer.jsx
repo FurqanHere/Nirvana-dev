@@ -12,9 +12,7 @@ const Footer = () => {
     <section
       className="cta-footer"
       style={{
-        // backgroundImage: `url(${footerImg})`,
-        backgroundColor: `black`,
-        backgroundBlendMode: "overlay, normal",
+        backgroundImage: `url(${footerImg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

@@ -21,6 +21,8 @@ body {
   background-size: cover;
   background-position: center;
   padding-top: 120px;
+  padding-bottom: 0;
+  overflow: visible;
 }
 
 .landing-overlay {
@@ -99,18 +101,16 @@ body {
 }
 
 .landing-services {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
-  margin: -80px 0 0 0;
+  margin: -200px 0 0 0;
   padding: 0;
   overflow: hidden;
   box-shadow: 0 28px 60px rgba(0, 0, 0, 0.4);
+  z-index: 10;
 }
 
 .service-card {
@@ -145,7 +145,7 @@ body {
 }
 
 .boats-section {
-  padding: 120px clamp(20px, 5vw, 80px) 80px;
+  padding: 90px clamp(20px, 5vw, 60px) 60px;
   background: #ffffff;
   position: relative;
   z-index: 1;
@@ -153,43 +153,43 @@ body {
 
 .boats-header {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 36px;
 }
 
 .boats-kicker {
   margin: 0;
   color: #555;
   font-weight: 500;
-  font-size: 25px;
+  font-size: 20px;
   letter-spacing: 0.2px;
 }
 
 .boats-heading {
-  margin: 8px 0 0;
-  font-size: 50px;
+  margin: 6px 0 0;
+  font-size: 40px;
   font-weight: 700;
   color: #0f1624;
 }
 
 .boats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 22px;
 }
 
 .boat-card {
   background: #ffffff;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
 }
 
 .boat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.16);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
 }
 
 .boat-card-image {
@@ -200,14 +200,14 @@ body {
 }
 
 .boat-card-body {
-  padding: 18px 18px 16px;
+  padding: 14px 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .boat-card-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #222;
 }
@@ -216,7 +216,7 @@ body {
   display: flex;
   justify-content: space-between;
   color: #6c757d;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 500;
 }
 
@@ -226,6 +226,24 @@ body {
   background-repeat: no-repeat;
   color: #ffffff;
   padding: 48px clamp(20px, 5vw, 80px);
+  position: relative;
+}
+
+.cta-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(6, 44, 116, 0.9) 0%, rgba(40, 89, 202, 0.9) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cta-footer > * {
+  position: relative;
+  z-index: 1;
 }
 
 .cta-footer-grid {
@@ -375,6 +393,12 @@ body {
   margin-right: 10px;
 }
 
+/* Bookings icon specific size */
+.service-card:nth-child(4) .service-icon img {
+  width: 90px;
+  height: 106px;
+}
+
 .service-card h3 {
   margin: 0;
   font-size: 22px;
@@ -384,9 +408,19 @@ body {
 
 .service-card p {
   margin: 0;
-  color: #e2e8f0;
+  color: #fff;
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 32px;
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.service-description {
+  line-height: 32px !important;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: white !important;
 }
 
 .service-small {
@@ -508,7 +542,7 @@ body {
 
 .navbar-logo-container {
   background: #ffffff;
-  clip-path: polygon(40% 0%, 100% 0%, 90% 25%, 61% 100%, 0% 100%, 20% 50%);
+  clip-path: polygon(34% 0%, 100% 0%, 90% 29%, 65% 100%, 0% 100%, 17% 50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2062,20 +2096,20 @@ html {
   }
 
   .boats-section {
-    padding: 60px clamp(20px, 4vw, 48px) 60px;
+    padding: 50px clamp(20px, 4vw, 48px) 50px;
   }
 
   .boats-heading {
-    font-size: 36px;
+    font-size: 32px;
   }
 
   .boats-kicker {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .boats-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    gap: 20px;
   }
 }
 
@@ -2122,32 +2156,32 @@ html {
   }
 
   .boats-section {
-    padding: 50px 20px 50px;
+    padding: 40px 20px 40px;
   }
 
   .boats-header {
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .boats-heading {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .boats-kicker {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .boats-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 18px;
   }
 
   .boat-card-title {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .boat-card-meta {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   /* Footer Mobile */
@@ -2253,27 +2287,27 @@ html {
   }
 
   .boats-section {
-    padding: 40px 16px 40px;
+    padding: 32px 16px 32px;
   }
 
   .boats-heading {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   .boats-kicker {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .boat-card-body {
-    padding: 16px;
+    padding: 14px;
   }
 
   .boat-card-title {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .boat-card-meta {
-    font-size: 12px;
+    font-size: 11px;
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
@@ -2363,6 +2397,12 @@ html {
   }
 }
 
+/* Remove navbar background on T9 detail page */
+.membership-page:has(.detail-view) .navbar-left,
+.membership-page:has(.detail-view) .navbar-right {
+  background-image: none;
+}
+
 /* MEMBERSHIP PAGE STYLES  */
 
 .membership-page {
@@ -2427,7 +2467,7 @@ html {
 .membership-packages-section {
   position: relative;
   padding: 80px clamp(20px, 5vw, 80px);
-  padding-top: 270px;
+  padding-top: 320px;
   min-height: 100vh;
   z-index: 2;
   margin-top: -600px;
@@ -2438,7 +2478,7 @@ html {
 }
 
 .membership-packages-container {
-  max-width: 1400px;
+  max-width: 1460px;
   margin: 0 auto;
   position: relative;
   z-index: 2;
@@ -2457,14 +2497,18 @@ html {
   padding: 20px 32px;
   position: relative;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+  border: 2px solid transparent;
+  cursor: pointer;
 }
 
 .membership-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(41, 90, 203, 0.25);
+  border-color: rgba(41, 90, 203, 0.3);
+  background: linear-gradient(to bottom, #ffffff 0%, #f8faff 100%);
 }
 
 .membership-card-star {
@@ -2476,12 +2520,23 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
 }
 
 .membership-card-star img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.membership-card:hover .membership-card-star {
+  transform: rotate(15deg) scale(1.1);
+}
+
+.membership-card:hover .membership-card-star img {
+  filter: drop-shadow(0 4px 8px rgba(41, 90, 203, 0.4));
 }
 
 .membership-card-title {
@@ -2490,6 +2545,12 @@ html {
   color: #0f1624;
   margin: 0 0 16px 0;
   font-family: "Montserrat", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.membership-card:hover .membership-card-title {
+  color: #295acb;
+  transform: translateX(4px);
 }
 
 .membership-card-price {
@@ -2498,6 +2559,12 @@ html {
   color: #0475d9;
   margin-bottom: 24px;
   font-family: "Montserrat", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.membership-card:hover .membership-card-price {
+  color: #295acb;
+  transform: scale(1.05);
 }
 
 .duration-text {
@@ -2521,6 +2588,7 @@ html {
   position: relative;
   line-height: 1.5;
   font-family: "Montserrat", sans-serif;
+  transition: all 0.3s ease;
 }
 
 .membership-card-benefits li::before {
@@ -2530,6 +2598,17 @@ html {
   color: #000;
   font-size: 20px;
   font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.membership-card:hover .membership-card-benefits li {
+  color: #1a1a1a;
+  transform: translateX(2px);
+}
+
+.membership-card:hover .membership-card-benefits li::before {
+  color: #295acb;
+  transform: scale(1.2);
 }
 
 .membership-card-button {
@@ -2542,14 +2621,36 @@ html {
   font-size: 17px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: "Inter", sans-serif;
   margin-top: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.membership-card-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
 }
 
 .membership-card-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(6, 44, 116, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(41, 90, 203, 0.5);
+  background: linear-gradient(135deg, #295acb 0%, #1e4a9e 100%);
+}
+
+.membership-card-button:hover::before {
+  left: 100%;
+}
+
+.membership-card-button:active {
+  transform: translateY(-1px) scale(0.98);
 }
 
 .membership-bottom-buttons {
@@ -2579,10 +2680,11 @@ html {
 }
 
 .membership-bottom-btn:hover {
-  background: #0170d3;
+  background: linear-gradient(135deg, #295acb 0%, #1e4a9e 100%);
   color: #ffffff;
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(1, 112, 211, 0.3);
+  box-shadow: 0 8px 20px rgba(41, 90, 203, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .membership-bottom-btn img {
@@ -2778,10 +2880,11 @@ html {
 }
 
 .payment-continue-btn:hover {
-  background: #0170d3;
+  background: linear-gradient(135deg, #295acb 0%, #1e4a9e 100%);
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(1, 112, 211, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(41, 90, 203, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Schedule view */
@@ -2944,6 +3047,9 @@ html {
 .schedule-submit-wrap {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .schedule-submit-btn {
@@ -2973,25 +3079,27 @@ html {
 }
 
 .details-nav-btn {
-  background: transparent;
+  background: #295acb;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: none;
   border-radius: 12px;
-  width: 180px;
-  height: 50px;
-  font-size: 16px;
+  width: 417px;
+  height: 61px;
+  font-size: 17px;
   font-weight: 600;
+  margin-top: 46px;
   cursor: pointer;
-  margin-left: 12px;
+  transition: all 0.3s ease;
+  font-family: "Montserrat", sans-serif;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
     color 0.2s ease, border-color 0.2s ease;
 }
 
 .details-nav-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(41, 90, 203, 0.5);
+  background: linear-gradient(135deg, #295acb 0%, #1e4a9e 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .details-nav-btn:active {
@@ -3012,24 +3120,36 @@ html {
   font-size: 25px;
   font-weight: 500;
   text-align: center;
+  margin-bottom: 30px;
 }
 
 .details-card {
   width: 100%;
-  max-width: 1351px;
+  max-width: 1240px;
   background: #ffffff;
   border-radius: 20px;
-  padding: 28px 32px;
+  padding: 32px 50px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  height: 450px;
+  justify-content: space-between;
 }
 
 .details-row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(240px, 1fr));
-  gap: 16px 18px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin: 0;
+}
+
+.details-row:has(.details-field:only-child) {
+  grid-template-columns: 1fr 1fr;
+}
+
+.details-row:has(.details-field:only-child) .details-field {
+  max-width: 100%;
 }
 
 .details-field {
@@ -3048,12 +3168,12 @@ html {
   color: #0170d3 !important;
 }
 .details-field input {
-  width: 609px;
-  height: 59px;
+  width: 100%;
+  height: 49px;
   border-radius: 8px;
   border: 1px solid #d0e1e4;
   background: #f4f9fa;
-  padding: 0 12px;
+  padding: 0 16px;
   font-size: 14px;
   color: #0f1624;
   outline: none;
@@ -3062,6 +3182,31 @@ html {
 .details-field input:focus {
   border-color: #0170d3;
   box-shadow: 0 0 0 3px rgba(1, 112, 211, 0.12);
+}
+
+.details-field input.error {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12);
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  display: block;
+  font-family: "Montserrat", sans-serif;
+}
+
+.required-asterisk {
+  color: #e74c3c;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.booking-form-field .error-message,
+.edit-profile-field .error-message {
+  margin-top: 6px;
 }
 
 .card-info-pay-container {
@@ -3102,8 +3247,9 @@ html {
 
 .details-btn.secondary {
   background: #fff !important;
-  color: #0475d9 !important;
-  border: 2px solid rgba(255, 255, 255, 0.8);
+  color: #0475D9 !important;
+  border: none;
+  box-shadow: 0 10px 20px rgba(41, 90, 203, 0.25);
 }
 
 .details-btn.primary:hover {
@@ -3112,8 +3258,9 @@ html {
 }
 
 .details-btn.secondary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(41, 90, 203, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .details-btn:active {
@@ -3181,8 +3328,9 @@ html {
 }
 
 .final-plan-price {
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 25px;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
   margin: 0 0 10px;
 }
 
@@ -3206,6 +3354,18 @@ html {
   object-fit: contain;
   max-width: 120px;
   max-height: 120px;
+  animation: checkmarkPulse 2s ease-in-out infinite;
+}
+
+@keyframes checkmarkPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
 }
 
 .final-plan-check::before {
@@ -3216,6 +3376,18 @@ html {
   background: linear-gradient(180deg, #3497ff 0%, #0f67c6 100%);
   opacity: 0.18;
   position: absolute;
+  animation: checkmarkRing 2s ease-in-out infinite;
+}
+
+@keyframes checkmarkRing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.18;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.25;
+  }
 }
 
 .final-plan-check {
@@ -3230,6 +3402,18 @@ html {
   background: linear-gradient(180deg, #2f8df4 0%, #0f67c6 100%);
   position: absolute;
   opacity: 0.35;
+  animation: checkmarkRingOuter 2s ease-in-out infinite;
+}
+
+@keyframes checkmarkRingOuter {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.45;
+  }
 }
 
 .final-plan-check img {
@@ -3299,7 +3483,12 @@ html {
 }
 
 .final-row .border-bottom {
-  border-bottom: 0.5px solid white !important;
+  border-bottom: none !important;
+  background-image: url("../images/Line.png");
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 100% auto;
+  padding-bottom: 12px;
 }
 
 .final-row.status-row {
@@ -3504,8 +3693,8 @@ html {
 }
 
 .success-primary {
-  background: white;
-  color: #0170d3;
+  background: transparent;
+  color: white;
   border: 2px solid #fff;
   border-radius: 10px;
   width: 350px;
@@ -4018,7 +4207,58 @@ html {
   overflow: hidden;
 }
 
+.detail-hero-blue-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-image: url('../../assets/images/membership-bg-img.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.detail-hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.detail-hero-thumbnails {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 4;
+}
+
+.detail-thumbnail {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.detail-thumbnail:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
 .detail-card {
+  position: relative;
   width: 100%;
   max-width: 1240px;
   margin: -120px auto 0;
@@ -4029,6 +4269,7 @@ html {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  z-index: 10;
 }
 
 .detail-header {
@@ -4139,6 +4380,11 @@ html {
   width: 100%;
 }
 
+.detail-date-time-fields .detail-input-wrapper {
+  width: 100%;
+  min-width: 0;
+}
+
 .detail-date-time-fields .detail-input {
   width: 100%;
   min-width: 0;
@@ -4172,18 +4418,44 @@ html {
   margin: 0;
 }
 
+.detail-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 .detail-input {
   height: 48px;
   border-radius: 10px;
   border: none;
   background: #ffffff;
-  padding: 0 20px;
+  padding: 0 50px 0 20px;
   font-size: 14px;
   color: #0170d3;
   outline: none;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
+}
+
+.detail-input-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  pointer-events: none;
+  color: #0170d3;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-input-icon.bi {
+  font-size: 18px;
+  color: #0170d3;
 }
 
 .detail-input::placeholder {
@@ -4311,7 +4583,6 @@ html {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 40px 20px 80px;
 }
 
 .detail-card {
@@ -4517,8 +4788,9 @@ html {
 }
 
 .booking-detail-title {
-  font-size: 36px;
-  font-weight: 700;
+  font-size: 30px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
   color: #ffffff;
   margin: 0 0 32px;
   text-align: left;
@@ -4552,7 +4824,7 @@ html {
 }
 
 .booking-detail-ref {
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 500;
   color: rgba(255, 255, 255, 1);
   margin: 0;
@@ -4610,7 +4882,7 @@ html {
 
 .booking-detail-spec-label {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 1);
   font-weight: 500;
 }
 
@@ -4663,12 +4935,12 @@ html {
 .booking-detail-info-field img {
   width: 45px;
   height: 46px;
-  /* object-fit: contain; */
+  object-fit: contain;
 }
 
 .booking-detail-info-field label {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 1);
   margin: 0 0 4px;
   display: block;
 }
@@ -5125,12 +5397,13 @@ html {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   font-size: 18px;
+  z-index: 1;
 }
 
 .edit-profile-text {
@@ -5192,6 +5465,11 @@ html {
 
 .edit-profile-input:focus {
   outline: none;
+}
+
+.edit-profile-input.error {
+  border: 2px solid #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12);
 }
 
 .edit-profile-actions {
@@ -5365,8 +5643,6 @@ html {
   background: transparent;
   border-radius: 20px;
   padding: 48px 56px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(26px);
 }
 
@@ -5479,6 +5755,7 @@ html {
   font-weight: 600;
   color: #ffffff;
   min-width: 180px;
+  border: 2px solid #DDFAFE;
   height: 99px;
   background: #0476D9;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
@@ -5499,6 +5776,11 @@ html {
 .bookings-type-experiences-img {
   width: 48px;
   height: 44px;
+}
+
+.bookings-type-experiences-img-ii {
+  width: 66px !important;
+  height: 66px !important;
 }
 
 .bookings-type-btn.active {
@@ -5528,7 +5810,7 @@ html {
 }
 
 .marina-dropdown {
-  width: 908px;
+  width: 868px;
   height: 57px;
   padding: 0 20px;
   border-radius: 10px;
@@ -5562,7 +5844,7 @@ html {
 }
 
 .bookings-listing-card {
-  background: transparent;
+  background: #062c74;
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -5647,8 +5929,7 @@ html {
   }
 
   .bookings-listing-card {
-    flex-direction: column;
-    align-items: flex-start;
+    width: 100%;
   }
 
   .bookings-listing-image {
@@ -5705,7 +5986,7 @@ html {
   gap: 8px;
   padding: 20px 32px;
   border-radius: 10px;
-  border: 0px solid #DDFAFE;
+  border: 2px solid #DDFAFE;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 16px;
@@ -5765,6 +6046,7 @@ html {
 }
 
 .experiences-listing-image {
+  position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;
@@ -5778,12 +6060,21 @@ html {
 }
 
 .experiences-listing-content {
-  flex: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 20px;
-  min-width: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+  border-radius: 16px 16px 0 0;
+  z-index: 1;
+}
+
+.experiences-listing-content .experiences-book-btn {
+  display: none;
 }
 
 .experiences-listing-title {
@@ -5809,9 +6100,9 @@ html {
 }
 
 .experiences-book-btn {
-  margin-top: 16px;
-  padding: 12px 24px;
-  border-radius: 12px;
+  margin-top: 0;
+  padding: 14px 24px;
+  border-radius: 0 0 16px 16px;
   border: none;
   background: #58a9ff;
   color: #ffffff;
@@ -5867,11 +6158,9 @@ html {
 }
 
 .booking-request-card {
-  background: #062c74;
+  background: #16429F;
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .booking-request-title {
@@ -5918,13 +6207,12 @@ html {
   width: 100%;
   height: 56px;
   padding: 0 20px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: none;
   background: #ffffff;
   color: #5E5E5E;
   font-size: 16px;
   font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
 
@@ -5932,6 +6220,11 @@ html {
   outline: none;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
   transform: translateY(-1px);
+}
+
+.booking-form-input.error {
+  border: 2px solid #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12);
 }
 
 .booking-form-input::placeholder {
@@ -5953,18 +6246,25 @@ html {
 
 .booking-promo-wrapper {
   display: flex;
+  flex-direction: row;
   gap: 12px;
-  align-items: flex-end;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 4px;
 }
 
 .booking-promo-input {
   flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0 16px;
 }
 
 .booking-promo-apply-btn {
-  height: 56px;
+  height: 48px;
   padding: 0 32px;
-  border-radius: 12px;
+  border-radius: 8px;
   border: none;
   background: #0475D9;
   color: #ffffff;
@@ -5974,6 +6274,7 @@ html {
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .booking-promo-apply-btn:hover {
@@ -6238,10 +6539,11 @@ html {
 .experience-hero-section {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 60vh;
   display: flex;
   align-items: flex-end;
-  padding: 120px 40px 60px;
+  padding: 0 40px 60px;
+  margin-top: 350px;
 }
 
 .experience-hero-bg {
@@ -6253,40 +6555,36 @@ html {
   height: 100%;
   object-fit: cover;
   z-index: 0;
+  border-radius: 30px;
 }
 
 .experience-info-card {
   position: relative;
-  z-index: 2;
-  background: #062c74;
-  border-radius: 24px;
-  padding: 48px 40px;
-  max-width: 600px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 40px;
 }
 
 .experience-info-title {
-  font-size: 36px;
+  font-size: 30px;
   font-weight: 700;
+  font-family: "Montserrat", sans-serif;
   color: #ffffff;
-  margin: 0 0 20px;
+  margin: 35px 0 20px;
   line-height: 1.2;
 }
 
 .experience-info-description {
-  font-size: 16px;
+  font-size: 14.5px;
+  font-weight: 500;
+  font-family: "Montserrat", sans-serif;
   color: rgba(255, 255, 255, 0.9);
-  line-height: 1.6;
+  line-height: 28px;
   margin: 0 0 32px;
 }
 
 .experience-details {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 32px;
+  flex-direction: row;
+  gap: 110px;
+  margin-bottom: 60px;
 }
 
 .experience-detail-item {
@@ -6322,14 +6620,15 @@ html {
 }
 
 .experience-book-btn {
-  width: 100%;
-  height: 56px;
+  width: 417px;
+  height: 61px;
   border-radius: 12px;
+  font-family: 'Inter', sans-serif;
   border: none;
   background: #ffffff;
   color: #062c74;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
@@ -6373,6 +6672,16 @@ html {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.enjoyYart {
+  width: 90px;
+  height: 33px;
+}
+
+.passengerImg {
+  width: 65px;
+  height: 65px;
 }
 
 @media (max-width: 1024px) {

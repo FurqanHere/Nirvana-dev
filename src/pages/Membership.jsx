@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import Lottie from "lottie-react";
+import successLottie from "../assets/images/Succes.json";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -44,8 +46,11 @@ import bookingShips from "../assets/images/bookingShips.png";
 import whiteBlueShip from "../assets/images/white-blue-ship.png";
 import blueThumbsUp from "../assets/images/blueThumbsUp.png";
 import whiteTransparentTick from "../assets/images/whiteTransparentTick-img.png";
+import tenderShip from "../assets/images/tenderShip.png";
+import thumbnail1 from "../assets/images/thumbnail1.png";
+import thumbnail2 from "../assets/images/thumbnail2.png";
+import thumbnail3 from "../assets/images/thumbnail3.png";
 
-// Fix for default marker icon in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
@@ -53,7 +58,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 
-// Create custom red marker icon
 const redIcon = new L.Icon({
   iconUrl:
     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAzMiA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDBDMTEuNTgyIDAgOCAzLjU4MiA4IDhDOCAxMy4zMzMgMTYgMjYgMTYgMjZDMTYgMjYgMjQgMTMuMzMzIDI0IDhDMjQgMy41ODIgMjAuNDE4IDAgMTYgMFoiIGZpbGw9IiNGRjAwMDAiLz4KPGNpcmNsZSBjeD0iMTYiIGN5PSI4IiByPSI0IiBmaWxsPSIjRkZGRkZGIi8+Cjwvc3ZnPgo=",
@@ -148,13 +152,47 @@ const Membership = () => {
   const [selectedBookingType, setSelectedBookingType] = useState("bookings");
   const [selectedMarina, setSelectedMarina] = useState("");
   const [showBookingSuccess, setShowBookingSuccess] = useState(false);
-  const detailsData = {
+  
+  // Personal Details Form State
+  const [personalDetails, setPersonalDetails] = useState({
     fullName: "",
     phone: "",
     nationality: "",
     emiratesId: "",
     passport: "",
-  };
+  });
+  const [personalDetailsErrors, setPersonalDetailsErrors] = useState({});
+
+  // Card Information Form State
+  const [cardInfo, setCardInfo] = useState({
+    fullName: "",
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+  });
+  const [cardInfoErrors, setCardInfoErrors] = useState({});
+
+  // Booking Request Form State
+  const [bookingRequest, setBookingRequest] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    date: "",
+    time: "",
+    emiratesId: "",
+    promoCode: "",
+    specialRequests: "",
+  });
+  const [bookingRequestErrors, setBookingRequestErrors] = useState({});
+
+  // Edit Profile Form State
+  const [editProfile, setEditProfile] = useState({
+    fullName: "Baki Phillinder",
+    email: "baki@phillinderzen.com",
+    phone: "+971 25 146 3987",
+    country: "United Arab Emirates",
+  });
+  const [editProfileErrors, setEditProfileErrors] = useState({});
 
   useEffect(() => {
     AOS.init({
@@ -179,17 +217,193 @@ const Membership = () => {
     setCurrentView("packages");
   };
 
+  // Validation Functions
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ""));
+  };
+
+  const validateCardNumber = (cardNumber) => {
+    const cardRegex = /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/;
+    return cardRegex.test(cardNumber.replace(/\s/g, ""));
+  };
+
+  const validateExpiryDate = (expiryDate) => {
+    const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    if (!expiryRegex.test(expiryDate)) return false;
+    const [month, year] = expiryDate.split("/");
+    const currentYear = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
+    const expYear = parseInt(year);
+    const expMonth = parseInt(month);
+    if (expYear < currentYear) return false;
+    if (expYear === currentYear && expMonth < currentMonth) return false;
+    return true;
+  };
+
+  const validateCVV = (cvv) => {
+    return /^\d{3,4}$/.test(cvv);
+  };
+
+  const validateEmiratesID = (id) => {
+    const idRegex = /^\d{3}-\d{4}-\d{7}-\d{1}$/;
+    return idRegex.test(id);
+  };
+
+  // Personal Details Validation
+  const validatePersonalDetails = () => {
+    const errors = {};
+    if (!personalDetails.fullName.trim()) {
+      errors.fullName = "Full Name is required";
+    }
+    if (!personalDetails.phone.trim()) {
+      errors.phone = "Phone Number is required";
+    } else if (!validatePhone(personalDetails.phone)) {
+      errors.phone = "Please enter a valid phone number";
+    }
+    if (!personalDetails.nationality.trim()) {
+      errors.nationality = "Nationality is required";
+    }
+    if (!personalDetails.emiratesId.trim()) {
+      errors.emiratesId = "Emirates ID is required";
+    } else if (!validateEmiratesID(personalDetails.emiratesId)) {
+      errors.emiratesId = "Please enter a valid Emirates ID (format: 784-xxxx-xxxxxxx-x)";
+    }
+    if (!personalDetails.passport.trim()) {
+      errors.passport = "Passport is required";
+    }
+    setPersonalDetailsErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Card Information Validation
+  const validateCardInfo = () => {
+    const errors = {};
+    if (!cardInfo.fullName.trim()) {
+      errors.fullName = "Full Name is required";
+    }
+    if (!cardInfo.cardNumber.trim()) {
+      errors.cardNumber = "Card Number is required";
+    } else if (!validateCardNumber(cardInfo.cardNumber)) {
+      errors.cardNumber = "Please enter a valid 16-digit card number";
+    }
+    if (!cardInfo.expiryDate.trim()) {
+      errors.expiryDate = "Expiry Date is required";
+    } else if (!validateExpiryDate(cardInfo.expiryDate)) {
+      errors.expiryDate = "Please enter a valid expiry date (MM/YY)";
+    }
+    if (!cardInfo.cvv.trim()) {
+      errors.cvv = "CVV is required";
+    } else if (!validateCVV(cardInfo.cvv)) {
+      errors.cvv = "Please enter a valid CVV (3-4 digits)";
+    }
+    setCardInfoErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Booking Request Validation
+  const validateBookingRequest = () => {
+    const errors = {};
+    if (!bookingRequest.fullName.trim()) {
+      errors.fullName = "Full Name is required";
+    }
+    if (!bookingRequest.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!validateEmail(bookingRequest.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+    if (!bookingRequest.phone.trim()) {
+      errors.phone = "Phone Number is required";
+    } else if (!validatePhone(bookingRequest.phone)) {
+      errors.phone = "Please enter a valid phone number";
+    }
+    if (!bookingRequest.date.trim()) {
+      errors.date = "Date is required";
+    }
+    if (!bookingRequest.time.trim()) {
+      errors.time = "Time is required";
+    }
+    if (bookingRequest.emiratesId && !validateEmiratesID(bookingRequest.emiratesId)) {
+      errors.emiratesId = "Please enter a valid Emirates ID (format: 784-xxxx-xxxxxxx-x)";
+    }
+    setBookingRequestErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Edit Profile Validation
+  const validateEditProfile = () => {
+    const errors = {};
+    if (!editProfile.fullName.trim()) {
+      errors.fullName = "Full Name is required";
+    }
+    if (!editProfile.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!validateEmail(editProfile.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+    if (!editProfile.phone.trim()) {
+      errors.phone = "Phone Number is required";
+    } else if (!validatePhone(editProfile.phone)) {
+      errors.phone = "Please enter a valid phone number";
+    }
+    if (!editProfile.country.trim()) {
+      errors.country = "Country is required";
+    }
+    setEditProfileErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   return (
     <div className="membership-page">
       <Header />
       <section
         className="membership-hero"
-        style={{ backgroundImage: `url(${landingBg})` }}
+        style={{ 
+          backgroundImage: currentView === "bookingManagement" || 
+                          currentView === "bookingDetail" ||
+                          currentView === "userProfile" ||
+                          currentView === "profileDetails" ||
+                          currentView === "editProfile" ||
+                          currentView === "feedback" ||
+                          currentView === "notifications" ||
+                          currentView === "bookingsHome" ||
+                          currentView === "experiencesHome" ||
+                          currentView === "bookingRequest" ||
+                          currentView === "experienceDetail"
+            ? "none" 
+            : `url(${landingBg})` 
+        }}
       ></section>
 
       <section
         className="membership-packages-section"
-        style={{ backgroundImage: `url(${membershipBgImg})` }}
+        style={{ 
+          backgroundImage: currentView === "detailPage" 
+            ? `url(${tenderShip})` 
+            : `url(${membershipBgImg})`,
+          backgroundSize: currentView === "detailPage" 
+            ? "contain" 
+            : "cover",
+          marginTop: currentView === "bookingManagement" ||
+                    currentView === "bookingDetail" ||
+                    currentView === "userProfile" ||
+                    currentView === "profileDetails" ||
+                    currentView === "editProfile" ||
+                    currentView === "feedback" ||
+                    currentView === "notifications" ||
+                    currentView === "bookingsHome" ||
+                    currentView === "experiencesHome" ||
+                    currentView === "bookingRequest" ||
+                    currentView === "experienceDetail"
+            ? "-916px" 
+            : undefined,
+          paddingTop: currentView === "experienceDetail" ? "0" : undefined
+        }}
       >
         {currentView !== "schedule" &&
           currentView !== "details" &&
@@ -206,7 +420,9 @@ const Membership = () => {
           currentView !== "bookingsHome" &&
           currentView !== "experiencesHome" &&
           currentView !== "bookingRequest" &&
-          currentView !== "experienceDetail" && (
+          currentView !== "experienceDetail" &&
+          currentView !== "finalReview" &&
+          currentView !== "paymentMethod" && (
             <div className="membership-hero-content" data-aos="fade-up">
               <p className="membership-kicker">Membership</p>
               <h1 className="membership-heading">
@@ -382,28 +598,64 @@ const Membership = () => {
               <div className="details-card">
                 <div className="details-row">
                   <div className="details-field">
-                    <label>Full Name</label>
-                    <input defaultValue={detailsData.fullName} />
+                    <label>Full Name <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={personalDetails.fullName}
+                      onChange={(e) => setPersonalDetails({...personalDetails, fullName: e.target.value})}
+                      className={personalDetailsErrors.fullName ? "error" : ""}
+                    />
+                    {personalDetailsErrors.fullName && (
+                      <span className="error-message">{personalDetailsErrors.fullName}</span>
+                    )}
                   </div>
                   <div className="details-field">
-                    <label>Phone Number</label>
-                    <input defaultValue={detailsData.phone} />
+                    <label>Phone Number <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={personalDetails.phone}
+                      onChange={(e) => setPersonalDetails({...personalDetails, phone: e.target.value})}
+                      className={personalDetailsErrors.phone ? "error" : ""}
+                    />
+                    {personalDetailsErrors.phone && (
+                      <span className="error-message">{personalDetailsErrors.phone}</span>
+                    )}
                   </div>
                 </div>
                 <div className="details-row">
                   <div className="details-field">
-                    <label>Nationality</label>
-                    <input defaultValue={detailsData.nationality} />
+                    <label>Nationality <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={personalDetails.nationality}
+                      onChange={(e) => setPersonalDetails({...personalDetails, nationality: e.target.value})}
+                      className={personalDetailsErrors.nationality ? "error" : ""}
+                    />
+                    {personalDetailsErrors.nationality && (
+                      <span className="error-message">{personalDetailsErrors.nationality}</span>
+                    )}
                   </div>
                   <div className="details-field">
-                    <label>Emirates ID</label>
-                    <input defaultValue={detailsData.emiratesId} />
+                    <label>Emirates ID <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={personalDetails.emiratesId}
+                      onChange={(e) => setPersonalDetails({...personalDetails, emiratesId: e.target.value})}
+                      className={personalDetailsErrors.emiratesId ? "error" : ""}
+                      placeholder="784-xxxx-xxxxxxx-x"
+                    />
+                    {personalDetailsErrors.emiratesId && (
+                      <span className="error-message">{personalDetailsErrors.emiratesId}</span>
+                    )}
                   </div>
                 </div>
                 <div className="details-row">
                   <div className="details-field">
-                    <label>Passport</label>
-                    <input defaultValue={detailsData.passport} />
+                    <label>Passport <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={personalDetails.passport}
+                      onChange={(e) => setPersonalDetails({...personalDetails, passport: e.target.value})}
+                      className={personalDetailsErrors.passport ? "error" : ""}
+                    />
+                    {personalDetailsErrors.passport && (
+                      <span className="error-message">{personalDetailsErrors.passport}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -420,7 +672,9 @@ const Membership = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setCurrentView("finalReview");
+                    if (validatePersonalDetails()) {
+                      setCurrentView("finalReview");
+                    }
                   }}
                 >
                   Continue
@@ -620,22 +874,68 @@ const Membership = () => {
               <div className="details-card">
                 <div className="details-row">
                   <div className="details-field">
-                    <label>Full Name</label>
-                    <input defaultValue="Jack Miller" />
+                    <label>Full Name <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={cardInfo.fullName}
+                      onChange={(e) => setCardInfo({...cardInfo, fullName: e.target.value})}
+                      className={cardInfoErrors.fullName ? "error" : ""}
+                    />
+                    {cardInfoErrors.fullName && (
+                      <span className="error-message">{cardInfoErrors.fullName}</span>
+                    )}
                   </div>
                   <div className="details-field">
-                    <label>Card Number</label>
-                    <input defaultValue="1587 **** ** 04" />
+                    <label>Card Number <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={cardInfo.cardNumber}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\s/g, "").replace(/\D/g, "");
+                        if (value.length > 16) value = value.slice(0, 16);
+                        value = value.match(/.{1,4}/g)?.join(" ") || value;
+                        setCardInfo({...cardInfo, cardNumber: value});
+                      }}
+                      className={cardInfoErrors.cardNumber ? "error" : ""}
+                      placeholder="1234 5678 9012 3456"
+                      maxLength="19"
+                    />
+                    {cardInfoErrors.cardNumber && (
+                      <span className="error-message">{cardInfoErrors.cardNumber}</span>
+                    )}
                   </div>
                 </div>
                 <div className="details-row">
                   <div className="details-field">
-                    <label>Expiry Date</label>
-                    <input placeholder="MM/YY" />
+                    <label>Expiry Date <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={cardInfo.expiryDate}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, "");
+                        if (value.length >= 2) {
+                          value = value.slice(0, 2) + "/" + value.slice(2, 4);
+                        }
+                        setCardInfo({...cardInfo, expiryDate: value});
+                      }}
+                      className={cardInfoErrors.expiryDate ? "error" : ""}
+                      placeholder="MM/YY"
+                      maxLength="5"
+                    />
+                    {cardInfoErrors.expiryDate && (
+                      <span className="error-message">{cardInfoErrors.expiryDate}</span>
+                    )}
                   </div>
                   <div className="details-field">
-                    <label>CVV</label>
-                    <input defaultValue="****" />
+                    <label>CVV <span className="required-asterisk">*</span></label>
+                    <input 
+                      value={cardInfo.cvv}
+                      onChange={(e) => setCardInfo({...cardInfo, cvv: e.target.value.replace(/\D/g, "")})}
+                      className={cardInfoErrors.cvv ? "error" : ""}
+                      placeholder="123"
+                      maxLength="4"
+                      type="password"
+                    />
+                    {cardInfoErrors.cvv && (
+                      <span className="error-message">{cardInfoErrors.cvv}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -646,7 +946,9 @@ const Membership = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setShowPaymentSuccess(true);
+                    if (validateCardInfo()) {
+                      setShowPaymentSuccess(true);
+                    }
                   }}
                 >
                   Pay
@@ -764,7 +1066,13 @@ const Membership = () => {
           ) : currentView === "detailPage" ? (
             <div className="detail-view">
               <div className="detail-hero">
+                <div className="detail-hero-blue-bg"></div>
                 <div className="detail-hero-overlay" />
+                <div className="detail-hero-thumbnails">
+                  <img src={thumbnail1} alt="Bedroom" className="detail-thumbnail" />
+                  <img src={thumbnail2} alt="Living Space" className="detail-thumbnail" />
+                  <img src={thumbnail3} alt="Lounge Area" className="detail-thumbnail" />
+                </div>
               </div>
 
               <div className="detail-card">
@@ -805,38 +1113,56 @@ const Membership = () => {
                       Select date &amp; Time
                     </label>
                     <div className="detail-date-time-fields">
-                      <input placeholder="Date" className="detail-input" />
-                      <input placeholder="Time" className="detail-input" />
+                      <div className="detail-input-wrapper">
+                        <input placeholder="Date" className="detail-input" />
+                        <img src={calendarImg} alt="Calendar" className="detail-input-icon" />
+                      </div>
+                      <div className="detail-input-wrapper">
+                        <input placeholder="Time" className="detail-input" />
+                        <img src={clockImg} alt="Clock" className="detail-input-icon" />
+                      </div>
                     </div>
                   </div>
 
                   <div className="detail-row two">
                     <div className="detail-field">
                       <label className="detail-field-label">Adults</label>
-                      <input placeholder="MM/YY" className="detail-input" />
+                      <div className="detail-input-wrapper">
+                        <input placeholder="MM/YY" className="detail-input" />
+                        <img src={personIcon} alt="Person" className="detail-input-icon" />
+                      </div>
                     </div>
                     <div className="detail-field">
                       <label className="detail-field-label">Children</label>
-                      <input placeholder="Children" className="detail-input" />
+                      <div className="detail-input-wrapper">
+                        <input placeholder="Children" className="detail-input" />
+                        <img src={personIcon} alt="Person" className="detail-input-icon" />
+                      </div>
                     </div>
                   </div>
 
                   <div className="detail-row two">
                     <div className="detail-field">
                       <label className="detail-field-label">Add Location</label>
-                      <input
-                        placeholder="Enter location"
-                        className="detail-input"
-                      />
+                      <div className="detail-input-wrapper">
+                        <input
+                          placeholder="Enter location"
+                          className="detail-input"
+                        />
+                        <i className="bi bi-geo-alt-fill detail-input-icon"></i>
+                      </div>
                     </div>
                     <div className="detail-field">
                       <label className="detail-field-label">
                         In-House Captain
                       </label>
-                      <input
-                        placeholder="Select Captain"
-                        className="detail-input"
-                      />
+                      <div className="detail-input-wrapper">
+                        <input
+                          placeholder="Select Captain"
+                          className="detail-input"
+                        />
+                        <i className="bi bi-person-badge detail-input-icon"></i>
+                      </div>
                     </div>
                   </div>
 
@@ -1071,7 +1397,7 @@ const Membership = () => {
                   onClick={() => setCurrentView("profileDetails")}
                 >
                   <div className="user-profile-avatar">
-                    <img src={ profilePic } alt="" />
+                    <img src={profilePic} alt="" />
                   </div>
                   <div className="user-profile-text">
                     <h3 className="user-profile-name">Baki Phillinder</h3>
@@ -1097,14 +1423,14 @@ const Membership = () => {
 
               <div className="user-manage-account">
                 <div className="d-flex justify-content-between">
-                <h4 className="manage-account-title">Manage Account</h4>
-                <button
-                  type="button"
-                  className="membership-notification-btn"
-                  onClick={() => setCurrentView("notifications")}
-                >
-                  <i className="bi bi-bell"></i>
-                </button>
+                  <h4 className="manage-account-title">Manage Account</h4>
+                  <button
+                    type="button"
+                    className="membership-notification-btn"
+                    onClick={() => setCurrentView("notifications")}
+                  >
+                    <i className="bi bi-bell"></i>
+                  </button>
                 </div>
                 <div className="manage-account-menu">
                   <div className="account-menu-item">
@@ -1160,7 +1486,7 @@ const Membership = () => {
               <div className="profile-detail-header">
                 <div className="profile-detail-user">
                   <div className="profile-detail-avatar">
-                    <img src={ profilePic } alt="" />
+                    <img src={profilePic} alt="" />
                   </div>
                   <div className="profile-detail-text">
                     <h3 className="profile-detail-name">Baki Phillinder</h3>
@@ -1224,35 +1550,51 @@ const Membership = () => {
               <div className="edit-profile-form">
                 <div className="edit-profile-row">
                   <div className="edit-profile-field">
-                    <label className="edit-profile-label">Full Name</label>
+                    <label className="edit-profile-label">Full Name <span className="required-asterisk">*</span></label>
                     <input
-                      className="edit-profile-input"
-                      defaultValue="Baki Phillinder"
+                      className={`edit-profile-input ${editProfileErrors.fullName ? "error" : ""}`}
+                      value={editProfile.fullName}
+                      onChange={(e) => setEditProfile({...editProfile, fullName: e.target.value})}
                     />
+                    {editProfileErrors.fullName && (
+                      <span className="error-message">{editProfileErrors.fullName}</span>
+                    )}
                   </div>
                   <div className="edit-profile-field">
-                    <label className="edit-profile-label">Email</label>
+                    <label className="edit-profile-label">Email <span className="required-asterisk">*</span></label>
                     <input
-                      className="edit-profile-input"
-                      defaultValue="baki@phillinderzen.com"
+                      className={`edit-profile-input ${editProfileErrors.email ? "error" : ""}`}
+                      value={editProfile.email}
+                      onChange={(e) => setEditProfile({...editProfile, email: e.target.value})}
                     />
+                    {editProfileErrors.email && (
+                      <span className="error-message">{editProfileErrors.email}</span>
+                    )}
                   </div>
                 </div>
 
                 <div className="edit-profile-row">
                   <div className="edit-profile-field">
-                    <label className="edit-profile-label">Phone Number</label>
+                    <label className="edit-profile-label">Phone Number <span className="required-asterisk">*</span></label>
                     <input
-                      className="edit-profile-input"
-                      defaultValue="+971 25 146 3987"
+                      className={`edit-profile-input ${editProfileErrors.phone ? "error" : ""}`}
+                      value={editProfile.phone}
+                      onChange={(e) => setEditProfile({...editProfile, phone: e.target.value})}
                     />
+                    {editProfileErrors.phone && (
+                      <span className="error-message">{editProfileErrors.phone}</span>
+                    )}
                   </div>
                   <div className="edit-profile-field">
-                    <label className="edit-profile-label">Country</label>
+                    <label className="edit-profile-label">Country <span className="required-asterisk">*</span></label>
                     <input
-                      className="edit-profile-input"
-                      defaultValue="United Arab Emirates"
+                      className={`edit-profile-input ${editProfileErrors.country ? "error" : ""}`}
+                      value={editProfile.country}
+                      onChange={(e) => setEditProfile({...editProfile, country: e.target.value})}
                     />
+                    {editProfileErrors.country && (
+                      <span className="error-message">{editProfileErrors.country}</span>
+                    )}
                   </div>
                 </div>
 
@@ -1260,7 +1602,11 @@ const Membership = () => {
                   <button
                     type="button"
                     className="edit-profile-save-btn"
-                    onClick={() => setCurrentView("feedback")}
+                    onClick={() => {
+                      if (validateEditProfile()) {
+                        setCurrentView("feedback");
+                      }
+                    }}
                   >
                     Save Profile
                   </button>
@@ -1383,7 +1729,11 @@ const Membership = () => {
                       setCurrentView("bookingsHome");
                     }}
                   >
-                    <img src={blueShip} className="bookings-type-btn-img" alt="" />
+                    <img
+                      src={blueShip}
+                      className="bookings-type-btn-img"
+                      alt=""
+                    />
                     <span>Bookings</span>
                   </button>
                   <button
@@ -1396,7 +1746,11 @@ const Membership = () => {
                       setCurrentView("experiencesHome");
                     }}
                   >
-                    <img src={ experiences } className="bookings-type-experiences-img" alt="" />
+                    <img
+                      src={experiences}
+                      className="bookings-type-experiences-img "
+                      alt=""
+                    />
                     <span>Experiences</span>
                   </button>
                 </div>
@@ -1437,7 +1791,7 @@ const Membership = () => {
               {/* Hero Image Section */}
               <div className="experiences-hero-section">
                 <img
-                  src={landingBg}
+                  src={bdShipImg}
                   alt="Luxury Yacht"
                   className="experiences-hero-image"
                 />
@@ -1448,7 +1802,7 @@ const Membership = () => {
                 <div className="experiences-type-buttons">
                   <button
                     type="button"
-                    className={`experiences-type-btn ${
+                    className={`experiences-type-btn gap-0 ${
                       selectedBookingType === "bookings" ? "active" : ""
                     }`}
                     onClick={() => {
@@ -1456,7 +1810,11 @@ const Membership = () => {
                       setCurrentView("bookingsHome");
                     }}
                   >
-                    <img src={ whiteBlueShip } className="bookings-type-experiences-img" alt="" />
+                    <img
+                      src={whiteBlueShip}
+                      className="bookings-type-experiences-img bookings-type-experiences-img-ii"
+                      alt=""
+                    />
                     <span>Bookings</span>
                   </button>
                   <button
@@ -1469,7 +1827,11 @@ const Membership = () => {
                       setCurrentView("experiencesHome");
                     }}
                   >
-                    <img src={ blueThumbsUp } className="bookings-type-experiences-img" alt="" />
+                    <img
+                      src={blueThumbsUp}
+                      className="bookings-type-experiences-img"
+                      alt=""
+                    />
                     <span>Experiences</span>
                   </button>
                 </div>
@@ -1495,25 +1857,25 @@ const Membership = () => {
                     <div key={index} className="experiences-listing-card">
                       <div className="experiences-listing-image">
                         <img src={boat.image} alt={boat.title} />
+                        <div className="experiences-listing-content">
+                          <h3 className="experiences-listing-title">
+                            {boat.title}
+                          </h3>
+                          <p className="experiences-listing-engine">
+                            {boat.engine}
+                          </p>
+                          <p className="experiences-listing-length">
+                            {boat.length}
+                          </p>
+                        </div>
                       </div>
-                      <div className="experiences-listing-content">
-                        <h3 className="experiences-listing-title">
-                          {boat.title}
-                        </h3>
-                        <p className="experiences-listing-engine">
-                          {boat.engine}
-                        </p>
-                        <p className="experiences-listing-length">
-                          {boat.length}
-                        </p>
-                        <button
-                          type="button"
-                          className="experiences-book-btn"
-                          onClick={() => setCurrentView("bookingRequest")}
-                        >
-                          Book Now
-                        </button>
-                      </div>
+                      <button
+                        type="button"
+                        className="experiences-book-btn"
+                        onClick={() => setCurrentView("bookingRequest")}
+                      >
+                        Book Now
+                      </button>
                     </div>
                   );
                 })}
@@ -1528,39 +1890,54 @@ const Membership = () => {
                   className="booking-request-form"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    setShowBookingSuccess(true);
+                    if (validateBookingRequest()) {
+                      setShowBookingSuccess(true);
+                    }
                   }}
                 >
                   <div className="booking-form-columns">
                     {/* Left Column */}
                     <div className="booking-form-column">
                       <div className="booking-form-field">
-                        <label className="booking-form-label">Full Name</label>
+                        <label className="booking-form-label">Full Name <span className="required-asterisk">*</span></label>
                         <input
                           type="text"
-                          className="booking-form-input"
+                          className={`booking-form-input ${bookingRequestErrors.fullName ? "error" : ""}`}
                           placeholder="Sheikh Bin Tamim"
+                          value={bookingRequest.fullName}
+                          onChange={(e) => setBookingRequest({...bookingRequest, fullName: e.target.value})}
                         />
+                        {bookingRequestErrors.fullName && (
+                          <span className="error-message">{bookingRequestErrors.fullName}</span>
+                        )}
                       </div>
 
                       <div className="booking-form-field">
-                        <label className="booking-form-label">Email</label>
+                        <label className="booking-form-label">Email <span className="required-asterisk">*</span></label>
                         <input
                           type="email"
-                          className="booking-form-input"
+                          className={`booking-form-input ${bookingRequestErrors.email ? "error" : ""}`}
                           placeholder="sheikh@bintamim.com"
+                          value={bookingRequest.email}
+                          onChange={(e) => setBookingRequest({...bookingRequest, email: e.target.value})}
                         />
+                        {bookingRequestErrors.email && (
+                          <span className="error-message">{bookingRequestErrors.email}</span>
+                        )}
                       </div>
 
                       <div className="booking-form-field">
-                        <label className="booking-form-label">Date</label>
+                        <label className="booking-form-label">Date <span className="required-asterisk">*</span></label>
                         <input
                           type="text"
-                          className="booking-form-input"
+                          className={`booking-form-input ${bookingRequestErrors.date ? "error" : ""}`}
                           placeholder="Select Date"
-                          readOnly
+                          value={bookingRequest.date}
+                          onChange={(e) => setBookingRequest({...bookingRequest, date: e.target.value})}
                         />
-                        <i className="bi bi-chevron-down booking-form-dropdown-icon"></i>
+                        {bookingRequestErrors.date && (
+                          <span className="error-message">{bookingRequestErrors.date}</span>
+                        )}
                       </div>
 
                       <div className="booking-form-field">
@@ -1572,6 +1949,8 @@ const Membership = () => {
                             type="text"
                             className="booking-form-input booking-promo-input"
                             placeholder="Enter Code"
+                            value={bookingRequest.promoCode}
+                            onChange={(e) => setBookingRequest({...bookingRequest, promoCode: e.target.value})}
                           />
                           <button
                             type="button"
@@ -1586,12 +1965,17 @@ const Membership = () => {
                     {/* Right Column */}
                     <div className="booking-form-column">
                       <div className="booking-form-field">
-                        <label className="booking-form-label">Email</label>
+                        <label className="booking-form-label">Phone Number <span className="required-asterisk">*</span></label>
                         <input
                           type="tel"
-                          className="booking-form-input"
+                          className={`booking-form-input ${bookingRequestErrors.phone ? "error" : ""}`}
                           placeholder="+971 24 153 6987"
+                          value={bookingRequest.phone}
+                          onChange={(e) => setBookingRequest({...bookingRequest, phone: e.target.value})}
                         />
+                        {bookingRequestErrors.phone && (
+                          <span className="error-message">{bookingRequestErrors.phone}</span>
+                        )}
                       </div>
 
                       <div className="booking-form-field">
@@ -1600,20 +1984,28 @@ const Membership = () => {
                         </label>
                         <input
                           type="text"
-                          className="booking-form-input"
-                          placeholder="784 - x x x x x x x x x x"
+                          className={`booking-form-input ${bookingRequestErrors.emiratesId ? "error" : ""}`}
+                          placeholder="784-xxxx-xxxxxxx-x"
+                          value={bookingRequest.emiratesId}
+                          onChange={(e) => setBookingRequest({...bookingRequest, emiratesId: e.target.value})}
                         />
+                        {bookingRequestErrors.emiratesId && (
+                          <span className="error-message">{bookingRequestErrors.emiratesId}</span>
+                        )}
                       </div>
 
                       <div className="booking-form-field">
-                        <label className="booking-form-label">Time</label>
+                        <label className="booking-form-label">Time <span className="required-asterisk">*</span></label>
                         <input
                           type="text"
-                          className="booking-form-input"
+                          className={`booking-form-input ${bookingRequestErrors.time ? "error" : ""}`}
                           placeholder="Select Time"
-                          readOnly
+                          value={bookingRequest.time}
+                          onChange={(e) => setBookingRequest({...bookingRequest, time: e.target.value})}
                         />
-                        <i className="bi bi-chevron-down booking-form-dropdown-icon"></i>
+                        {bookingRequestErrors.time && (
+                          <span className="error-message">{bookingRequestErrors.time}</span>
+                        )}
                       </div>
 
                       <div className="booking-form-field">
@@ -1624,6 +2016,8 @@ const Membership = () => {
                           className="booking-form-textarea"
                           placeholder="Enter Text"
                           rows="4"
+                          value={bookingRequest.specialRequests}
+                          onChange={(e) => setBookingRequest({...bookingRequest, specialRequests: e.target.value})}
                         ></textarea>
                       </div>
                     </div>
@@ -1648,9 +2042,7 @@ const Membership = () => {
             <div className="experience-detail-view">
               {/* Hero Section */}
               <div className="experience-hero-section">
-                <div
-                  className="experience-hero-bg">
-                </div>
+                <div className="experience-hero-bg"></div>
 
                 {/* Information Card Overlay */}
                 <div className="experience-info-card">
@@ -1663,12 +2055,21 @@ const Membership = () => {
                     aperiam, eaque ipsa quae ab illo inventore veritatis et
                     quasi architecto beatae vitae dicta sunt explicabo. Nemo
                     enim ipsam voluptatem quia voluptas sit aspernatur aut odit
-                    aut fugit.
+                    aut fugit, sed quia consequuntur magni dolores eos qui
+                    ratione voluptatem sequi nesciunt. Neque porro quisquam est,
+                    qui dolorem ipsum quia dolor sit amet, consectetur, adipisci
+                    velit, sed quia non numquam eius modi tempora incidunt ut
+                    labore et dolore magnam aliquam quaerat voluptatem. Ut enim
+                    ad minima veniam, quis nostrum exercitationem ullam corporis
+                    suscipit laboriosam, nisi ut aliquid ex ea commodi
+                    consequatur? Quis autem vel eum iure reprehenderit qui in ea
+                    voluptate velit esse quam nihil molestiae consequatur, vel
+                    illum qui dolorem eum fugiat quo voluptas nulla pariatur?
                   </p>
 
                   <div className="experience-details">
                     <div className="experience-detail-item">
-                      <i className="bi bi-ship experience-detail-icon"></i>
+                      <img src={ yartShipImg } className="enjoyYart" alt="" />
                       <div className="experience-detail-text">
                         <span className="experience-detail-label">Boat</span>
                         <span className="experience-detail-sub">
@@ -1677,7 +2078,7 @@ const Membership = () => {
                       </div>
                     </div>
                     <div className="experience-detail-item">
-                      <i className="bi bi-people experience-detail-icon"></i>
+                      <img src={ passengerImg } className="passengerImg" alt="" />
                       <div className="experience-detail-text">
                         <span className="experience-detail-label">10</span>
                         <span className="experience-detail-sub">
@@ -1687,6 +2088,7 @@ const Membership = () => {
                     </div>
                   </div>
 
+                  <div className="w-100 d-flex justify-content-center align-items-center">
                   <button
                     type="button"
                     className="experience-book-btn"
@@ -1694,10 +2096,11 @@ const Membership = () => {
                   >
                     Book Experience
                   </button>
+                  </div>
                 </div>
 
                 {/* Thumbnail Images */}
-                <div className="experience-thumbnails">
+                {/* <div className="experience-thumbnails">
                   <div className="experience-thumbnail">
                     <img src={boatCard1} alt="Bedroom" />
                   </div>
@@ -1707,7 +2110,7 @@ const Membership = () => {
                   <div className="experience-thumbnail">
                     <img src={boatCard3} alt="Lounge" />
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           ) : (
@@ -1851,7 +2254,7 @@ const Membership = () => {
             </button>
             <div className="success-icon">
               <div className="success-icon-circle">
-                <img src={whiteTickImg} alt="Success" />
+                <Lottie animationData={successLottie} loop={false} style={{ width: '142px', height: '142px' }} />
               </div>
             </div>
             <h3 className="success-title">Successful!</h3>
@@ -1890,7 +2293,7 @@ const Membership = () => {
             </button>
             <div className="success-icon">
               <div className="success-icon-circle">
-                <img src={whiteTickImg} alt="Success" />
+                <Lottie animationData={successLottie} loop={false} style={{ width: '142px', height: '142px' }} />
               </div>
             </div>
             <h3 className="success-title">Payment Successful</h3>
@@ -1938,7 +2341,7 @@ const Membership = () => {
             </button>
             <div className="success-icon">
               <div className="success-icon-circle">
-                <img src={whiteTickImg} alt="Success" />
+                <Lottie animationData={successLottie} loop={false} style={{ width: '142px', height: '142px' }} />
               </div>
             </div>
             <h3 className="success-title">Successful</h3>
@@ -2032,13 +2435,13 @@ const Membership = () => {
             </button>
             <div className="booking-success-icon">
               <div className="booking-success-icon-circle">
-                <img src={ whiteTransparentTick } className="booking-success-img-circle" alt="" />
+                <Lottie animationData={successLottie} loop={false} style={{ width: '142px', height: '142px' }} />
               </div>
             </div>
             <h3 className="booking-success-title">Submitted Successful!</h3>
             <p className="booking-success-message">
-              We have received your request, our team <br /> will contact with you
-              soon.
+              We have received your request, our team <br /> will contact with
+              you soon.
             </p>
             <button
               className="booking-success-ok-btn"
