@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import AOS from "aos";
 import "aos/dist/aos.css";
-import landingBg from "../assets/images/about-us/aboutUs-bgImg.png";
-import promiseBg from "../assets/images/about-us/aboutUs-promiseBgImg.png";
-import rightArrow from "../assets/images/about-us/aboutUsRightArrow.png";
+
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+
 import featureShip from "../assets/images/about-us/ship.png";
 import featureLiscence from "../assets/images/about-us/liscence.png";
 import featureUaeClub from "../assets/images/about-us/uae-club.png";
@@ -12,8 +14,10 @@ import featureVersatileBoat from "../assets/images/about-us/versatile-boat.png";
 import featureAddOns from "../assets/images/about-us/add-ons.png";
 import featureSixPrime from "../assets/images/about-us/six-prime.png";
 import featureClub from "../assets/images/about-us/club.png";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+
+import landingBg from "../assets/images/about-us/aboutUs-bgImg.png";
+import promiseBg from "../assets/images/about-us/aboutUs-promiseBgImg.png";
+import rightArrow from "../assets/images/about-us/aboutUsRightArrow.png";
 
 const LandingPageAboutus = () => {
   useEffect(() => {
@@ -28,6 +32,42 @@ const LandingPageAboutus = () => {
     });
   }, []);
 
+  const CountUp = ({ end, duration = 1500, suffix = "" }) => {
+    const [value, setValue] = useState(0);
+    const ref = useRef(null);
+    useEffect(() => {
+      const el = ref.current;
+      if (!el) return;
+      let started = false;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && !started) {
+              started = true;
+              const start = performance.now();
+              const animate = (t) => {
+                const p = Math.min((t - start) / duration, 1);
+                const current = Math.floor(p * end);
+                setValue(current);
+                if (p < 1) requestAnimationFrame(animate);
+              };
+              requestAnimationFrame(animate);
+            }
+          });
+        },
+        { threshold: 0.4 }
+      );
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, [end, duration]);
+    return (
+      <span ref={ref} className="aboutus-sets-stat-number hover-text" data-aos="fade-up">
+        {value}
+        {suffix}
+      </span>
+    );
+  };
+
   return (
     <div className="landing-page">
       <Header />
@@ -41,8 +81,8 @@ const LandingPageAboutus = () => {
             data-aos="fade-up"
             data-aos-delay="200"
           >
-            <h1 className="text-white hover-text" data-aos="fade-up" data-aos-delay="250">Nirvana Yachts &amp; Boats</h1>
-            <p className="landing-hero-subtitle hover-text" data-aos="fade-up" data-aos-delay="300">
+            <h1 className="text-white hover-scale" data-aos="fade-up" data-aos-delay="250">Nirvana Yachts &amp; Boats</h1>
+            <p className="landing-hero-subtitle hover-scale" data-aos="fade-up" data-aos-delay="300">
               Your gateway to a new marine world of premium boats, luxury <br />
               yachts, and a full range of water sports and activities
             </p>
@@ -57,15 +97,15 @@ const LandingPageAboutus = () => {
             style={{ backgroundImage: `url(${promiseBg})` }}
           >
             <div className="aboutus-promise-panel">
-              <h2 className="aboutus-promise-title hover-text" data-aos="fade-up">OUR PROMISE</h2>
-              <p className="aboutus-promise-text hover-text" data-aos="fade-up" data-aos-delay="80">
+              <h2 className="aboutus-promise-title" data-aos="fade-up">OUR PROMISE</h2>
+              <p className="aboutus-promise-text" data-aos="fade-up" data-aos-delay="80">
                 Bespoke services focused on luxury, safety, comfort, and
                 sustainability
               </p>
               <div className="aboutus-promise-action">
                 <button
                   type="button"
-                  className="aboutus-promise-button btn-hover"
+                  className="aboutus-promise-button btn-hover hoverable"
                   aria-label="Our promise"
                   data-aos="zoom-in"
                 >
@@ -81,15 +121,15 @@ const LandingPageAboutus = () => {
         <div className="aboutus-sets-stats">
           <div className="aboutus-sets-stats-grid">
             <div className="aboutus-sets-stat" data-aos="fade-up">
-              <div className="aboutus-sets-stat-number hover-text" data-aos="fade-up" data-aos-delay="50">8+</div>
+              <CountUp end={8} duration={1200} suffix="+" />
               <div className="aboutus-sets-stat-label hover-text" data-aos="fade-up" data-aos-delay="80">Years Experience</div>
             </div>
             <div className="aboutus-sets-stat" data-aos="fade-up" data-aos-delay="50">
-              <div className="aboutus-sets-stat-number hover-text" data-aos="fade-up" data-aos-delay="100">1000+</div>
+              <CountUp end={1000} duration={1400} suffix="+" />
               <div className="aboutus-sets-stat-label hover-text" data-aos="fade-up" data-aos-delay="130">Happy Members</div>
             </div>
             <div className="aboutus-sets-stat" data-aos="fade-up" data-aos-delay="100">
-              <div className="aboutus-sets-stat-number hover-text" data-aos="fade-up" data-aos-delay="150">50+</div>
+              <CountUp end={50} duration={1200} suffix="+" />
               <div className="aboutus-sets-stat-label hover-text" data-aos="fade-up" data-aos-delay="180">Premium Boats</div>
             </div>
             <div className="aboutus-sets-stat" data-aos="fade-up" data-aos-delay="150">
@@ -100,7 +140,7 @@ const LandingPageAboutus = () => {
         </div>
 
         <div className="aboutus-sets-content">
-          <h2 className="aboutus-sets-title" data-aos="fade-up">
+          <h2 className="aboutus-sets-title hover-text" data-aos="fade-up">
             WHAT SETS US APART?
           </h2>
           <p className="aboutus-sets-subtitle hover-text" data-aos="fade-up" data-aos-delay="80">
@@ -110,7 +150,7 @@ const LandingPageAboutus = () => {
           <div className="aboutus-sets-grid">
             <div className="aboutus-sets-item" data-aos="fade-up">
               <div className="aboutus-sets-icon">
-                <img src={featureShip} alt="" className="hoverable" data-aos="zoom-in" />
+                <img src={featureShip} alt="" className="hoverable featureShip" data-aos="zoom-in" />
               </div>
               <p className="aboutus-sets-text hover-text" data-aos="fade-up" data-aos-delay="60">
                 A fleet of leading international <br />
@@ -119,7 +159,7 @@ const LandingPageAboutus = () => {
             </div>
             <div className="aboutus-sets-item" data-aos="fade-up" data-aos-delay="50">
               <div className="aboutus-sets-icon">
-                <img src={featureLiscence} alt="" className="hoverable" data-aos="zoom-in" />
+                <img src={featureLiscence} alt="" className="hoverable featureLiscence" data-aos="zoom-in" />
               </div>
               <p className="aboutus-sets-text hover-text" data-aos="fade-up" data-aos-delay="110">
                 Boat license training <br />
@@ -128,7 +168,7 @@ const LandingPageAboutus = () => {
             </div>
             <div className="aboutus-sets-item" data-aos="fade-up" data-aos-delay="100">
               <div className="aboutus-sets-icon">
-                <img src={featureUaeClub} alt="" className="hoverable" data-aos="zoom-in" />
+                <img src={featureUaeClub} alt="" className="hoverable featureUaeClub" data-aos="zoom-in" />
               </div>
               <p className="aboutus-sets-text hover-text" data-aos="fade-up" data-aos-delay="160">
                 UAE’s only club with <br />
@@ -138,7 +178,7 @@ const LandingPageAboutus = () => {
 
             <div className="aboutus-sets-item" data-aos="fade-up">
               <div className="aboutus-sets-icon">
-                <img src={featureMobApp} alt="" className="hoverable" data-aos="zoom-in" />
+                <img src={featureMobApp} alt="" className="hoverable featureMobApp" data-aos="zoom-in" />
               </div>
               <p className="aboutus-sets-text hover-text" data-aos="fade-up" data-aos-delay="60">
                 Mobile app for easy <br />
@@ -147,7 +187,7 @@ const LandingPageAboutus = () => {
             </div>
             <div className="aboutus-sets-item" data-aos="fade-up" data-aos-delay="50">
               <div className="aboutus-sets-icon">
-                <img src={featureVersatileBoat} alt="" className="hoverable" data-aos="zoom-in" />
+                <img src={featureVersatileBoat} alt="" className="hoverable featureVersatileBoat" data-aos="zoom-in" />
               </div>
               <p className="aboutus-sets-text hover-text" data-aos="fade-up" data-aos-delay="110">
                 Versatile boats for cruising, <br />
@@ -156,19 +196,16 @@ const LandingPageAboutus = () => {
             </div>
             <div className="aboutus-sets-item" data-aos="fade-up" data-aos-delay="100">
               <div className="aboutus-sets-icon">
-                <img src={featureAddOns} alt="" className="hoverable" data-aos="zoom-in" />
+                <img src={featureAddOns} alt="" className="hoverable featureAddOns" data-aos="zoom-in" />
               </div>
               <p className="aboutus-sets-text hover-text" data-aos="fade-up" data-aos-delay="160">
                 Add-ons: catering, décor, <br />
                 water sports gear
               </p>
             </div>
-          </div>
-
-          <div className="aboutus-sets-bottom">
             <div className="aboutus-sets-item" data-aos="fade-up">
               <div className="aboutus-sets-icon">
-                <img src={featureSixPrime} alt="" className="hoverable" data-aos="zoom-in" />
+                <img src={featureSixPrime} alt="" className="hoverable featureSixPrime" data-aos="zoom-in" />
               </div>
               <p className="aboutus-sets-text hover-text" data-aos="fade-up" data-aos-delay="60">
                 Six prime Abu Dhabi <br />
@@ -177,7 +214,7 @@ const LandingPageAboutus = () => {
             </div>
             <div className="aboutus-sets-item" data-aos="fade-up" data-aos-delay="50">
               <div className="aboutus-sets-icon">
-                <img src={featureClub} alt="" className="hoverable" data-aos="zoom-in" />
+                <img src={featureClub} alt="" className="hoverable featureClub" data-aos="zoom-in" />
               </div>
               <p className="aboutus-sets-text hover-text" data-aos="fade-up" data-aos-delay="110">
                 Club lounge with <br />
@@ -185,6 +222,7 @@ const LandingPageAboutus = () => {
               </p>
             </div>
           </div>
+
         </div>
       </section>
       

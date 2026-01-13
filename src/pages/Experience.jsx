@@ -11,15 +11,15 @@ import romanticMain from "../assets/images/experiences/romantic-bg.png";
 import romanticThumb1 from "../assets/images/experiences/romantic-img1.png";
 import romanticThumb2 from "../assets/images/experiences/romantic-img2.png";
 
-import adventureMain from "../assets/images/experiences/romantic-bg.png";
+import adventureMain from "../assets/images/experiences/sun-cruise.png";
 import adventureThumb1 from "../assets/images/experiences/romantic-img1.png";
 import adventureThumb2 from "../assets/images/experiences/romantic-img2.png";
 
-import celebrationMain from "../assets/images/experiences/romantic-bg.png";
+import celebrationMain from "../assets/images/experiences/photography.png";
 import celebrationThumb1 from "../assets/images/experiences/romantic-img1.png";
 import celebrationThumb2 from "../assets/images/experiences/romantic-img2.png";
 
-import foodMain from "../assets/images/experiences/romantic-bg.png";
+import foodMain from "../assets/images/experiences/enjoyment.png";
 import foodThumb1 from "../assets/images/experiences/romantic-img1.png";
 import foodThumb2 from "../assets/images/experiences/romantic-img2.png";
 
@@ -103,7 +103,7 @@ const Experiences = () => {
       </section>
 
       <section className="experience-tabs-section">
-        <div className="container">
+        <div className="container" style={{ maxWidth: "1220px", width: "100%" }}>
           {/* Tabs */}
           <div
             className="experience-tabs"
