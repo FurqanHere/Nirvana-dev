@@ -153,7 +153,6 @@ const PrivacyPolicy = () => {
           <p>
             All content and trademarks in the App are owned by or licensed to
             <b>
-              {" "}
               FIRST GEAR AUTO USING ELECTRONIC MEDIA RENTING VEHICLES L.L.C.
             </b>
             Unauthorized use of the App’s content is strictly prohibited.

@@ -12,13 +12,13 @@ const leftLinks = [
   { name: "Home", path: "home", type: "section" },
   { name: "About Us", path: "/about-us", type: "route" },
   { name: "Boats", path: "features", type: "section" },
-  { name: "Experiences", path: "experiences", type: "section" },
+  { name: "Experiences", path: "/experience", type: "route" },
 ];
 
 const rightLinks = [
   { name: "Calma", path: "/calma", type: "route" },
   { name: "Membership", path: "/member-ship", type: "route" },
-  { name: "Location", path: "location", type: "section" },
+  { name: "Locations", path: "/locations", type: "route" },
   { name: "Contacts", path: "contacts", type: "section" },
 ];
 
@@ -31,6 +31,10 @@ export default function Navbar({ background = "", profile = null }) {
     // Set active link based on current route
     if (location.pathname === "/member-ship") {
       setActiveLink("/member-ship");
+    } else if (location.pathname === "/experience") {
+      setActiveLink("/experience");
+    } else if (location.pathname === "/locations") {
+      setActiveLink("/locations");
     } else if (location.pathname === "/") {
       setActiveLink("home");
     } else {

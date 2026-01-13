@@ -182,11 +182,11 @@ const PrivacyPolicy = () => {
           <h3 className="mt-4">4. Refund Process</h3>
           <ul>
             <li>
-              Refunds, if applicable, will be initiated within{" "}
+              Refunds, if applicable, will be initiated within
               <b>7–10 business days</b> after cancellation confirmation.
             </li>
             <li>
-              The refund will be processed to the <b>original payment method</b>{" "}
+              The refund will be processed to the <b>original payment method</b>
               used at the time of booking.
             </li>
           </ul>

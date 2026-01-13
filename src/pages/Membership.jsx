@@ -144,8 +144,8 @@ const LandingPageMembership = () => {
             data-aos="fade-up"
             data-aos-delay="200"
           >
-            <h1 className="text-white">MEMBERSHIPS</h1>
-            <p className="landing-hero-subtitle">Where Time Floats Free</p>
+            <h1 className="text-white hover-text" data-aos="fade-up" data-aos-delay="250">MEMBERSHIPS</h1>
+            <p className="landing-hero-subtitle hover-text" data-aos="fade-up" data-aos-delay="300">Where Time Floats Free</p>
           </div>
         </div>
       </section>
@@ -153,8 +153,8 @@ const LandingPageMembership = () => {
       {/* HOW IT WORKS */}
       <section className="how-it-works-section position-relative">
         <div className="container">
-          <h2 data-aos="fade-up">How It Works !</h2>
-          <p data-aos="fade-up" data-aos-delay="100">
+          <h2 className="hover-text" data-aos="fade-up">How It Works !</h2>
+          <p className="hover-text" data-aos="fade-up" data-aos-delay="100">
             Easy step follow and get membership and enjoy our services
           </p>
 
@@ -162,10 +162,10 @@ const LandingPageMembership = () => {
             {/* Card 1 */}
             <div className="how-card" data-aos="fade-up" data-aos-delay="200">
               <div className="icon-box">
-                <img src={chooseMembership} alt="" />
+                <img src={chooseMembership} alt="" className="hoverable" data-aos="zoom-in" />
               </div>
-              <h3>Choose a Membership:</h3>
-              <p>
+              <h3 className="hover-text" data-aos="fade-up" data-aos-delay="220">Choose a Membership:</h3>
+              <p className="hover-text" data-aos="fade-up" data-aos-delay="240">
                 Pick a plan that matches <br /> your lifestyle.
               </p>
             </div>
@@ -173,10 +173,10 @@ const LandingPageMembership = () => {
             {/* Card 2 */}
             <div className="how-card" data-aos="fade-up" data-aos-delay="300">
               <div className="icon-box">
-                <img src={calender} alt="" />
+                <img src={calender} alt="" className="hoverable" data-aos="zoom-in" />
               </div>
-              <h3>Book Your Slot:</h3>
-              <p>
+              <h3 className="hover-text" data-aos="fade-up" data-aos-delay="320">Book Your Slot:</h3>
+              <p className="hover-text" data-aos="fade-up" data-aos-delay="340">
                 Reserve your boat in <br /> seconds.
               </p>
             </div>
@@ -184,24 +184,24 @@ const LandingPageMembership = () => {
             {/* Card 3 */}
             <div className="how-card" data-aos="fade-up" data-aos-delay="400">
               <div className="icon-box">
-                <img src={sail} alt="" />
+                <img src={sail} alt="" className="hoverable" data-aos="zoom-in" />
               </div>
-              <h3>Sail & Enjoy:</h3>
-              <p>
+              <h3 className="hover-text" data-aos="fade-up" data-aos-delay="420">Sail & Enjoy:</h3>
+              <p className="hover-text" data-aos="fade-up" data-aos-delay="440">
                 We handle fuel, cleaning, <br /> and support.
               </p>
             </div>
           </div>
         </div>
         <div className="wheel">
-          <img src={wheel} alt="" />
+          <img src={wheel} alt="" className="hoverable" data-aos="zoom-in" />
         </div>
       </section>
 
       <section className="packages-section position-relative">
         <div className="text-center mb-5">
-          <h2>Packges</h2>
-          <p style={{ color: "#989898" }}>FREE ACCESS TO 42 BOATS</p>
+          <h2 className="hover-text" data-aos="fade-up">Packges</h2>
+          <p className="hover-text" style={{ color: "#989898" }} data-aos="fade-up" data-aos-delay="80">FREE ACCESS TO 42 BOATS</p>
         </div>
         <div className="app-slider" data-aos="fade-up">
           <Swiper
@@ -222,23 +222,23 @@ const LandingPageMembership = () => {
                 <div className="packages-grid single-slide">
                   <div className={`pkg-card ${pkg.theme}`}>
                     <div className="pkg-corner">
-                      <img className="pkg-strap" src={pkg.strap} alt="" />
-                      <img className="pkg-star" src={pkg.star} alt="" />
+                      <img className="pkg-strap hoverable" src={pkg.strap} alt="" data-aos="zoom-in" />
+                      <img className="pkg-star hoverable" src={pkg.star} alt="" data-aos="zoom-in" data-aos-delay="50" />
                     </div>
 
                     <div className="pkg-header">
-                      <h3 className="pkg-name">{pkg.name}</h3>
-                      <p className="pkg-price">{pkg.price}</p>
+                      <h3 className="pkg-name hover-text" data-aos="fade-up">{pkg.name}</h3>
+                      <p className="pkg-price hover-text" data-aos="fade-up" data-aos-delay="60">{pkg.price}</p>
                     </div>
 
                     <ul className="pkg-benefits">
                       {pkg.benefits.map((b, idx) => (
-                        <li key={idx}>{b}</li>
+                        <li key={idx} className="hover-text" data-aos="fade-up" data-aos-delay={60 + idx * 40}>{b}</li>
                       ))}
                     </ul>
 
                     <div className="d-flex justify-content-center">
-                      <button type="button" className="pkg-button">
+                      <button type="button" className="pkg-button btn-hover" data-aos="zoom-in" data-aos-delay="120">
                         Select Package
                       </button>
                     </div>
@@ -249,7 +249,7 @@ const LandingPageMembership = () => {
           </Swiper>
         </div>
         <div className="deco">
-          <img src={deco} alt="" />
+          <img src={deco} alt="" className="hoverable" data-aos="zoom-in" />
         </div>
       </section>
 

@@ -9,6 +9,8 @@ import ContactUs from "../pages/ContactUs";
 import Become_a_Partner from "../pages/Become-a-Partner";
 import Aboutus from "../pages/AboutUs";
 import Membership from "../pages/Membership";
+import Experience from "../pages/Experience";
+import Locations from "../pages/Locations.jsx";
 
 const AppRouter = () => {
     const basePath = process.env.REACT_APP_BASE_PATH;
@@ -25,6 +27,8 @@ const AppRouter = () => {
           <Route path="/cancellation-policy" element={<CancellationPolicy />} />
           <Route path="/member-ship" element={<Membership />} />
           <Route path="/about-us" element={<Aboutus />} />
+          <Route path="/experience" element={<Experience />} />
+          <Route path="/locations" element={<Locations />} />
         </Routes>
       </Router>
     );
