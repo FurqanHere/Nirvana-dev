@@ -679,7 +679,7 @@ body {
 .packages-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  gap: 30px;
 }
 .pkg-card {
   border-radius: 18px;
@@ -687,8 +687,10 @@ body {
   color: #ffffff;
   position: relative;
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.12);
-  /* width: 90%; */
-  height: fit-content;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .pkg-brown {
   background: #ce9c70;
@@ -705,7 +707,7 @@ body {
 }
 
 .pkg-dark {
-  background: #595959;
+  background: #9CAEB5;
   color: #fff;
 }
 
@@ -877,6 +879,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  flex-grow: 1;
+}
+
+.single-slide {
+  height: 100%;
 }
 .pkg-benefits li {
   display: flex;

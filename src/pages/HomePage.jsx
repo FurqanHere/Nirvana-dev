@@ -22,6 +22,7 @@ import whiteStrap from "../assets/images/white-strap.png";
 import blueStrap from "../assets/images/blue-strap.png";
 import yellowStar from "../assets/images/yellow-star.png";
 import whiteStar from "../assets/images/white-star.png";
+import grayStar from "../assets/images/gray-star.png";
 
 import appBg from "../assets/images/app-bg-img.png";
 import appSS2 from "../assets/images/app-ss/app-ss2.png";
@@ -68,6 +69,23 @@ const HomePage = () => {
   };
 
   const packages = [
+    {
+      name: "SEALUX",
+      price: "AED 1,499/mo",
+      theme: "pkg-dark",
+      strap: whiteStrap,
+      star: grayStar,
+      benefits: [
+        "10 Bookings per Month",
+        "Category B Boat Access",
+        "Weekdays Access",
+        "1 Weekend Access per Month",
+        "Session Merging (Once a Month)",
+        "3 Rolling Bookings",
+        "3 Free In-House Captains per Year",
+        "60 Freezing Days",
+      ],
+    },
     {
       name: "SEA DWELLER",
       price: "AED 1,700/mo",
@@ -251,7 +269,8 @@ const HomePage = () => {
           ))}
         </div>
       </section>
-      {/*  */}
+
+      {/* Screenshots of App */}
       <section
         className="app-section"
         id="screenshots"
@@ -298,6 +317,7 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Download App */}
       <section className="download-App-main" id="download">
         <div className="container-fluid">
           <div className="downloadApp" data-aos="fade-up">
