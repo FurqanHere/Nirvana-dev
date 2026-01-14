@@ -604,7 +604,7 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 14px;
-  background: #143E96;
+  background: #143e96;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -767,21 +767,22 @@ body {
 .calma-tabs {
   display: flex;
   gap: 0;
-  border: 2px solid #CE9C70;
+  border: 2px solid #ce9c70;
   border-bottom: 0;
   border-top-left-radius: 22px;
   border-top-right-radius: 22px;
   overflow: hidden;
-  width: 27.53%;
+  width: 40%;
 }
 .calma-tab {
-  padding: 14px 26px;
+  width: 100%;
+    height: 70px;
   background: #ffffff;
   color: #b27f55;
   border: none;
-  border-right: 2px solid #CE9C70;
+  border-right: 2px solid #ce9c70;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 20px;
   letter-spacing: 0.2px;
 }
 .calma-tab.active {
@@ -2222,10 +2223,18 @@ html {
   pointer-events: none;
 }
 .office-swiper .swiper-slide-prev .office-slide-card::before {
-  background: linear-gradient(90deg, rgba(206,156,112,0.18), rgba(206,156,112,0));
+  background: linear-gradient(
+    90deg,
+    rgba(206, 156, 112, 0.18),
+    rgba(206, 156, 112, 0)
+  );
 }
 .office-swiper .swiper-slide-next .office-slide-card::before {
-  background: linear-gradient(90deg, rgba(40,94,164,0.18), rgba(40,94,164,0));
+  background: linear-gradient(
+    90deg,
+    rgba(40, 94, 164, 0.18),
+    rgba(40, 94, 164, 0)
+  );
 }
 .office-slide-card img {
   width: 100%;
@@ -2288,11 +2297,11 @@ html {
   justify-content: center;
 }
 .office-thumb {
-  width: 120px;
-  height: 90px;
+  width: 165px;
+  height: 140px;
   border-radius: 18px;
   overflow: hidden;
-  border: 8px solid #ffffff;
+  border: 1px solid #ffffff;
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.15);
   background: #ffffff;
 }
@@ -2301,6 +2310,7 @@ html {
   height: 100%;
   object-fit: cover;
   display: block;
+  border-radius: 18px;
 }
 .office-thumb.active {
   outline: 2px solid #ce9c70;
@@ -2345,7 +2355,7 @@ html {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: #16429F;
+  background: #16429f;
   color: #ffffff;
 }
 .contact-form-section {
@@ -2353,7 +2363,7 @@ html {
   background: #ffffff;
 }
 .contact-form-card {
-  background: #16429F;
+  background: #16429f;
   border-radius: 20px;
   padding: 28px;
   color: #ffffff;
@@ -2396,11 +2406,10 @@ html {
 }
 .contact-form-actions {
   margin-top: -70px;
-  
 }
 .contact-form-actions button {
   background: #ffffff;
-  color: #0475D9;
+  color: #0475d9;
   border: none;
   border-radius: 8px;
   width: 609px;
@@ -2426,6 +2435,108 @@ html {
 }
 .download-badge.hoverable:hover {
   transform: scale(1.03);
+}
+
+/* Boat Catalog */
+.boat-wheel {
+  position: absolute;
+  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.boat-wheel .boat-wheel-img {
+  width: 200px;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(100%) brightness(1.05) contrast(0.9);
+}
+.boat-deco {
+  position: absolute;
+  left: -330px;
+  top: 60%;
+  transform: translateY(-60%);
+}
+.boat-deco .boat-deco-img {
+  width: 800px;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+.boat-catalog-section {
+  padding: 60px clamp(20px, 5vw, 80px);
+  background: #ffffff;
+  position: relative;
+}
+.boat-catalog-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+.boat-catalog-eyebrow {
+  display: block;
+  color: #070707;
+  font-size: 25px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.boat-catalog-title {
+  font-size: 50px;
+  font-weight: 700;
+  margin-bottom: 50px;
+}
+.boat-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.boat-card {
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+.boat-img img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  display: block;
+}
+.boat-info {
+  padding: 12px 14px;
+  border: 1px solid #dddddd;
+  border-top: 0px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+.boat-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+.boat-specs {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #666666;
+  font-size: 14px;
+}
+.boat-spec {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 1024px) {
+  .boat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .boat-grid {
+    grid-template-columns: 1fr;
+  }
+  .boat-img img {
+    height: 180px;
+  }
 }
 
 /* Footer */

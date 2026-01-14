@@ -11,7 +11,7 @@ import "aos/dist/aos.css";
 const leftLinks = [
   { name: "Home", path: "home", type: "section" },
   { name: "About Us", path: "/about-us", type: "route" },
-  { name: "Boats", path: "features", type: "section" },
+  { name: "Boats", path: "/boats", type: "route" },
   { name: "Experiences", path: "/experience", type: "route" },
 ];
 
@@ -37,6 +37,8 @@ export default function Navbar({ background = "", profile = null }) {
       setActiveLink("/locations");
     } else if (location.pathname === "/calma") {
       setActiveLink("/calma");
+    } else if (location.pathname === "/boat") {
+      setActiveLink("/boat");
     } else if (location.pathname === "/") {
       setActiveLink("home");
     } else if (location.pathname === "/contact-us") {

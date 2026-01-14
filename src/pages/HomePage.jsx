@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-// import landingBg from "../assets/images/landingPageBg.png";
+
 import landingBg from "../assets/images/landing-page-bg-img.png";
 import logoBlue from "../assets/images/logo-blue.png";
 import thumbnail1 from "../assets/images/thumbnail1.png";
@@ -24,15 +24,11 @@ import yellowStar from "../assets/images/yellow-star.png";
 import whiteStar from "../assets/images/white-star.png";
 
 import appBg from "../assets/images/app-bg-img.png";
-import appSS1 from "../assets/images/app-ss/app-ss1.png";
 import appSS2 from "../assets/images/app-ss/app-ss2.png";
 import appSS3 from "../assets/images/app-ss/app-ss3.png";
 import appSS4 from "../assets/images/app-ss/app-ss4.png";
 import appSS5 from "../assets/images/app-ss/app-ss5.png";
 import appSS6 from "../assets/images/app-ss/app-ss6.png";
-import appSS7 from "../assets/images/app-ss/app-ss7.png";
-import appSS8 from "../assets/images/app-ss/app-ss8.png";
-import appSS9 from "../assets/images/app-ss/app-ss9.png";
 import appSS10 from "../assets/images/app-ss/app-ss10.png";
 
 import scrollTopIcon from "../assets/images/arrow-up.png";
@@ -45,6 +41,9 @@ import downloadAppSS from "../assets/images/downloadAppSS.png";
 const HomePage = () => {
   const [showTop, setShowTop] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const appSlides = [appSS2, appSS3, appSS4, appSS5, appSS6, appSS10].filter(Boolean);
+  const slidesTablet = Math.min(2, appSlides.length);
+  const slidesDesktop = Math.min(3, appSlides.length);
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -285,40 +284,15 @@ const HomePage = () => {
               slidesPerView={1}
               breakpoints={{
                 640: { slidesPerView: 1 },
-                768: { slidesPerView: 3 },
-                1024: { slidesPerView: 3 },
+                768: { slidesPerView: slidesTablet },
+                1024: { slidesPerView: slidesDesktop },
               }}
             >
-              <SwiperSlide>
-                <img src={appSS1} alt="App Screenshot 1" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS2} alt="App Screenshot 2" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS3} alt="App Screenshot 3" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS4} alt="App Screenshot 1" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS5} alt="App Screenshot 2" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS6} alt="App Screenshot 3" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS7} alt="App Screenshot 3" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS8} alt="App Screenshot 3" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS9} alt="App Screenshot 3" className="app-ss hoverable" />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src={appSS10} alt="App Screenshot 3" className="app-ss hoverable" />
-              </SwiperSlide>
+              {appSlides.map((ss, idx) => (
+                <SwiperSlide key={idx}>
+                  <img src={ss} alt={`App Screenshot ${idx + 1}`} className="app-ss hoverable" />
+                </SwiperSlide>
+              ))}
             </Swiper>
           </div>
         </div>

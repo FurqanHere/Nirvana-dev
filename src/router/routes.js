@@ -12,6 +12,7 @@ import Membership from "../pages/Membership";
 import Experience from "../pages/Experience";
 import Locations from "../pages/Locations.jsx";
 import Calma from "../pages/Calma.jsx";
+import Boats from "../pages/Boats.jsx";
 
 const AppRouter = () => {
     const basePath = process.env.REACT_APP_BASE_PATH;
@@ -31,6 +32,7 @@ const AppRouter = () => {
           <Route path="/experience" element={<Experience />} />
           <Route path="/locations" element={<Locations />} />
           <Route path="/calma" element={<Calma />} />
+          <Route path="/boats" element={<Boats />} />
         </Routes>
       </Router>
     );
