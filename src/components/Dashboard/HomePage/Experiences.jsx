@@ -1,0 +1,116 @@
+import "../../../assets/css/style.base.css";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Dropdown } from "primereact/dropdown";
+import bdShipImg from "../../../assets/images/bs-ship.png";
+import whiteBlueShip from "../../../assets/images/white-blue-ship.png";
+import blueThumbsUp from "../../../assets/images/blueThumbsUp.png";
+import boat1 from "../../../assets/images/boat1.png";
+import boat2 from "../../../assets/images/boat2.png";
+
+const Experiences = ({
+  selectedTab,
+  setSelectedTab,
+  setSelectedSection,
+  selectedMarina,
+  setSelectedMarina,
+  filteredCards,
+}) => {
+  const navigate = useNavigate();
+  const marinaOptions = [
+    { label: "Royal M Marina", value: "royal-m" },
+    { label: "Marina 1", value: "marina-1" },
+    { label: "Marina 2", value: "marina-2" },
+  ];
+
+  return (
+    <div className="experiences-home-view">
+      <div className="experiences-hero-section">
+        <img
+          src={bdShipImg}
+          alt="Luxury Yacht"
+          className="experiences-hero-image"
+        />
+      </div>
+
+      <div className="experiences-interactive-section">
+        <div className="experiences-type-buttons">
+          <button
+            type="button"
+            className={`experiences-type-btn ${
+              selectedTab === "bookings" ? "active" : ""
+            }`}
+            onClick={() => {
+              setSelectedTab("bookings");
+              setSelectedSection("boats");
+            }}
+          >
+            <img
+              src={whiteBlueShip}
+              className="bookings-type-experiences-img bookings-type-experiences-img-ii"
+              alt=""
+            />
+            <span>Bookings</span>
+          </button>
+          <button
+            type="button"
+            className={`experiences-type-btn ${
+              selectedTab === "experiences" ? "active" : ""
+            }`}
+            onClick={() => {
+              setSelectedTab("experiences");
+              setSelectedSection("experiences");
+            }}
+          >
+            <img
+              src={blueThumbsUp}
+              className="bookings-type-experiences-img"
+              alt=""
+            />
+            <span>Experiences</span>
+          </button>
+        </div>
+        <div className="bookings-marina-select">
+          <Dropdown
+            value={selectedMarina}
+            onChange={(e) => setSelectedMarina(e.value)}
+            options={marinaOptions}
+            optionLabel="label"
+            placeholder="Select Marina"
+            className="marina-dropdown-prime"
+          />
+          <input
+            type="text"
+            placeholder="Search"
+            className="bookings-search-input"
+          />
+        </div>
+      </div>
+
+      <div className="experiences-listings-grid">
+        {filteredCards.map((card, index) => (
+          <div
+            key={card.id}
+            className="experiences-listing-card"
+            onClick={() => navigate("/yacht-details")}
+          >
+            <div className="experiences-listing-image">
+              <img src={index % 2 === 0 ? boat1 : boat2} alt={card.title} />
+              <div className="experiences-listing-content">
+                <div className="experiences-listing-content-left">
+                  <h3 className="experiences-listing-title">{card.title}</h3>
+                  <p className="experiences-listing-engine">
+                    Mercury V8 (300 hp)
+                  </p>
+                </div>
+                <p className="experiences-listing-length">25 ft</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Experiences;

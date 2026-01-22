@@ -1,0 +1,342 @@
+.ship-details-page {
+  min-height: 100vh;
+  padding-top: 100px;
+  padding-bottom: 50px;
+}
+
+.ship-details-container {
+  max-width: 1200px;
+  margin: 520px auto 0;
+  padding: 0 20px;
+  z-index: 2;
+}
+
+.ship-details-page .success-modal .success-primary {
+  margin-top: auto;
+}
+
+.ship-details-card {
+  background-color: #16429F;
+  border-radius: 30px;
+  padding: 50px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.ship-details-header {
+  margin-bottom: 20px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-right: 50px; /* Space for heart icon */
+}
+
+.ship-details-content-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  gap: 30px;
+}
+
+.ship-details-title-section {
+  width: 100%;
+}
+
+.ship-details-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.ship-details-subtitle {
+  font-size: 18px;
+  margin-bottom: 0px;
+  opacity: 0.9;
+}
+
+.ship-details-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.8;
+  max-width: 600px;
+}
+
+/* Feature Grid */
+.ship-details-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-left: 20px;
+}
+
+.ship-details-feature-box {
+  background: white;
+  border-radius: 10px;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+}
+
+.ship-details-feature-icon {
+  font-size: 24px;
+  color: #0475D9;
+  margin-bottom: 5px;
+}
+
+.ship-details-feature-label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.ship-details-heart-icon {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Form Grid Layout */
+.sd-form-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.sd-row-2-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.sd-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.sd-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  margin-left: 5px;
+}
+
+.sd-input {
+  height: 50px;
+  border-radius: 10px;
+  border: none;
+  padding: 0 20px;
+  font-size: 14px;
+  color: #333;
+  width: 100%;
+  outline: none;
+}
+
+.sd-input::placeholder {
+  color: #999;
+}
+
+/* Date & Time with Icons */
+.sd-input-icon-wrapper {
+  position: relative;
+}
+
+.sd-input-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #0475D9;
+  font-size: 18px;
+  pointer-events: none;
+}
+
+/* Passengers Section */
+.sd-passenger-row {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 10px 20px;
+  height: 50px;
+  justify-content: space-between;
+  color: #333;
+}
+
+.sd-passenger-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: #0475D9;
+}
+
+.sd-passenger-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.sd-counter-btn {
+  width: 24px;
+  height: 24px;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.sd-counter-value {
+  font-weight: 600;
+  min-width: 15px;
+  text-align: center;
+}
+
+/* Benefits Section */
+.sd-benefits-group {
+  display: flex;
+  gap: 20px;
+  background: white;
+  border-radius: 10px;
+  padding: 15px 20px;
+  align-items: center;
+  color: #333;
+}
+
+.sd-benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sd-benefit-item input[type="radio"],
+.sd-benefit-item input[type="checkbox"] {
+  accent-color: #0475D9;
+  width: 16px;
+  height: 16px;
+}
+
+/* Map Section */
+.sd-map-container {
+  height: 100%;
+  min-height: 100px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Add-ons Section */
+.sd-addons-container {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  color: #333;
+}
+
+.sd-addons-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  font-weight: 600;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.sd-addon-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.sd-addon-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sd-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #007bff;
+  border-radius: 50%;
+}
+
+.sd-special-req-textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  border-radius: 10px;
+  border: none;
+  padding: 15px;
+  resize: none;
+  font-family: inherit;
+}
+
+/* Submit Button */
+.sd-submit-btn {
+  display: block;
+  width: 300px;
+  margin: 40px auto 0;
+  height: 50px;
+  background: white;
+  color: #0475D9;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.sd-submit-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Back Button */
+.sd-back-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  position: absolute;
+  top: -60px;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .sd-row-2-cols {
+    grid-template-columns: 1fr;
+  }
+  .ship-details-header {
+    flex-direction: column;
+  }
+  .ship-details-features {
+    margin-left: 0;
+    margin-top: 20px;
+    width: 100%;
+    justify-content: space-between;
+  }
+}

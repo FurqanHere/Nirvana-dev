@@ -1,20 +1,29 @@
-// import React, { useEffect } from "react";
-// import { useLocation } from "react-router-dom";
-// import Header from "../components/Header";
-// import Footer from "../components/Footer";
-// import { useTranslation } from "react-i18next";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { useTranslation } from "react-i18next";
 
-const PrivacyPolicy = () => {
-  // const { t, i18n } = useTranslation();
-  // const { pathname } = useLocation();
+const TermsAndConditions = () => {
+  const { i18n } = useTranslation();
+  const { pathname } = useLocation();
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (i18n && i18n.language) {
+      const currentLang = i18n.language;
+      const direction = currentLang === "ar" ? "rtl" : "ltr";
+      document.documentElement.setAttribute("dir", direction);
+      document.documentElement.setAttribute("lang", currentLang);
+    }
+  }, [i18n, i18n?.language]);
 
   return (
     <>
-      {/* <div className="from-top">
+      <div className="from-top">
         <Header background="bg-white" />
 
         <div className="heading-policy flex-column">
@@ -26,16 +35,15 @@ const PrivacyPolicy = () => {
         <div className="text-center">
           <p>Effective Date: [June 17, 2025]</p>
           <p>
-            Website: <a href="https://gearapp.ae"> https://gearapp.ae </a>
+            Website: <a href="https://nirvanaychts.ae"> https://nirvanaychts.ae </a>
           </p>
           <p>
-            These Terms & Conditions ("Terms") govern your use of the Gear
-            mobile application ("App") operated by FIRST GEAR AUTO USING
-            ELECTRONIC MEDIA RENTING VEHICLES L.L.C, a company incorporated in
+            These Terms & Conditions ("Terms") govern your use of the Nirvana
+            mobile application ("App") operated by Nirvana Yachts & Boats L.L.C, a company incorporated in
             Dubai, United Arab Emirates (“we”, “us”, “our”).
           </p>
           <p>
-            By downloading, accessing, or using the Gear App, you agree to be
+            By downloading, accessing, or using the Nirvana App, you agree to be
             bound by these Terms. If you do not agree, please do not use the
             App.
           </p>
@@ -43,22 +51,22 @@ const PrivacyPolicy = () => {
         <div className="privacy-heading">
           <h3>1. Service Description</h3>
           <p className="my-0">
-            Gear is a car rental aggregator platform that allows users to book
-            vehicles on a rental basis through third-party car rental companies
+            Nirvana is a yacht rental aggregator platform that allows users to book
+            yachts/boats on a rental basis through third-party yacht rental companies
             (“Rental Partners”).
           </p>
           <p className="">
-            We do <b>not</b> own or operate any of the vehicles listed in the
+            We do <b>not</b> own or operate any of the yachts listed in the
             app. Our role is to facilitate your booking with our partnered
             rental providers.
           </p>
 
           <h3 className="mt-4">2. Eligibility</h3>
-          <label>To use the Gear App, you must:</label>
+          <label>To use the Nirvana App, you must:</label>
           <ul>
             <li>Be at least 18 years of age</li>
             <li>
-              Possess a valid government-issued ID and driving license (or
+              Possess a valid government-issued ID (or
               passport for tourists)
             </li>
             <li>Provide accurate and complete personal information</li>
@@ -72,8 +80,7 @@ const PrivacyPolicy = () => {
             <li>Full name</li>
             <li>Valid email address and mobile number</li>
             <li>
-              Scans or photos of Emirates ID, passport (if tourist), and driving
-              license
+              Scans or photos of Emirates ID, passport (if tourist)
             </li>
           </ul>
           <p>
@@ -90,7 +97,7 @@ const PrivacyPolicy = () => {
               <strong>Rental Partner.</strong>
             </li>
             <li>
-              Vehicle availability, pricing, rental terms, and delivery options
+              Yacht availability, pricing, rental terms, and delivery options
               are set by the Rental Partner.
             </li>
             <li>
@@ -141,7 +148,7 @@ const PrivacyPolicy = () => {
           <label>We are not liable for:</label>
           <ul>
             <li>Any damages or losses caused by third-party rental services</li>
-            <li>Vehicle breakdowns, traffic violations, or accidents</li>
+            <li>Yacht breakdowns, or accidents</li>
             <li>Delays or service failures caused by Rental Partners</li>
           </ul>
           <p>
@@ -153,7 +160,8 @@ const PrivacyPolicy = () => {
           <p>
             All content and trademarks in the App are owned by or licensed to
             <b>
-              FIRST GEAR AUTO USING ELECTRONIC MEDIA RENTING VEHICLES L.L.C.
+              {" "}
+              Nirvana Yachts & Boats L.L.C.
             </b>
             Unauthorized use of the App’s content is strictly prohibited.
           </p>
@@ -171,32 +179,32 @@ const PrivacyPolicy = () => {
             after such changes constitutes your acceptance of the revised Terms.
           </p>
           <strong>
-            FIRST GEAR AUTO USING ELECTRONIC MEDIA RENTING VEHICLES L.L.C
+            Nirvana Yachts & Boats L.L.C
           </strong>
           <p>
-            Email: <strong>business@gearapp.ae</strong>
+            Email: <strong>sales@nirvanaychts.ae</strong>
           </p>
           <p>Location: Dubai, United Arab Emirates</p>
-          <p>Website: https://gearapp.ae</p>
+          <p>Website: https://nirvanaychts.ae</p>
 
           <h3 className="mt-4">12. Contact Us</h3>
           <p>If you have any questions about these Terms, please contact:</p>
           <strong>
-            FIRST GEAR AUTO USING ELECTRONIC MEDIA RENTING VEHICLES L.L.C
+            Nirvana Yachts & Boats L.L.C
           </strong>
           <p>
-            Email: <strong>business@gearapp.ae</strong>
+            Email: <strong>sales@nirvanaychts.ae</strong>
           </p>
           <p>Location: Dubai, United Arab Emirates</p>
           <p>
-            Website: <a href="https://gearapp.ae"> https://gearapp.ae </a>
+            Website: <a href="https://nirvanaychts.ae"> https://nirvanaychts.ae </a>
           </p>
         </div>
       </div>
 
-      <Footer /> */}
+      <Footer />
     </>
   );
 };
 
-export default PrivacyPolicy;
+export default TermsAndConditions;

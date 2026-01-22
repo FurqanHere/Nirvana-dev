@@ -6,11 +6,23 @@ import Footer from "../components/Footer";
 import Swal from "sweetalert2";
 import ApiService from "../services/ApiService";
 import landingBg from "../assets/images/experiences/experience-bg.png";
+import { useTranslation } from "react-i18next";
 
 const ContactUs = () => {
+  const { i18n } = useTranslation();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (i18n && i18n.language) {
+      const currentLang = i18n.language;
+      const direction = currentLang === "ar" ? "rtl" : "ltr";
+      document.documentElement.setAttribute("dir", direction);
+      document.documentElement.setAttribute("lang", currentLang);
+    }
+  }, [i18n, i18n?.language]);
 
   useEffect(() => {
     AOS.init({

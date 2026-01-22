@@ -1,27 +1,28 @@
+import "../assets/css/style.base.css";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
 
-const PrivacyPolicy = () => {
-  const { t, i18n } = useTranslation();
+const CancellationPolicy = () => {
+  // const { t, i18n } = useTranslation();
   const { pathname } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
     
     // Update document title
-    document.title = "GearApp | Unlock New Roads - Cancellation Policy";
+    document.title = "Nirvana | Cancellation Policy";
     
     // Update or create OG URL meta tag
     let ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) {
-      ogUrl.setAttribute('content', 'https://gearapp.ae/cancellation-policy');
+      ogUrl.setAttribute('content', 'https://nirvanayachts.ae/cancellation-policy');
     } else {
       ogUrl = document.createElement('meta');
       ogUrl.setAttribute('property', 'og:url');
-      ogUrl.setAttribute('content', 'https://gearapp.ae/cancellation-policy');
+      ogUrl.setAttribute('content', 'https://nirvanayachts.ae/cancellation-policy');
       document.head.appendChild(ogUrl);
     }
 
@@ -39,45 +40,45 @@ const PrivacyPolicy = () => {
     // Update or create OG title meta tag
     let ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) {
-      ogTitle.setAttribute('content', 'GearApp | Unlock New Roads - Cancellation Policy');
+      ogTitle.setAttribute('content', 'Nirvana | Cancellation Policy');
     } else {
       ogTitle = document.createElement('meta');
       ogTitle.setAttribute('property', 'og:title');
-      ogTitle.setAttribute('content', 'GearApp | Unlock New Roads - Cancellation Policy');
+      ogTitle.setAttribute('content', 'Nirvana | Cancellation Policy');
       document.head.appendChild(ogTitle);
     }
 
     // Update or create description meta tag
     let description = document.querySelector('meta[name="description"]');
     if (description) {
-      description.setAttribute('content', 'GearApp is the UAE\'s premier online marketplace for luxury car rentals. Browse and book high-end sports cars, SUVs, and exotic vehicles with ease and style');
+      description.setAttribute('content', 'Nirvana Yachts & Boats L.L.C - Luxury Yacht Rentals');
     } else {
       description = document.createElement('meta');
       description.setAttribute('name', 'description');
-      description.setAttribute('content', 'GearApp is the UAE\'s premier online marketplace for luxury car rentals. Browse and book high-end sports cars, SUVs, and exotic vehicles with ease and style');
+      description.setAttribute('content', 'Nirvana Yachts & Boats L.L.C - Luxury Yacht Rentals');
       document.head.appendChild(description);
     }
 
     // Update or create OG description meta tag
     let ogDescription = document.querySelector('meta[property="og:description"]');
     if (ogDescription) {
-      ogDescription.setAttribute('content', 'GearApp is the UAE\'s premier online marketplace for luxury car rentals. Browse and book high-end sports cars, SUVs, and exotic vehicles with ease and style');
+      ogDescription.setAttribute('content', 'Nirvana Yachts & Boats L.L.C - Luxury Yacht Rentals');
     } else {
       ogDescription = document.createElement('meta');
       ogDescription.setAttribute('property', 'og:description');
-      ogDescription.setAttribute('content', 'GearApp is the UAE\'s premier online marketplace for luxury car rentals. Browse and book high-end sports cars, SUVs, and exotic vehicles with ease and style');
+      ogDescription.setAttribute('content', 'Nirvana Yachts & Boats L.L.C - Luxury Yacht Rentals');
       document.head.appendChild(ogDescription);
     }
 
     // Update or create OG image meta tag
     let ogImage = document.querySelector('meta[property="og:image"]');
     if (ogImage) {
-      ogImage.setAttribute('content', 'https://gearapp.ae/static/media/Gear-Benner.93214bc2aa960fc498eb.jpg');
+      // ogImage.setAttribute('content', 'https://gearapp.ae/static/media/Gear-Benner.93214bc2aa960fc498eb.jpg');
     } else {
-      ogImage = document.createElement('meta');
-      ogImage.setAttribute('property', 'og:image');
-      ogImage.setAttribute('content', 'https://gearapp.ae/static/media/Gear-Benner.93214bc2aa960fc498eb.jpg');
-      document.head.appendChild(ogImage);
+      // ogImage = document.createElement('meta');
+      // ogImage.setAttribute('property', 'og:image');
+      // ogImage.setAttribute('content', 'https://gearapp.ae/static/media/Gear-Benner.93214bc2aa960fc498eb.jpg');
+      // document.head.appendChild(ogImage);
     }
 
     // Add OG image dimensions and type
@@ -119,37 +120,35 @@ const PrivacyPolicy = () => {
       <div className="container">
         <div className="text-center">
           <p>Effective Date: [June 17, 2025]</p>
-          <p>Website: https://gearapp.ae</p>
+          <p>Website: https://nirvanayachts.ae</p>
           <p>
             At
             <b className="ms-1">
-              FIRST GEAR AUTO USING ELECTRONIC MEDIA RENTING VEHICLES L.L.C
+              Nirvana Yachts & Boats L.L.C
             </b>
             , we aim to make your rental experience smooth and transparent.
-            Since Gear operates as an aggregator connecting users with
-            third-party rental companies, the following cancellation policy
-            applies:
+            The following cancellation policy applies:
           </p>
           <p>
-            By downloading, accessing, or using the Gear App, you agree to be
+            By accessing or using the Nirvana website, you agree to be
             bound by these Terms. If you do not agree, please do not use the
-            App.
+            Website.
           </p>
         </div>
         <div className="privacy-heading">
           <h3>1. General Cancellation Terms</h3>
           <ul>
             <li>
-              Users may cancel their booking directly through the Gear app.
+              Users may cancel their booking directly through the Nirvana website.
             </li>
             <li>
-              Each <b> rental partner </b> may have its
+              Each <b> booking </b> may have its
               <b> own cancellation rules</b>, including applicable fees,
               refundable deposits, and notice periods.
             </li>
             <li>
-              Cancellation <b>before the scheduled pickup</b> time may be
-              eligible for a full or partial refund depending on the partner's
+              Cancellation <b>before the scheduled time</b> may be
+              eligible for a full or partial refund depending on the
               policy.
             </li>
           </ul>
@@ -161,8 +160,7 @@ const PrivacyPolicy = () => {
               time may <b>not be eligible for a refund.</b>
             </li>
             <li>
-              Any charges or fees retained are determined by the rental
-              partner’s specific terms.
+              Any charges or fees retained are determined by the specific terms.
             </li>
           </ul>
 
@@ -170,7 +168,7 @@ const PrivacyPolicy = () => {
 
           <ul>
             <li>
-              Failure to pick up the vehicle at the scheduled time without prior
+              Failure to arrive at the scheduled time without prior
               cancellation will be considered a <b> no-show.</b>
             </li>
             <li>
@@ -194,7 +192,7 @@ const PrivacyPolicy = () => {
           <h3 className="mt-4">5. How to Cancel</h3>
           <label>You can cancel a booking by: </label>
           <ol>
-            <li>Logging into your Gear account</li>
+            <li>Logging into your Nirvana account</li>
             <li>
               Going to <b> My Bookings </b>
             </li>
@@ -203,14 +201,14 @@ const PrivacyPolicy = () => {
           </ol>
 
           <span>
-            For assistance, you may also email us at <b>business@gearapp.ae.</b>
+            For assistance, you may also email us at <b>sales@nirvanayachts.ae.</b>
           </span>
 
           <h3 className="mt-4">6. Disputes or Special Cases</h3>
           <span>
             For disputes, emergencies, or cancellation due to uncontrollable
             events (e.g., medical, travel restrictions), you may contact our
-            support team. We will review each case with the rental partner, but
+            support team. We will review each case, but
             we cannot guarantee exceptions.
           </span>
         </div>
@@ -221,4 +219,4 @@ const PrivacyPolicy = () => {
   );
 };
 
-export default PrivacyPolicy;
+export default CancellationPolicy;

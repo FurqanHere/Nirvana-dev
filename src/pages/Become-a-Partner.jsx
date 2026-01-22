@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import "../assets/css/style.base.css";
+import React from "react";
 
-import Header from "../components/Header.jsx";
-import Footer from "../components/Footer.jsx";
+// import Header from "../components/Header.jsx";
+// import Footer from "../components/Footer.jsx";
 
-import Swal from "sweetalert2";
-import { toast } from "react-toastify";
+// import Swal from "sweetalert2";
+// import { toast } from "react-toastify";
 
-import { Dropdown } from "primereact/dropdown";
+// import { Dropdown } from "primereact/dropdown";
 // import ReCAPTCHA from "react-google-recaptcha";
 
 // import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
-import ApiService from "../services/ApiService";
+// import ApiService from "../services/ApiService";
 
 // const UAE_STATES = [
 //   { label: "Abu Dhabi", value: "abu-dhabi" },

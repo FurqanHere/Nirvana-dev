@@ -5,53 +5,54 @@ import Footer from "../components/Footer";
 import { useTranslation } from "react-i18next";
 
 const PrivacyPolicy = () => {
-  // const { t, i18n } = useTranslation();
-  // const { pathname } = useLocation();
+  const { i18n } = useTranslation();
+  const { pathname } = useLocation();
 
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-  // useEffect(() => {
-  //   const currentLang = i18n.language;
-  //   const direction = currentLang === "ar" ? "rtl" : "ltr";
-  //   document.documentElement.setAttribute("dir", direction);
-  //   document.documentElement.setAttribute("lang", currentLang);
-  // }, [i18n.language]);
+  useEffect(() => {
+    if (i18n && i18n.language) {
+      const currentLang = i18n.language;
+      const direction = currentLang === "ar" ? "rtl" : "ltr";
+      document.documentElement.setAttribute("dir", direction);
+      document.documentElement.setAttribute("lang", currentLang);
+    }
+  }, [i18n, i18n?.language]);
 
   return (
     <>
-      {/* <div className="privacy-bg from-top">
+      <div className="privacy-bg from-top">
         <Header background="bg-white" />
 
         <div className="heading-policy flex-column">
           <h1>Privacy Policy</h1>
         </div>
-      </div> */}
+      </div>
 
-      {/* <div className="container data-info">
+      <div className="container data-info">
         <div className="text-center">
           <p>Effective Date: [June 17, 2025]</p>
           <p>
-            Website: <a href="https://gearapp.ae"> https://gearapp.ae </a>
+            Website: <a href="https://nirvanaychts.ae"> https://nirvanaychts.ae </a>
           </p>
         </div>
         <div className="privacy-heading">
           <h3>1. Introduction</h3>
           <p>
-            Welcome to Gear, a mobile application operated by FIRST GEAR AUTO
-            USING ELECTRONIC MEDIA RENTING VEHICLES L.L.C, a company
+            Welcome to Nirvana, a platform operated by Nirvana Yachts & Boats L.L.C, a company
             incorporated in Dubai, United Arab Emirates (“we”, “our”, or “us”).
             This Privacy Policy outlines how we collect, use, disclose, and
             protect your information when you use our mobile app and services.
           </p>
           <p className="mt-4 mb-5">
-            By using Gear (the “App”), you agree to the terms of this Privacy
+            By using Nirvana (the “App”), you agree to the terms of this Privacy
             Policy.
           </p>
           <h3 className="mt-5">2. Information We Collect</h3>
           <p>
-            To provide our car rental services through the Gear app, we may
+            To provide our yacht rental services through the Nirvana app, we may
             collect the following information:
           </p>
           <label>Personal Information:</label>
@@ -80,9 +81,9 @@ const PrivacyPolicy = () => {
           <h3 className="mt-5">3. How We Use Your Information</h3>
           <label>We use your personal information to:</label>
           <ul>
-            <li>Create and manage your Gear account</li>
-            <li>Facilitate car rental bookings with third-party providers</li>
-            <li>Verify your identity and eligibility to rent a vehicle</li>
+            <li>Create and manage your Nirvana account</li>
+            <li>Facilitate yacht rental bookings with third-party providers</li>
+            <li>Verify your identity and eligibility to rent a vehicle/yacht</li>
             <li>
               Communicate with you regarding bookings, account activity, and
               customer support
@@ -96,7 +97,7 @@ const PrivacyPolicy = () => {
           <label>We may share your information with:</label>
           <ul>
             <li>
-              <strong>Third-Party Car Rental Companies:</strong> To facilitate
+              <strong>Third-Party Rental Companies:</strong> To facilitate
               your rental booking.
             </li>
             <li>
@@ -132,7 +133,7 @@ const PrivacyPolicy = () => {
             <li>Request a copy of your data</li>
             <p>
               To exercise these rights, please contact us at
-              business@gearapp.ae.
+              sales@nirvanaychts.ae.
             </p>
           </ul>
           <h3 className="mt-5">8. Children’s Privacy</h3>
@@ -153,18 +154,18 @@ const PrivacyPolicy = () => {
             our data practices, please contact us at:
           </p>
           <strong style={{ color: "#6b6b6b" }}>
-            FIRST GEAR AUTO USING ELECTRONIC MEDIA RENTING VEHICLES L.L.C
+            Nirvana Yachts & Boats L.L.C
           </strong>
           <p>
-            Email: <strong> business@gearapp.ae</strong>
+            Email: <strong> sales@nirvanaychts.ae</strong>
           </p>
           <p>Location: Dubai, United Arab Emirates</p>
-          <span>Website:</span><a href="https://gearapp.ae"> https://gearapp.ae </a>
+          <span>Website:</span><a href="https://nirvanaychts.ae"> https://nirvanaychts.ae </a>
         </div>
-      </div> */}
+      </div>
 
       {/* Footer */}
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };

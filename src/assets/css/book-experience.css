@@ -1,0 +1,331 @@
+.book-experience-page {
+  min-height: 100vh;
+  padding-top: 100px;
+  padding-bottom: 50px;
+}
+
+.book-experience-container {
+  max-width: 1200px;
+  margin: 520px auto 0;
+  padding: 0 20px;
+  z-index: 2;
+}
+
+.book-experience-page .success-modal .success-primary {
+  margin-top: auto;
+}
+
+.book-experience-card {
+  background-color: #16429F;
+  border-radius: 30px;
+  padding: 50px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.book-experience-header {
+  margin-bottom: 40px;
+}
+
+.book-experience-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.book-experience-subtitle {
+  font-size: 18px;
+  margin-bottom: 25px;
+  opacity: 0.9;
+}
+
+.book-experience-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.8;
+  max-width: 800px;
+}
+
+/* Form Grid Layout */
+.be-form-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.be-row-3-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.be-row-2-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.be-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.be-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  margin-left: 5px;
+}
+
+.be-input {
+  height: 50px;
+  border-radius: 10px;
+  border: none;
+  padding: 0 20px;
+  font-size: 14px;
+  color: #333;
+  width: 100%;
+  outline: none;
+}
+
+.be-input::placeholder {
+  color: #999;
+}
+
+/* Promo Code */
+.be-promo-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.be-promo-input {
+  padding-right: 100px; /* Space for button */
+}
+
+.be-promo-btn {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  bottom: 5px;
+  background-color: #0475D9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 20px;
+  font-weight: 600;
+  cursor: pointer;
+  height: 40px;
+}
+
+/* Date & Time with Icons */
+.be-input-icon-wrapper {
+  position: relative;
+}
+
+.be-input-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #0475D9;
+  font-size: 18px;
+  pointer-events: none;
+}
+
+/* Passengers Section */
+.be-passenger-row {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 10px 20px;
+  height: 50px;
+  justify-content: space-between;
+  color: #333; /* Dark text inside white box */
+}
+
+.be-passenger-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: #0056b3; /* Blue text for label */
+}
+
+.be-passenger-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.be-counter-btn {
+  width: 24px;
+  height: 24px;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.be-counter-value {
+  font-weight: 600;
+  min-width: 15px;
+  text-align: center;
+}
+
+/* Toggle Switch */
+.be-toggle-row {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 0 20px;
+  height: 50px;
+  justify-content: space-between;
+}
+
+.be-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: #0056b3;
+}
+
+.be-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.be-toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.be-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.be-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.be-toggle-input:checked + .be-toggle-slider {
+  background-color: #000;
+}
+
+.be-toggle-input:checked + .be-toggle-slider:before {
+  transform: translateX(26px);
+}
+
+/* Add-ons Section */
+.be-addons-container {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  color: #333;
+}
+
+.be-addons-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  font-weight: 600;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.be-addon-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.be-addon-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.be-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.be-special-req-textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  border-radius: 10px;
+  border: none;
+  padding: 15px;
+  resize: none;
+  font-family: inherit;
+}
+
+/* Submit Button */
+.be-submit-btn {
+  display: block;
+  width: 300px;
+  margin: 40px auto 0;
+  height: 50px;
+  background: white;
+  color: #0475D9;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.be-submit-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Back Button */
+.be-back-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  position: absolute;
+  top: -60px;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .be-row-3-cols, .be-row-2-cols {
+    grid-template-columns: 1fr;
+  }
+}

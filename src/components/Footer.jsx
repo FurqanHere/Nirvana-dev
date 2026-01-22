@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/LandingPageLogo.png";
 import footerBg from "../assets/images/landingPageFooterBg.png";
-import wheel from "../assets/images/footer-wheel.png";
 import fb from "../assets/images/landingPagefb.png";
 import x from "../assets/images/landingPageX.png";
 import insta from "../assets/images/landingPageInstagram.png";

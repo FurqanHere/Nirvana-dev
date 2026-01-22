@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import "../assets/css/style.base.css";
+import React from "react";
+// import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
 
-const PrivacyPolicy = () => {
+const Support = () => {
   // const { t, i18n } = useTranslation();
   // const { pathname } = useLocation();
 
@@ -21,22 +22,22 @@ const PrivacyPolicy = () => {
 
   return (
     <>
-      {/* <div className="privacy-bg from-top">
+      <div className="privacy-bg from-top">
         <Header background="bg-white" />
-      </div> */}
+      </div>
 
-      {/* <div className="container mt-5">
+      <div className="container mt-5">
         <div className="row">
           <div className="col-md-1"></div>
           <div className="col-md-7 d-flex flex-column justify-content-center">
             <div className="position-relative">
-              <h2 className="fw-bold">Contact Gear</h2>
+              <h2 className="fw-bold">Contact Support</h2>
             </div>
 
-            <p>Contact Gear by phone or email</p>
+            <p>Contact us by phone or email</p>
             <div className="d-flex">
-              <p>+971 56 114 5454 | </p>
-              <p className="ms-1"> business@gearapp.ae</p>
+              <p>+971 54 792 2842 | </p>
+              <p className="ms-1"> sales@nirvanayachts.ae</p>
             </div>
           </div>
           <div className="col-md-4">
@@ -103,12 +104,11 @@ const PrivacyPolicy = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
 
-      {/* Footer */}
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };
 
-export default PrivacyPolicy;
+export default Support;

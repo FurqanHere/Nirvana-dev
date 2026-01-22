@@ -9,7 +9,7 @@ import calender from "../assets/images/membership/calender.png";
 import sail from "../assets/images/membership/sail.png";
 import chooseMembership from "../assets/images/membership/chooseMembership.png";
 
-import leftBlueDeco from "../assets/images/left-blue-deco-img.png";
+// import leftBlueDeco from "../assets/images/left-blue-deco-img.png";
 import yellowStrap from "../assets/images/yellow-strap.png";
 import whiteStrap from "../assets/images/white-strap.png";
 import blueStrap from "../assets/images/blue-strap.png";
@@ -17,45 +17,60 @@ import yellowStar from "../assets/images/yellow-star.png";
 import whiteStar from "../assets/images/white-star.png";
 
 import wheel from "../assets/images/wheel-img.png";
-import deco from "../assets/images/left-deco-piece.png";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
+import grayStar from "../assets/images/gray-star.png";
 
-const LandingPageMembership = () => {
+
+const Membership = () => {
   const packages = [
     {
       name: "SEALUX",
       price: "AED 1,499/mo",
-      theme: "pkg-brown",
+      theme: "pkg-dark",
       strap: whiteStrap,
-      star: yellowStar,
+      star: grayStar,
       benefits: [
-        "10 Bookings Per Month",
+        "10 Bookings per Month",
         "Category B Boat Access",
         "Weekdays Access",
-        "Session Merging – Once Per Month",
-        "3 Free In-House Captains Per Year",
-        "60 Freeze Days (Membership Pause)",
+        "1 Weekend Access per Month",
+        "Session Merging (Once a Month)",
+        "3 Rolling Bookings",
+        "3 Free In-House Captains per Year",
+        "60 Freezing Days",
       ],
     },
     {
       name: "SEA DWELLER",
       price: "AED 1,700/mo",
-      theme: "pkg-blue",
+      theme: "pkg-brown",
       strap: whiteStrap,
       star: yellowStar,
       benefits: [
-        "10 Bookings Per Month",
+        "10 Bookings per Month",
         "Category B Boat Access",
         "Weekdays Access",
-        "1 Weekend Access Per Month",
+        "1 Weekend Access per Month",
         "Session Merging (Once a Month)",
         "3 Rolling Bookings",
-        "3 Free In-House Captains Per Year",
+        "3 Free In-House Captains per Year",
+        "60 Freezing Days",
+      ],
+    },
+    {
+      name: "SEALUX",
+      price: "AED 1,499/mo",
+      theme: "pkg-blue",
+      strap: yellowStrap,
+      star: whiteStar,
+      benefits: [
+        "10 Bookings per Month",
+        "Category B Boat Access",
+        "Weekdays Access",
+        "1 Weekend Access per Month",
+        "Session Merging (Once a Month)",
+        "3 Rolling Bookings",
+        "3 Free In-House Captains per Year",
         "60 Freezing Days",
       ],
     },
@@ -66,55 +81,14 @@ const LandingPageMembership = () => {
       strap: blueStrap,
       star: whiteStar,
       benefits: [
-        "10 Bookings Per Month",
+        "10 Bookings per Month",
         "Category B Boat Access",
         "Weekdays Access",
-        "Free Weekends Access Per Month",
-        "Session Merging (Twice a Month)",
-        "Three Rolling Bookings",
-        "Houseboat Access Once Every Two Months",
-        "Three Free In-House Captains Per Year",
-        "80 Freeze Days (Membership Pause)",
-      ],
-    },
-    {
-      name: "SEA DWELLER PLUS",
-      price: "AED 1,700/mo",
-      theme: "pkg-yellow",
-      strap: yellowStrap,
-      star: whiteStar,
-      benefits: [
-        "10 Bookings Per Month",
-        "Category A & B Boat Access",
-        "Weekdays And Weekend Access",
-        "Session Merging (Twice A Month)",
-        "Three Rolling Bookings",
-        "Houseboat Access Once A Month",
-        "Free In-House Captains",
-        "75 Freeze Days (Membership Pause)",
-        "Dual Membership",
-        "Gift Trips",
-        "Dubai Boat Usage",
-      ],
-    },
-    {
-      name: "ROYAL",
-      price: "AED 8,000/mo",
-      theme: "pkg-dark",
-      strap: blueStrap,
-      star: whiteStar,
-      benefits: [
-        "10 Bookings Per Month",
-        "Category A & B Boat Access",
-        "Weekdays And Weekend Access",
-        "Session Merging (Twice A Month)",
-        "Three Rolling Bookings",
-        "Houseboat Access Once A Month",
-        "Free In-House Captains",
-        "75 Freeze Days (Membership Pause)",
-        "Dual Membership",
-        "Gift Trips",
-        "Dubai Boat Usage",
+        "1 Weekend Access per Month",
+        "Session Merging (Once a Month)",
+        "3 Rolling Bookings",
+        "3 Free In-House Captains per Year",
+        "60 Freezing Days",
       ],
     },
   ];
@@ -198,58 +172,38 @@ const LandingPageMembership = () => {
         </div>
       </section>
 
-      <section className="packages-section position-relative">
-        <div className="text-center mb-5">
-          <h2>Packges</h2>
-          <p style={{ color: "#989898" }}>FREE ACCESS TO 42 BOATS</p>
+      <section className="packages-section" id="packages">
+        <div className="packages-header" data-aos="fade-up">
+          <h2 className="packages-title">Packages</h2>
+          <p className="packages-subtitle">Our Simple 3 Membership package</p>
         </div>
-        <div className="app-slider" data-aos="fade-up">
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            navigation
-            autoplay={{ delay: 3500, disableOnInteraction: false }}
-            loop
-            centeredSlides
-            spaceBetween={24}
-            slidesPerView={1}
-            breakpoints={{
-              768: { slidesPerView: 3 },
-              1024: { slidesPerView: 3 },
-            }}
-          >
-            {packages.map((pkg, index) => (
-              <SwiperSlide key={index}>
-                <div className="packages-grid single-slide">
-                  <div className={`pkg-card ${pkg.theme}`}>
-                    <div className="pkg-corner">
-                      <img className="pkg-strap" src={pkg.strap} alt="" />
-                      <img className="pkg-star" src={pkg.star} alt="" />
-                    </div>
-
-                    <div className="pkg-header">
-                      <h3 className="pkg-name">{pkg.name}</h3>
-                      <p className="pkg-price">{pkg.price}</p>
-                    </div>
-
-                    <ul className="pkg-benefits">
-                      {pkg.benefits.map((b, idx) => (
-                        <li key={idx}>{b}</li>
-                      ))}
-                    </ul>
-
-                    <div className="d-flex justify-content-center">
-                      <button type="button" className="pkg-button">
-                        Select Package
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-        <div className="deco">
-          <img src={deco} alt="" />
+        <div className="packages-grid">
+          {packages.map((pkg) => (
+            <div
+              className={`pkg-card ${pkg.theme}`}
+              key={pkg.name}
+              data-aos="fade-up"
+            >
+              <div className="pkg-corner">
+                <img className="pkg-strap" src={pkg.strap} alt="" />
+                <img className="pkg-star" src={pkg.star} alt="" />
+              </div>
+              <div className="pkg-header">
+                <h3 className="pkg-name">{pkg.name}</h3>
+                <p className="pkg-price">{pkg.price}</p>
+              </div>
+              <ul className="pkg-benefits">
+                {pkg.benefits.map((b, idx) => (
+                  <li key={idx}>{b}</li>
+                ))}
+              </ul>
+              <div className="d-flex justify-content-center">
+                <button type="button" className="pkg-button">
+                  Select Package
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -258,4 +212,4 @@ const LandingPageMembership = () => {
   );
 };
 
-export default LandingPageMembership;
+export default Membership;
