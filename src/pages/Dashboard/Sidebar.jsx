@@ -1,5 +1,8 @@
 import "../../assets/css/style.base.css";
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import ApiService from "../../services/ApiService";
+import { toast } from "react-toastify";
 
 // Import Sidebar Images
 import homeIcon from '../../assets/images/sidebar-home.png';
@@ -83,9 +86,27 @@ const sidebarStructure = [
 ];
 
 const Sidebar = ({ selectedSection, setSelectedSection }) => {
+  const navigate = useNavigate();
   const [openGroups, setOpenGroups] = useState(() => new Set(
     sidebarStructure.filter(i => i.type === 'group').map(i => i.key)
   ));
+
+  const handleLogout = async () => {
+    try {
+      const response = await ApiService.post("/logout");
+      if (response.data.status) {
+        toast.success(response.data.message || "Logged out successfully");
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
+      // Even if API fails, we should clear local state
+    } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
+      navigate("/login", { replace: true });
+    }
+  };
 
   const toggleGroup = (key) => {
     setOpenGroups(prev => {
@@ -142,7 +163,7 @@ const Sidebar = ({ selectedSection, setSelectedSection }) => {
                     className={`sidebar-bottom-item ${selectedSection === child.key ? "active" : ""}`}
                     onClick={() => {
                       if (isLogout) {
-                        // handle logout logic if any
+                        handleLogout();
                       } else {
                         setSelectedSection(child.key);
                       }

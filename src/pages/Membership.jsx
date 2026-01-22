@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Header from "../components/Header";
-import LandingPageFooter from "../components/Footer";
 import landingBg from "../assets/images/membership/membership-bg.png";
+import ApiService from "../services/ApiService";
+import Swal from "sweetalert2";
 
 import calender from "../assets/images/membership/calender.png";
 import sail from "../assets/images/membership/sail.png";
@@ -20,80 +21,22 @@ import wheel from "../assets/images/wheel-img.png";
 
 import grayStar from "../assets/images/gray-star.png";
 
+import "../assets/css/style.base.css";
+
 
 const Membership = () => {
-  const packages = [
-    {
-      name: "SEALUX",
-      price: "AED 1,499/mo",
-      theme: "pkg-dark",
-      strap: whiteStrap,
-      star: grayStar,
-      benefits: [
-        "10 Bookings per Month",
-        "Category B Boat Access",
-        "Weekdays Access",
-        "1 Weekend Access per Month",
-        "Session Merging (Once a Month)",
-        "3 Rolling Bookings",
-        "3 Free In-House Captains per Year",
-        "60 Freezing Days",
-      ],
-    },
-    {
-      name: "SEA DWELLER",
-      price: "AED 1,700/mo",
-      theme: "pkg-brown",
-      strap: whiteStrap,
-      star: yellowStar,
-      benefits: [
-        "10 Bookings per Month",
-        "Category B Boat Access",
-        "Weekdays Access",
-        "1 Weekend Access per Month",
-        "Session Merging (Once a Month)",
-        "3 Rolling Bookings",
-        "3 Free In-House Captains per Year",
-        "60 Freezing Days",
-      ],
-    },
-    {
-      name: "SEALUX",
-      price: "AED 1,499/mo",
-      theme: "pkg-blue",
-      strap: yellowStrap,
-      star: whiteStar,
-      benefits: [
-        "10 Bookings per Month",
-        "Category B Boat Access",
-        "Weekdays Access",
-        "1 Weekend Access per Month",
-        "Session Merging (Once a Month)",
-        "3 Rolling Bookings",
-        "3 Free In-House Captains per Year",
-        "60 Freezing Days",
-      ],
-    },
-    {
-      name: "ELITE",
-      price: "AED 2,500/mo",
-      theme: "pkg-navy",
-      strap: blueStrap,
-      star: whiteStar,
-      benefits: [
-        "10 Bookings per Month",
-        "Category B Boat Access",
-        "Weekdays Access",
-        "1 Weekend Access per Month",
-        "Session Merging (Once a Month)",
-        "3 Rolling Bookings",
-        "3 Free In-House Captains per Year",
-        "60 Freezing Days",
-      ],
-    },
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const styles = [
+    { theme: "pkg-dark", strap: whiteStrap, star: grayStar },
+    { theme: "pkg-brown", strap: whiteStrap, star: yellowStar },
+    { theme: "pkg-blue", strap: yellowStrap, star: whiteStar },
+    { theme: "pkg-navy", strap: blueStrap, star: whiteStar },
   ];
 
   useEffect(() => {
+    fetchPackages();
     window.scrollTo(0, 0);
   }, []);
 
@@ -104,6 +47,78 @@ const Membership = () => {
       offset: 100,
     });
   }, []);
+
+  const fetchPackages = async () => {
+    try {
+      const response = await ApiService.get("/getPackages");
+      if (response.data.status) {
+        setPackages(response.data.data.packages);
+      } else {
+        console.error("Failed to fetch packages");
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBuyPackage = async (pkg) => {
+    const token = localStorage.getItem('user')
+      ? JSON.parse(localStorage.getItem('user')).auth_token
+      : null;
+
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Login Required",
+        text: "Please login to purchase a package.",
+        confirmButtonColor: "#3F85DE",
+        confirmButtonText: "Login",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/login";
+        }
+      });
+      return;
+    }
+
+    try {
+      // Assuming 'monthly' is the default term as per the requirement or UI context
+      // If user selection is needed, we would need a modal or dropdown.
+      // For now, proceeding with 'monthly' and the package id.
+      const payload = {
+        package_id: pkg.id,
+        term: "monthly" 
+      };
+
+      const response = await ApiService.post("/buyPackage", payload);
+
+      if (response.data.status) {
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: response.data.message || "Package purchased successfully!",
+          confirmButtonColor: "#3F85DE",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: response.data.message || "Failed to purchase package.",
+          confirmButtonColor: "#3F85DE",
+        });
+      }
+    } catch (error) {
+      console.error("Error buying package:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.message || "An error occurred while purchasing the package.",
+        confirmButtonColor: "#3F85DE",
+      });
+    }
+  };
 
   return (
     <div className="landing-page">
@@ -178,36 +193,49 @@ const Membership = () => {
           <p className="packages-subtitle">Our Simple 3 Membership package</p>
         </div>
         <div className="packages-grid">
-          {packages.map((pkg) => (
-            <div
-              className={`pkg-card ${pkg.theme}`}
-              key={pkg.name}
-              data-aos="fade-up"
-            >
-              <div className="pkg-corner">
-                <img className="pkg-strap" src={pkg.strap} alt="" />
-                <img className="pkg-star" src={pkg.star} alt="" />
-              </div>
-              <div className="pkg-header">
-                <h3 className="pkg-name">{pkg.name}</h3>
-                <p className="pkg-price">{pkg.price}</p>
-              </div>
-              <ul className="pkg-benefits">
-                {pkg.benefits.map((b, idx) => (
-                  <li key={idx}>{b}</li>
-                ))}
-              </ul>
-              <div className="d-flex justify-content-center">
-                <button type="button" className="pkg-button">
-                  Select Package
-                </button>
-              </div>
-            </div>
-          ))}
+          {loading ? (
+             <div style={{ width: "100%", textAlign: "center", padding: "40px" }}>
+               <div className="spinner-border text-primary" role="status">
+                 <span className="visually-hidden">Loading...</span>
+               </div>
+             </div>
+          ) : (
+            packages.map((pkg, idx) => {
+              const style = styles[idx % styles.length];
+              return (
+                <div
+                  className={`pkg-card ${style.theme}`}
+                  key={pkg.id || idx}
+                  data-aos="fade-up"
+                >
+                  <div className="pkg-corner">
+                    <img className="pkg-strap" src={style.strap} alt="" />
+                    <img className="pkg-star" src={style.star} alt="" />
+                  </div>
+                  <div className="pkg-header">
+                    <h3 className="pkg-name">{pkg.name}</h3>
+                    <p className="pkg-price">AED {pkg.monthly_price}/mo</p>
+                  </div>
+                  <ul className="pkg-benefits">
+                    {pkg.features && pkg.features.map((b, i) => (
+                      <li key={i}>{b}</li>
+                    ))}
+                  </ul>
+                  <div className="d-flex justify-content-center">
+                    <button 
+                      type="button" 
+                      className="pkg-button"
+                      onClick={() => handleBuyPackage(pkg)}
+                    >
+                      Select Package
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </section>
-
-      <LandingPageFooter />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import ApiService from "../services/ApiService";
 import landingBg from "../assets/images/experiences/experience-bg.png";
 import { useTranslation } from "react-i18next";
+// import "../assets/css/style.base.css";
 
 const ContactUs = () => {
   const { i18n } = useTranslation();
@@ -33,14 +34,14 @@ const ContactUs = () => {
     });
   }, []);
 
-  const [form, setForm] = useState({ name: "", phone: "", message: "" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
   // const [recaptchaValue, setRecaptchaValue] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.phone) return;
+    if (!form.name || !form.phone || !form.email) return;
     
     // Validate reCAPTCHA
     // if (!recaptchaValue) {
@@ -74,7 +75,7 @@ const ContactUs = () => {
             confirmButton: "swal-confirm-btn"
           }
         });
-        setForm({ name: "", phone: "", message: "" });
+        setForm({ name: "", phone: "", email: "", message: "" });
       } else {
         Swal.fire({ 
           icon: "error", 
@@ -177,6 +178,8 @@ const ContactUs = () => {
                   <label>Email</label>
                   <input
                     type="email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
                     placeholder="you@example.com"
                   />
                 </div>

@@ -1,8 +1,10 @@
 import "../assets/css/style.base.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./CreateAccount.css";
+import ApiService from "../services/ApiService";
+import { toast } from "react-toastify";
 
 import backgroundImage from "../assets/images/login-bg.png";
 import googleIcon from "../assets/images/google.png";
@@ -12,13 +14,62 @@ import { useNavigate } from "react-router-dom";
 
 const CreateAccount = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    password: ""
+  });
 
-  const handleCreateAccount = () => {
-    if (typeof window !== "undefined") {
-      const userData = {};
-      localStorage.setItem("user", JSON.stringify(userData));
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleCreateAccount = async () => {
+    if (!formData.fullName || !formData.email || !formData.phone || !formData.password) {
+      toast.error("Please fill in all fields");
+      return;
     }
-    navigate("/phone-otp", { replace: true, state: { flow: "signup" } });
+
+    setLoading(true);
+    try {
+      const payload = {
+        name: formData.fullName,
+        email: formData.email.trim(),
+        phone: formData.phone,
+        phone_code: "+971",
+        password: formData.password,
+        device_token: "web_token_dummy",
+        device_type: "WEB"
+      };
+
+      const response = await ApiService.post("/register", payload);
+
+      if (response.data.status) {
+        toast.success(response.data.message || "Account created successfully. Please verify OTP.");
+        navigate("/phone-otp", { 
+          replace: true, 
+          state: { 
+            flow: "signup",
+            email: formData.email.trim(),
+            phone: formData.phone,
+            phone_code: "+971"
+          } 
+        });
+      } else {
+        toast.error(response.data.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error("Registration Error:", error);
+      toast.error("An error occurred during registration");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -50,6 +101,8 @@ const CreateAccount = () => {
                 type="text"
                 placeholder=""
                 className="login-input"
+                value={formData.fullName}
+                onChange={handleInputChange}
               />
             </div>
 
@@ -61,6 +114,8 @@ const CreateAccount = () => {
                 type="email"
                 placeholder=""
                 className="login-input"
+                value={formData.email}
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -81,6 +136,8 @@ const CreateAccount = () => {
                   type="tel"
                   placeholder=""
                   className="login-input phone-input"
+                  value={formData.phone}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
@@ -93,6 +150,8 @@ const CreateAccount = () => {
                 type="password"
                 placeholder=""
                 className="login-input"
+                value={formData.password}
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -101,8 +160,10 @@ const CreateAccount = () => {
             type="button"
             className="login-button create-button"
             onClick={handleCreateAccount}
+            disabled={loading}
+            style={{ opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
           >
-            Create Account
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 

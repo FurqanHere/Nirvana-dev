@@ -23,6 +23,8 @@ import foodMain from "../assets/images/experiences/enjoyment.png";
 import foodThumb1 from "../assets/images/experiences/romantic-img1.png";
 import foodThumb2 from "../assets/images/experiences/romantic-img2.png";
 
+import "../assets/css/base.css"
+
 const Experiences = () => {
   useEffect(() => {
     window.scrollTo(0, 0);

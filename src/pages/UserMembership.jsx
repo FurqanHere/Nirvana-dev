@@ -9,6 +9,8 @@ import L from "leaflet";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useNavigate, useLocation } from "react-router-dom";
+import ApiService from "../services/ApiService";
+import { toast } from "react-toastify";
 
 import landingBg from "../assets/images/landingPageBg.png";
 import membershipBgImg from "../assets/images/main-yact-bg.png";
@@ -52,6 +54,7 @@ import InsertCardDetails from "../components/InsertCardDetails";
 import Document from "../components/Document";
 import OrientationScreen from "../components/OrientationScreen";
 import ClubBriefing from "../components/ClubBriefing";
+import Notifications from "../components/Dashboard/Profile/Notifications";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -59,14 +62,6 @@ L.Icon.Default.mergeOptions({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
-
-// const redIcon = new L.Icon({
-  //   iconUrl:
-  //     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAzMiA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDBDMTEuNTgyIDAgOCAzLjU4MiA4IDhDOCAxMy4zMzMgMTYgMjYgMTYgMjZDMTYgMjYgMjQgMTMuMzMzIDI0IDhDMjQgMy41ODIgMjAuNDE4IDAgMTYgMFoiIGZpbGw9IiNGRjAwMDAiLz4KPGNpcmNsZSBjeD0iMTYiIGN5PSI4IiByPSI0IiBmaWxsPSIjRkZGRkZGIi8+Cjwvc3ZnPgo=",
-  //   iconSize: [32, 40],
-  //   iconAnchor: [16, 40],
-  //   popupAnchor: [0, -40],
-  // });
 
 const membershipPackages = [
   {
@@ -178,6 +173,8 @@ const Membership = () => {
   const [selectedMarina, setSelectedMarina] = useState("");
   const [showOrientationSuccess, setShowOrientationSuccess] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   // Personal Details Form State
   const [personalDetails, setPersonalDetails] = useState({
@@ -198,6 +195,26 @@ const Membership = () => {
   });
   const [cardInfoErrors, setCardInfoErrors] = useState({});
 
+  const handleLogout = async (e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    setLogoutLoading(true);
+    try {
+      const response = await ApiService.post("/logout");
+      if (response.data.status) {
+        toast.success(response.data.message || "Logged out successfully");
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
+    } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
+      setIsLoggedIn(false);
+      navigate("/login", { replace: true });
+      setLogoutLoading(false);
+    }
+  };
+
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -211,6 +228,19 @@ const Membership = () => {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         setIsLoggedIn(true);
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUserInfo(parsedUser);
+          // Pre-fill personal details if available
+          setPersonalDetails(prev => ({
+            ...prev,
+            fullName: parsedUser.first_name ? `${parsedUser.first_name} ${parsedUser.last_name || ''}` : parsedUser.name || prev.fullName,
+            phone: parsedUser.phone || prev.phone,
+            email: parsedUser.email || "",
+          }));
+        } catch (e) {
+          console.error("Error parsing user data", e);
+        }
       }
     }
   }, []);
@@ -360,9 +390,45 @@ const Membership = () => {
     }
   };
 
+  const profileComponent = isLoggedIn ? (
+    <div className="d-flex align-items-center gap-3">
+      <div 
+        className="dashboard-user" 
+        onClick={() => setCurrentView("userProfile")}
+        style={{ cursor: "pointer" }}
+        title="View Profile"
+      >
+        <div className="dashboard-avatar">
+          <img src={profilePic} alt="" className="w-100" />
+        </div>
+        <div className="dashboard-user-text">
+          <p className="dashboard-welcome">Welcome</p>
+          <h5 className="dashboard-user-name">
+            {userInfo?.first_name ? `${userInfo.first_name} !` : (userInfo?.name ? `${userInfo.name} !` : "Member !")}
+          </h5>
+        </div>
+      </div>
+      <button 
+        className="btn btn-link p-0 text-white d-flex align-items-center justify-content-center"
+        onClick={handleLogout}
+        title="Logout"
+        disabled={logoutLoading}
+        style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', textDecoration: 'none' }}
+      >
+        {logoutLoading ? (
+            <div className="spinner-border spinner-border-sm text-white" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        ) : (
+            <i className="bi bi-box-arrow-right" style={{ fontSize: '1.2rem' }}></i>
+        )}
+      </button>
+    </div>
+  ) : null;
+
   return (
     <div className="membership-page">
-      <Header />
+      <Header profile={profileComponent} />
       <section
         className="membership-hero d-none"
         style={{
@@ -896,21 +962,18 @@ const Membership = () => {
                   </div>
                   <div
                     className="account-menu-item"
-                    onClick={() => {
-                      if (typeof window !== "undefined") {
-                        localStorage.removeItem("user");
-                      }
-                      setIsLoggedIn(false);
-                      setCurrentView("packages");
-                    }}
+                    onClick={!logoutLoading ? handleLogout : undefined}
+                    style={{ cursor: logoutLoading ? 'wait' : 'pointer', opacity: logoutLoading ? 0.7 : 1 }}
                   >
-                    <span>Logout</span>
-                    <i className="bi bi-chevron-right"></i>
+                    <span>{logoutLoading ? "Logging out..." : "Logout"}</span>
+                    {!logoutLoading && <i className="bi bi-chevron-right"></i>}
                   </div>
                 </div>
               </div>
             </div>
-          ) : currentView === "feedback" ? (
+          ) : currentView === "notifications" ? (
+        <Notifications onBack={() => setCurrentView("userProfile")} />
+      ) : currentView === "feedback" ? (
             <div className="feedback-view">
               <h2 className="feedback-title">Reviews &amp; Feedback</h2>
               <p className="feedback-question">

@@ -180,7 +180,7 @@ const LandingPageAboutus = () => {
         </div>
       </section>
 
-      <section className="landing-services">
+      {/* <section className="landing-services">
         {services.map((service, index) => (
           <div
             key={service.title}
@@ -203,7 +203,7 @@ const LandingPageAboutus = () => {
             </p>
           </div>
         ))}
-      </section>
+      </section> */}
 
       <section className="aboutus-sets-section">
         <div className="aboutus-sets-stats">

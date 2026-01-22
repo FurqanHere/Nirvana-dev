@@ -22,7 +22,7 @@ const rightLinks = [
   { name: "Contact Us", path: "/contact-us", type: "route" },
 ];
 
-export default function Navbar({ background = "", profile = null }) {
+export default function Navbar({ background = "", profile = null, showAuthButtons = true }) {
   const location = useLocation();
   const [activeLink, setActiveLink] = useState("home");
   const [isScrolled, setIsScrolled] = useState(false);
@@ -63,8 +63,26 @@ export default function Navbar({ background = "", profile = null }) {
   }, []);
 
   return (
-    <>
-      <nav className={`navbar-custom ${background} ${isScrolled ? 'navbar-fixed' : ''}`} data-aos="fade-down">
+    <div className="header-wrapper" style={{ position: 'fixed', top: 0, left: 0, right: 0, width: '100%', zIndex: 1100 }}>
+      {/* Top Bar - Desktop Only */}
+      {!profile && showAuthButtons && (
+        <div className="d-none d-lg-flex justify-content-end align-items-center px-5 py-2" style={{ background: isScrolled ? 'rgba(6, 15, 24, 0.98)' : 'rgba(0,0,0,0.2)', transition: 'background 0.3s ease' }}>
+           <div className="d-flex align-items-center gap-3">
+                <Link to="/login" className="text-decoration-none">
+                  <button className="btn bg-white text-dark px-3 py-1 fw-bold rounded-3 border-0" style={{ fontSize: '14px', minWidth: '93px', height: "41px" }}>
+                    Login
+                  </button>
+                </Link>
+                <Link to="/signup" className="text-decoration-none">
+                  <button className="btn px-3 py-1 fw-bold rounded-3 border-0" style={{ backgroundColor: '#FAD090', color: '#1A1A1A', fontSize: '14px', minWidth: '93px', height: "41px" }}>
+                    Sign Up
+                  </button>
+                </Link>
+           </div>
+        </div>
+      )}
+
+      <nav className={`navbar-custom ${background} ${isScrolled ? 'navbar-fixed' : ''}`} data-aos="fade-down" style={{ position: 'relative', top: 'auto' }}>
         <div className="navbar-container">
           {/* Left Group */}
           <div className="d-flex align-items-center justify-content-start w-100" data-aos="fade-right">
@@ -214,8 +232,23 @@ export default function Navbar({ background = "", profile = null }) {
               </li>
             ))}
           </ul>
+
+          {!profile && showAuthButtons && (
+            <div className="d-flex flex-column gap-3 mt-4">
+              <Link to="/login" className="text-decoration-none w-100" data-bs-dismiss="offcanvas">
+                <button className="btn bg-white text-dark w-100 py-2 fw-bold rounded-3 border-0">
+                  Login
+                </button>
+              </Link>
+              <Link to="/signup" className="text-decoration-none w-100" data-bs-dismiss="offcanvas">
+                <button className="btn w-100 py-2 fw-bold rounded-3 border-0" style={{ backgroundColor: '#FAD090', color: '#1A1A1A' }}>
+                  Sign Up
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

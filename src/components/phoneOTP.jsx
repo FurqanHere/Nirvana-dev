@@ -5,6 +5,8 @@ import Header from "./Header";
 import Footer from "./Footer";
 import membershipBgImg from "../assets/images/login-bg.png";
 import whiteTickImg from "../assets/images/white-tick-img.png";
+import ApiService from "../services/ApiService";
+import { toast } from "react-toastify";
 
 const PhoneOTP = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -14,7 +16,10 @@ const PhoneOTP = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const flow = location.state?.flow || "contract";
+  const email = location.state?.email;
+  const phone = location.state?.phone;
   const isSignup = flow === "signup";
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (timeLeft <= 0) return;
@@ -38,19 +43,94 @@ const PhoneOTP = () => {
     }
   };
 
-  const handleResend = () => {
-    setOtp(["", "", "", ""]);
-    setTimeLeft(30);
-    inputRefs.current[0]?.focus();
+  const handleResend = async () => {
+    if (email) {
+      try {
+        const payload = {
+          email: email
+        };
+        const response = await ApiService.post("/resendOtp", payload);
+        
+        if (response.data.status) {
+          toast.success(response.data.message || "OTP sent successfully.");
+          const expires_in = response.data.data?.otp_expires_in || 30;
+          setOtp(["", "", "", ""]);
+          setTimeLeft(expires_in);
+          inputRefs.current[0]?.focus();
+        } else {
+          toast.error(response.data.message || "Failed to resend OTP");
+        }
+      } catch (error) {
+        console.error("Resend OTP Error:", error);
+        toast.error("An error occurred while resending OTP");
+      }
+    } else {
+      setOtp(["", "", "", ""]);
+      setTimeLeft(30);
+      inputRefs.current[0]?.focus();
+    }
   };
 
-  const handleContinue = () => {
-    setShowSuccess(true);
+  const handleContinue = async () => {
+    const otpString = otp.join("");
+    if (otpString.length !== 4) {
+      toast.error("Please enter a valid 4-digit OTP");
+      return;
+    }
+
+    // If we have an email, verify against backend
+    if (email) {
+      setLoading(true);
+      try {
+        const payload = {
+          email: email,
+          otp: otpString,
+          device_token: "web_token_dummy", // Using dummy token for web
+          device_type: "WEB", // Using WEB for website
+        };
+
+        const response = await ApiService.post("/verifyOtp", payload);
+
+        if (response.data.status) {
+          // Remove "Phone" from the success message if it exists
+          const successMsg = response.data.message || "Verified successfully.";
+          const cleanMsg = successMsg.replace("Phone ", "");
+          toast.success(cleanMsg);
+          
+          const { user, auth_token } = response.data.data;
+          const userData = {
+            ...user,
+            auth_token
+          };
+          
+          if (typeof window !== "undefined") {
+            localStorage.setItem("user", JSON.stringify(userData));
+          }
+
+          setShowSuccess(true);
+        } else {
+          toast.error(response.data.message || "OTP verification failed");
+        }
+      } catch (error) {
+        console.error("OTP Verification Error:", error);
+        if (error.response && error.response.data && error.response.data.message) {
+           // Handled by toast usually
+        }
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Fallback for flows without email (like previous contract flow mock)
+      // or if just testing UI
+      if (otpString.length === 4) {
+        setShowSuccess(true);
+      }
+    }
   };
 
   return (
     <div className="review-contract-page">
-      <Header />
+      <Header showAuthButtons={false} />
       <section
         className="review-contract-hero"
         style={{ backgroundImage: `url(${membershipBgImg})`, height: "100vh" }}
@@ -93,8 +173,10 @@ const PhoneOTP = () => {
               type="button"
               className="phone-otp-continue-btn"
               onClick={handleContinue}
+              disabled={loading}
+              style={{ opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
             >
-              Continue
+              {loading ? "Verifying..." : "Continue"}
             </button>
           </div>
         </div>
