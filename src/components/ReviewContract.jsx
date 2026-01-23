@@ -1,6 +1,6 @@
 import "../assets/css/style.base.css";
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import logo from "../assets/images/contract-logo.png";
@@ -9,8 +9,16 @@ import membershipBgImg from "../assets/images/main-yact-bg.png";
 const ReviewContract = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const docRef = useRef(null);
   const thumbRef = useRef(null);
+  
+  const personalDetails = location.state?.personalDetails || {};
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -65,7 +73,7 @@ const ReviewContract = () => {
                   </h3>
 
                   <p className="review-contract-doc-paragraph">
-                    This Boat Club Membership Agreement (the “Agreement”) was signed on (Signing Date) between:
+                    This Boat Club Membership Agreement (the “Agreement”) was signed on {currentDate} between:
                   </p>
 
                   <p className="review-contract-doc-paragraph">
@@ -73,7 +81,7 @@ const ReviewContract = () => {
                   </p>
 
                   <p className="review-contract-doc-paragraph">
-                    2) (Full Name), a national of (Nationality), with ID No. (Passport ID or EID), email address (Email Adress) and mobile number (Mobile Number), (herein after referred to as the “Member”) or Second Party,
+                    2) {personalDetails.fullName || "(Full Name)"}, a national of {personalDetails.nationality || "(Nationality)"}, with ID No. {personalDetails.emiratesId || personalDetails.passport || "(Passport ID or EID)"}, email address {personalDetails.email || "(Email Address)"} and mobile number {personalDetails.phone || "(Mobile Number)"}, (herein after referred to as the “Member”) or Second Party,
                   </p>
 
                   <p className="review-contract-doc-paragraph">
@@ -110,7 +118,7 @@ const ReviewContract = () => {
               />
               <span className="agreement-toggle-slider" aria-hidden="true" />
               <span className="agreement-toggle-text">
-                I <span className="review-contract-member-name">John Cary</span>{" "}
+                I <span className="review-contract-member-name">{personalDetails.fullName || "Member"}</span>{" "}
                 agree with membership terms
               </span>
             </label>
@@ -121,7 +129,15 @@ const ReviewContract = () => {
               disabled={!agreeTerms}
               onClick={() => {
                 if (!agreeTerms) return;
-                navigate("/phone-otp", { state: { flow: "contract" } });
+                navigate("/phone-otp", { 
+                  state: { 
+                    flow: "contract",
+                    personalDetails: personalDetails,
+                    phone: personalDetails.phone,
+                    email: personalDetails.email,
+                    package: location.state?.package
+                  } 
+                });
               }}
             >
               Sign Contract

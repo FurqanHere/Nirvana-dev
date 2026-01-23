@@ -9,7 +9,7 @@ const PersonalDetail = ({
   onContinue,
 }) => {
   return (
-    <div className="details-section">
+    <div className="details-section personal-details-screen">
       <h2 className="details-heading">Personal Details &amp; Agreement</h2>
       <div className="details-content-wrapper">
         <div className="details-card">
@@ -34,6 +34,28 @@ const PersonalDetail = ({
                 </span>
               )}
             </div>
+            <div className="details-field">
+              <label>
+                Email <span className="required-asterisk">*</span>
+              </label>
+              <input
+                value={personalDetails.email}
+                onChange={(e) =>
+                  onChangePersonalDetails({
+                    ...personalDetails,
+                    email: e.target.value,
+                  })
+                }
+                className={personalDetailsErrors.email ? "error" : ""}
+              />
+              {personalDetailsErrors.email && (
+                <span className="error-message">
+                  {personalDetailsErrors.email}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="details-row">
             <div className="details-field">
               <label>
                 Phone Number <span className="required-asterisk">*</span>

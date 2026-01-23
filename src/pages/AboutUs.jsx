@@ -180,31 +180,6 @@ const LandingPageAboutus = () => {
         </div>
       </section>
 
-      {/* <section className="landing-services">
-        {services.map((service, index) => (
-          <div
-            key={service.title}
-            className="service-card"
-            style={{
-              backgroundImage: `url(${service.bgImage})`,
-              height: "430px",
-            }}
-            data-aos="fade-up"
-            data-aos-delay={index * 100}
-          >
-            <div className="service-icon">
-              <img src={service.image} alt={service.title} />
-            </div>
-            <h3>{service.title}</h3>
-            <p className="service-description">{service.description}</p>
-            <p className="service-small">
-              Enjoy a seamless, members-only experience designed to deliver
-              comfort, exclusivity, and unforgettable moments on the water.
-            </p>
-          </div>
-        ))}
-      </section> */}
-
       <section className="aboutus-sets-section">
         <div className="aboutus-sets-stats">
           <div className="aboutus-sets-stats-grid">

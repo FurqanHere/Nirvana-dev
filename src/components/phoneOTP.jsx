@@ -78,8 +78,65 @@ const PhoneOTP = () => {
       return;
     }
 
+    // If contract flow, prioritize signing
+    if (flow === "contract") {
+      setLoading(true);
+      try {
+        const formData = new FormData();
+        formData.append("otp", otpString);
+        
+        // Add required op parameter
+        formData.append("op", "1234");
+        
+        // Add user_id if available
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          try {
+            const parsedUser = JSON.parse(storedUser);
+            if (parsedUser.id) {
+              formData.append("user_id", parsedUser.id);
+            }
+          } catch (e) {
+            console.error("Error parsing user from local storage", e);
+          }
+        }
+
+        // Add personal details if available
+        const personalDetails = location.state?.personalDetails;
+        if (personalDetails) {
+          Object.keys(personalDetails).forEach(key => {
+            formData.append(key, personalDetails[key]);
+          });
+        }
+
+        const response = await ApiService.post("/signContract", formData);
+
+        if (response.data.status) {
+          toast.success(response.data.message || "Contract signed successfully.");
+          
+          // Update user data if provided in response
+          if (response.data.data?.user) {
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+              const parsedUser = JSON.parse(storedUser);
+              const updatedUser = { ...parsedUser, ...response.data.data.user };
+              localStorage.setItem("user", JSON.stringify(updatedUser));
+            }
+          }
+
+          setShowSuccess(true);
+        } else {
+          toast.error(response.data.message || "Failed to sign contract");
+        }
+      } catch (error) {
+        console.error("Sign Contract Error:", error);
+        toast.error(error.response?.data?.message || "Error signing contract");
+      } finally {
+        setLoading(false);
+      }
+    } 
     // If we have an email, verify against backend
-    if (email) {
+    else if (email) {
       setLoading(true);
       try {
         const payload = {
@@ -210,7 +267,11 @@ const PhoneOTP = () => {
                     navigate("/membership");
                   } else {
                     navigate("/membership", {
-                      state: { showFinalReview: true },
+                      state: { 
+                        showFinalReview: true,
+                        personalDetails: location.state?.personalDetails,
+                        package: location.state?.package
+                      },
                     });
                   }
                 }}

@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ApiService from "../services/ApiService";
+import { toast } from "react-toastify";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
@@ -68,76 +71,54 @@ const HomePage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const packages = [
-    {
-      name: "SEALUX",
-      price: "AED 1,499/mo",
-      theme: "pkg-dark",
-      strap: whiteStrap,
-      star: grayStar,
-      benefits: [
-        "10 Bookings per Month",
-        "Category B Boat Access",
-        "Weekdays Access",
-        "1 Weekend Access per Month",
-        "Session Merging (Once a Month)",
-        "3 Rolling Bookings",
-        "3 Free In-House Captains per Year",
-        "60 Freezing Days",
-      ],
-    },
-    {
-      name: "SEA DWELLER",
-      price: "AED 1,700/mo",
-      theme: "pkg-brown",
-      strap: whiteStrap,
-      star: yellowStar,
-      benefits: [
-        "10 Bookings per Month",
-        "Category B Boat Access",
-        "Weekdays Access",
-        "1 Weekend Access per Month",
-        "Session Merging (Once a Month)",
-        "3 Rolling Bookings",
-        "3 Free In-House Captains per Year",
-        "60 Freezing Days",
-      ],
-    },
-    {
-      name: "SEALUX",
-      price: "AED 1,499/mo",
-      theme: "pkg-blue",
-      strap: yellowStrap,
-      star: whiteStar,
-      benefits: [
-        "10 Bookings per Month",
-        "Category B Boat Access",
-        "Weekdays Access",
-        "1 Weekend Access per Month",
-        "Session Merging (Once a Month)",
-        "3 Rolling Bookings",
-        "3 Free In-House Captains per Year",
-        "60 Freezing Days",
-      ],
-    },
-    {
-      name: "ELITE",
-      price: "AED 2,500/mo",
-      theme: "pkg-navy",
-      strap: blueStrap,
-      star: whiteStar,
-      benefits: [
-        "10 Bookings per Month",
-        "Category B Boat Access",
-        "Weekdays Access",
-        "1 Weekend Access per Month",
-        "Session Merging (Once a Month)",
-        "3 Rolling Bookings",
-        "3 Free In-House Captains per Year",
-        "60 Freezing Days",
-      ],
-    },
-  ];
+  const navigate = useNavigate();
+  const [packages, setPackages] = useState([]);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const response = await ApiService.get("/getPackages");
+        if (response.data.status) {
+          setPackages(response.data.data.packages);
+        }
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+      }
+    };
+    fetchPackages();
+  }, []);
+
+  const handleBuyPackage = async (pkg) => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      toast.info("Please login to purchase a package");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const payload = {
+        package_id: pkg.id,
+        term: "monthly",
+        payment_method: "card",
+      };
+      const response = await ApiService.post("/buyPackage", payload);
+      if (response.data.status) {
+        toast.success(response.data.message || "Package purchased successfully!");
+      } else {
+        toast.error(response.data.message || "Purchase failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message || "Error purchasing package"
+      );
+    }
+  };
+
+  const themes = ["pkg-dark", "pkg-brown", "pkg-blue", "pkg-navy"];
+  const straps = [whiteStrap, whiteStrap, yellowStrap, blueStrap];
+  const stars = [grayStar, yellowStar, whiteStar, whiteStar];
 
   return (
     <div className="landing-page">
@@ -241,27 +222,38 @@ const HomePage = () => {
           <p className="packages-subtitle">Our Simple 3 Membership package</p>
         </div>
         <div className="packages-grid">
-          {packages.map((pkg) => (
+          {packages.map((pkg, index) => (
             <div
-              className={`pkg-card ${pkg.theme}`}
-              key={pkg.name}
+              className={`pkg-card ${themes[index % themes.length]}`}
+              key={pkg.id || index}
               data-aos="fade-up"
             >
               <div className="pkg-corner">
-                <img className="pkg-strap" src={pkg.strap} alt="" />
-                <img className="pkg-star" src={pkg.star} alt="" />
+                <img
+                  className="pkg-strap"
+                  src={straps[index % straps.length]}
+                  alt=""
+                />
+                <img
+                  className="pkg-star"
+                  src={stars[index % stars.length]}
+                  alt=""
+                />
               </div>
               <div className="pkg-header">
                 <h3 className="pkg-name">{pkg.name}</h3>
-                <p className="pkg-price">{pkg.price}</p>
+                <p className="pkg-price">AED {pkg.monthly_price}/mo</p>
               </div>
               <ul className="pkg-benefits">
-                {pkg.benefits.map((b, idx) => (
-                  <li key={idx}>{b}</li>
-                ))}
+                {pkg.features &&
+                  pkg.features.map((b, idx) => <li key={idx}>{b}</li>)}
               </ul>
               <div className="d-flex justify-content-center">
-                <button type="button" className="pkg-button">
+                <button
+                  type="button"
+                  className="pkg-button"
+                  onClick={() => handleBuyPackage(pkg)}
+                >
                   Select Package
                 </button>
               </div>

@@ -22,7 +22,7 @@ const Boats = ({
   ];
 
   return (
-    <div className="bookings-home-view">
+    <div className="bookings-home-view boat-dashboard-screen">
       <div className="bookings-hero-section">
         <img
           src={bdShipImg}

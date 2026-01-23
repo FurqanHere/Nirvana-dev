@@ -2,17 +2,17 @@ import "../assets/css/style.base.css";
 import React from "react";
 import whiteBgTick from "../assets/images/white-bg-tick.png";
 
-const FinalReview = ({ onProceed }) => {
+const FinalReview = ({ personalDetails, pkg, onProceed }) => {
   return (
-    <div className="final-review">
+    <div className="final-review final-review-screen">
       <h2 className="details-heading">Final Review</h2>
 
       <div className="final-review-top">
         <div className="final-card primary">
           <div className="final-primary-content">
-            <p className="final-plan-name">SEALUX</p>
-            <p className="final-plan-price">AED 1,499/mo</p>
-            <p className="final-plan-desc">Primary Best Package buy for easy.</p>
+            <p className="final-plan-name">{pkg?.name || "Package Name"}</p>
+            <p className="final-plan-price">AED {pkg?.monthly_price || "0"}/mo</p>
+            <p className="final-plan-desc">{pkg?.description || "Package description"}</p>
           </div>
           <div className="final-plan-check">
             <img
@@ -27,7 +27,7 @@ const FinalReview = ({ onProceed }) => {
           <div className="final-card secondary">
             <div className="final-secondary-top">
               <span className="final-term">Monthly</span>
-              <span className="final-secondary-price">AED 2,500/mo</span>
+              <span className="final-secondary-price">AED {pkg?.monthly_price || "0"}/mo</span>
             </div>
             <p className="final-secondary-sub">
               Package price × 12 (paid monthly)
@@ -43,31 +43,31 @@ const FinalReview = ({ onProceed }) => {
         <div className="final-row">
           <div className="border-bottom">
             <p className="final-label">Full Name</p>
-            <p className="final-value">Baki Phililnder</p>
+            <p className="final-value">{personalDetails?.fullName || "-"}</p>
           </div>
           <div className="border-bottom">
             <p className="final-label">Email</p>
-            <p className="final-value">baki@phililnderzen.com</p>
+            <p className="final-value">{personalDetails?.email || "-"}</p>
           </div>
         </div>
         <div className="final-row">
           <div className="border-bottom">
-            <p className="final-label">Email</p>
-            <p className="final-value">baki@phililnderzen.com</p>
+            <p className="final-label">Passport</p>
+            <p className="final-value">{personalDetails?.passport || "-"}</p>
           </div>
           <div className="border-bottom">
             <p className="final-label">Country</p>
-            <p className="final-value">United Arab Emirates</p>
+            <p className="final-value">{personalDetails?.nationality || "-"}</p>
           </div>
         </div>
         <div className="final-row">
           <div className="border-bottom">
             <p className="final-label">Phone Number</p>
-            <p className="final-value">+971 26 078 7961</p>
+            <p className="final-value">{personalDetails?.phone || "-"}</p>
           </div>
           <div className="border-bottom">
             <p className="final-label">Emirates ID</p>
-            <p className="final-value">784-2654-2578169-4</p>
+            <p className="final-value">{personalDetails?.emiratesId || "-"}</p>
           </div>
         </div>
         <div className="final-row status-row">
@@ -88,4 +88,3 @@ const FinalReview = ({ onProceed }) => {
 };
 
 export default FinalReview;
-

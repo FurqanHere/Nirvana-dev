@@ -63,74 +63,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 
-const membershipPackages = [
-  {
-    name: "Sealux",
-    price: "1,499.00 AED/Monthly",
-    description: "Perfect for occasional boaters",
-    benefits: [
-      "7 Boat Booking (bookings)",
-      "Boat Category Access",
-      "Weekday Access",
-      "1 Session Merging (per month)",
-      "2 Rolling Bookings (Slots)",
-      "3 In-House Captains (per year)",
-      "60 days Freezing Days",
-    ],
-  },
-  {
-    name: "Sea Dweller",
-    price: "1,700.00 AED/Monthly",
-    description: "For regular yacht enthusiasts",
-    benefits: [
-      "7 Boat Booking (bookings)",
-      "Boat Category Access",
-      "Weekday Access",
-      "1 Weekend Access (per month)",
-      "3 Future Bookings (Bookings)",
-      "1 Session Merging (per month)",
-      "3 Rolling Bookings (Slots)",
-      "3 In-House Captains (per year)",
-      "60 days Freezing Days",
-    ],
-  },
-  {
-    name: "Elite",
-    price: "2,500.00 AED/Monthly",
-    description: "Premium experience with enhanced benefits",
-    benefits: [
-      "12 Boat Booking (bookings)",
-      "Boat Category Access",
-      "Weekday Access",
-      "5 Weekend Access (per month)",
-      "4 Future Bookings (Bookings)",
-      "2 Session Merging (per month)",
-      "3 Rolling Bookings (Slots)",
-      "1 Houseboat Access (per period)",
-      "3 In-House Captains (per year)",
-      "60 days Freezing Days",
-    ],
-  },
-  {
-    name: "Royal",
-    price: "8,000.00 AED/Monthly",
-    description: "Ultimate luxury experience with unlimited benefits",
-    benefits: [
-      "10 Boat Booking (bookings)",
-      "Boat Category Access",
-      "Weekday Access",
-      "2 Weekend Access (per month)",
-      "3 Future Bookings (Bookings)",
-      "2 Session Merging (per month)",
-      "3 Rolling Bookings (Slots)",
-      "1 Houseboat Access (per period)",
-      "Unlimited In-House Captains",
-      "75 days Freezing Days",
-      "Dual Membership",
-    ],
-  },
-];
-
 
 const boatsData = [
   {
@@ -156,6 +88,39 @@ const boatsData = [
 const Membership = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [packages, setPackages] = useState([]);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const response = await ApiService.get("/getPackages");
+        if (response.data.status) {
+          setPackages(response.data.data.packages);
+        }
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+      }
+    };
+    fetchPackages();
+  }, []);
+
+  const handleBuyPackage = (pkg) => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      toast.info("Please login to purchase a package");
+      navigate("/login", {
+        state: {
+          from: "/membership",
+          selectedPackage: pkg.name,
+        },
+      });
+      return;
+    }
+
+    setSelectedPackage(pkg.name);
+    setCurrentView("selectPayment");
+  };
+
   const [currentView, setCurrentView] = useState("packages");
   const [selectedPackage, setSelectedPackage] = useState("SEALUX");
   const [selectedFrequency, setSelectedFrequency] = useState("Annual");
@@ -179,12 +144,25 @@ const Membership = () => {
   // Personal Details Form State
   const [personalDetails, setPersonalDetails] = useState({
     fullName: "",
+    email: "",
     phone: "",
     nationality: "",
     emiratesId: "",
     passport: "",
   });
   const [personalDetailsErrors, setPersonalDetailsErrors] = useState({});
+
+  useEffect(() => {
+    if (location.state?.showFinalReview) {
+      if (location.state.personalDetails) {
+        setPersonalDetails(location.state.personalDetails);
+      }
+      if (location.state.package) {
+        setSelectedPackage(location.state.package.name || location.state.package);
+      }
+      setCurrentView("finalReview");
+    }
+  }, [location.state]);
 
   // Card Information Form State
   const [cardInfo, setCardInfo] = useState({
@@ -231,13 +209,6 @@ const Membership = () => {
         try {
           const parsedUser = JSON.parse(storedUser);
           setUserInfo(parsedUser);
-          // Pre-fill personal details if available
-          setPersonalDetails(prev => ({
-            ...prev,
-            fullName: parsedUser.first_name ? `${parsedUser.first_name} ${parsedUser.last_name || ''}` : parsedUser.name || prev.fullName,
-            phone: parsedUser.phone || prev.phone,
-            email: parsedUser.email || "",
-          }));
         } catch (e) {
           console.error("Error parsing user data", e);
         }
@@ -309,6 +280,11 @@ const Membership = () => {
     const errors = {};
     if (!personalDetails.fullName.trim()) {
       errors.fullName = "Full Name is required";
+    }
+    if (!personalDetails.email || !personalDetails.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(personalDetails.email)) {
+      errors.email = "Please enter a valid email address";
     }
     if (!personalDetails.phone.trim()) {
       errors.phone = "Phone Number is required";
@@ -382,11 +358,44 @@ const Membership = () => {
     });
   };
 
-  const handleCardPayClick = (e) => {
+  const handleCardPayClick = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (validateCardInfo()) {
-      setShowPaymentSuccess(true);
+       setShowPaymentSuccess(true);
+    }
+  };
+
+  const handlePaymentProceed = async () => {
+    const pkg = packages.find((p) => p.name === selectedPackage);
+    if (!pkg) {
+      toast.error("Package not found");
+      return;
+    }
+
+    try {
+      const payload = {
+        package_id: pkg.id,
+        term: selectedFrequency.toLowerCase().replace("-", "_"),
+        payment_method: selectedPaymentMethod === "online" ? "card" : "cash",
+      };
+      
+      const response = await ApiService.post("/buyPackage", payload);
+      if (response.data.status) {
+        toast.success(response.data.message || "Package subscription created successfully.");
+        if (selectedPaymentMethod === "online") {
+          setCurrentView("cardInfo");
+        } else {
+          setShowPaymentSuccess(true);
+        }
+      } else {
+        toast.error(response.data.message || "Failed to create subscription");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message || "Error creating subscription"
+      );
     }
   };
 
@@ -521,9 +530,9 @@ const Membership = () => {
           {currentView === "packages" ? (
             <>
               <div className="membership-cards-grid">
-                {membershipPackages.map((pkg, index) => (
+                {packages.map((pkg, index) => (
                   <div
-                    key={pkg.name}
+                    key={pkg.id || index}
                     className={`membership-card membership-card-${index}`}
                     data-aos="fade-up"
                     data-aos-delay={index * 150}
@@ -549,29 +558,17 @@ const Membership = () => {
                     </div>
                     <h3 className="membership-card-title">{pkg.name}</h3>
                     <div className="membership-card-price">
-                      {pkg.price}
-                      <span className="duration-text">{pkg.duration}</span>
+                      AED {pkg.monthly_price}/Monthly
+                      {/* <span className="duration-text">{pkg.duration}</span> */}
                     </div>
                     <ul className="membership-card-benefits">
-                      {pkg.benefits.map((benefit, idx) => (
+                      {pkg.features && pkg.features.map((benefit, idx) => (
                         <li key={idx}>{benefit}</li>
                       ))}
                     </ul>
                     <button
                       className="membership-card-button"
-                      onClick={() => {
-                        if (!isLoggedIn) {
-                          navigate("/login", {
-                            state: {
-                              from: "/membership",
-                              selectedPackage: pkg.name,
-                            },
-                          });
-                        } else {
-                          setSelectedPackage(pkg.name);
-                          setCurrentView("paymentOptions");
-                        }
-                      }}
+                      onClick={() => handleBuyPackage(pkg)}
                     >
                       Select Package
                     </button>
@@ -615,7 +612,16 @@ const Membership = () => {
               personalDetails={personalDetails}
               personalDetailsErrors={personalDetailsErrors}
               onChangePersonalDetails={setPersonalDetails}
-              onOpenAgreement={() => navigate("/review-contract")}
+              onOpenAgreement={() => {
+                if (validatePersonalDetails()) {
+                  navigate("/review-contract", { 
+                    state: { 
+                      personalDetails,
+                      package: selectedPackage
+                    } 
+                  });
+                }
+              }}
               onContinue={(e) => {
                 if (e && e.preventDefault) {
                   e.preventDefault();
@@ -627,12 +633,16 @@ const Membership = () => {
               }}
             />
           ) : currentView === "finalReview" ? (
-            <FinalReview onProceed={() => setCurrentView("paymentMethod")} />
+            <FinalReview 
+              personalDetails={personalDetails}
+              pkg={packages.find((p) => p.name === selectedPackage)}
+              onProceed={() => setCurrentView("paymentMethod")} 
+            />
           ) : currentView === "paymentMethod" ? (
             <Payment
               selectedPaymentMethod={selectedPaymentMethod}
               onChangeMethod={setSelectedPaymentMethod}
-              onProceed={() => setCurrentView("cardInfo")}
+              onProceed={handlePaymentProceed}
             />
           ) : currentView === "cardInfo" ? (
             <InsertCardDetails
@@ -1194,6 +1204,7 @@ const Membership = () => {
           ) : (
             <SelectPaymentOptions
               selectedPackage={selectedPackage}
+              selectedPackageData={packages.find((p) => p.name === selectedPackage)}
               selectedFrequency={selectedFrequency}
               onFrequencyChange={setSelectedFrequency}
               onContinue={(e) => {

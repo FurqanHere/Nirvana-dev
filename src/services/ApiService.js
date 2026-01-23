@@ -12,11 +12,14 @@ const ApiService = {
         : null;
         const apiUrl = process.env.REACT_APP_API_URL; // Default to 'en' if not set
 
+        const headers = {};
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+
         this.api = axios.create({
             baseURL: apiUrl, // Replace with your API base URL
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+            headers: headers,
         });
 
         // Set up a response interceptor to handle errors globally, if needed
@@ -26,7 +29,7 @@ const ApiService = {
                 const { status, data } = error.response;
                 if (status === 401) {
                     toast.error('Unauthorized');
-                    window.location.href = '/login'; // Adjust the path as needed
+                    // window.location.href = '/login';
                 }
                 else if (status === 500) {
                     // Internal Server Error
@@ -48,7 +51,7 @@ const ApiService = {
      * @returns {Promise} - Axios response promise.
      */
     request(config) {
-        this.createApiInstance(); // Ensure the instance is created with current token and language
+        this.createApiInstance(config); // Ensure the instance is created with current token and language
         return this.api.request(config);
     },
 

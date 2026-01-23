@@ -5,10 +5,13 @@ import blueTickImg from "../assets/images/blue-tick.png";
 
 const SelectPaymentOptions = ({
   selectedPackage,
+  selectedPackageData,
   selectedFrequency,
   onFrequencyChange,
   onContinue,
 }) => {
+  const data = selectedPackageData || {};
+
   return (
     <div className="payment-options-container">
       <div
@@ -18,9 +21,9 @@ const SelectPaymentOptions = ({
         <div className="selected-package-info">
           <div>
             <h3 className="selected-package-name">{selectedPackage}</h3>
-            <p className="selected-package-label">Primary Best package</p>
+            <p className="selected-package-label">{data.description}</p>
           </div>
-          <div className="selected-package-price">AED 1,499/mo</div>
+          <div className="selected-package-price">AED {data.monthly_price}/mo</div>
           <div className="selected-package-checkmark">
             <img src={blueTickImg} alt="" />
           </div>
@@ -37,12 +40,12 @@ const SelectPaymentOptions = ({
           <div className="frequency-info">
             <div className="frequency-header">
               <h4 className="frequency-name">Monthly</h4>
-              <p className="frequency-price">AED 2,500/mo</p>
+              <p className="frequency-price">AED {data.monthly_price}/mo</p>
             </div>
-            <p className="frequency-details">Package price × 12 (paid monthly)</p>
+            <p className="frequency-details">{data.monthly_details}</p>
             <div className="frequency-footer">
               <p className="frequency-note">
-                Refundable, One-Time 5% VAT.
+                Refundable, One-Time {parseFloat(data.vat_percentage)}% VAT.
               </p>
               <div className="frequency-radio">
                 <input
@@ -65,12 +68,12 @@ const SelectPaymentOptions = ({
           <div className="frequency-info">
             <div className="frequency-header">
               <h4 className="frequency-name">Semi-Annual</h4>
-              <p className="frequency-price">AED 2,500/mo</p>
+              <p className="frequency-price">AED {data.semi_annual_price}</p>
             </div>
-            <p className="frequency-details">Two payments</p>
+            <p className="frequency-details">{data.semi_annual_details}</p>
             <div className="frequency-footer">
               <p className="frequency-note">
-                Refundable, One-Time 5% VAT.
+                Refundable, One-Time {parseFloat(data.vat_percentage)}% VAT.
               </p>
               <div className="frequency-radio">
                 <input
@@ -93,12 +96,12 @@ const SelectPaymentOptions = ({
           <div className="frequency-info">
             <div className="frequency-header">
               <h4 className="frequency-name">Annual</h4>
-              <p className="frequency-price">AED 2,500/mo</p>
+              <p className="frequency-price">AED {data.annual_price}</p>
             </div>
-            <p className="frequency-details">One full payment</p>
+            <p className="frequency-details">{data.annual_details}</p>
             <div className="frequency-footer">
               <p className="frequency-note">
-                Refundable, One-Time 5% VAT.
+                Refundable, One-Time {parseFloat(data.vat_percentage)}% VAT.
               </p>
               <div className="frequency-radio">
                 <input
@@ -127,4 +130,3 @@ const SelectPaymentOptions = ({
 };
 
 export default SelectPaymentOptions;
-
