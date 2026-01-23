@@ -12,14 +12,11 @@ const ApiService = {
         : null;
         const apiUrl = process.env.REACT_APP_API_URL; // Default to 'en' if not set
 
-        const headers = {};
-        if (token) {
-            headers.Authorization = `Bearer ${token}`;
-        }
-
         this.api = axios.create({
             baseURL: apiUrl, // Replace with your API base URL
-            headers: headers,
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
         });
 
         // Set up a response interceptor to handle errors globally, if needed
@@ -51,7 +48,7 @@ const ApiService = {
      * @returns {Promise} - Axios response promise.
      */
     request(config) {
-        this.createApiInstance(config); // Ensure the instance is created with current token and language
+        this.createApiInstance(); // Ensure the instance is created with current token and language
         return this.api.request(config);
     },
 

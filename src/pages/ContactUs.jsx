@@ -62,7 +62,7 @@ const ContactUs = () => {
     try {
       setSubmitting(true);
       // const formDataWithRecaptcha = { ...form, recaptcha: recaptchaValue };
-      const response = await ApiService.request({ method: "POST", url: "/contactUs", data: form, skipAuth: true });
+      const response = await ApiService.request({ method: "POST", url: "/contactUs", data: form });
       if (response.data.status) {
         Swal.fire({ 
           icon: "success", 
