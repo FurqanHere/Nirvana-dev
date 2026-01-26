@@ -1,4 +1,4 @@
-import "../../../assets/css/style.base.css";
+import "../../../assets/css/base.css";
 import React, { useState } from "react";
 import docFront from "../../../assets/images/document-front.png";
 import docBack from "../../../assets/images/document-back.png";

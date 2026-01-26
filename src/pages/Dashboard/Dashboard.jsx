@@ -1,5 +1,6 @@
-import "../../assets/css/style.base.css";
+import "../../assets/css/base.css";
 import React, { useEffect, useState } from "react";
+import ApiService from "../../services/ApiService";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Header from "../../components/Header";
@@ -36,11 +37,54 @@ export default function Dashboard() {
   const [selectedTab, setSelectedTab] = useState("bookings");
   const [selectedSection, setSelectedSection] = useState("boats");
   const [selectedMarina, setSelectedMarina] = useState("");
-  const [search] = useState("");
+  const [search, setSearch] = useState("");
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [userName, setUserName] = useState("User");
+  const [boats, setBoats] = useState([]);
+  const [experiences, setExperiences] = useState([]);
+  const [locations, setLocations] = useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [boatsRes, locationsRes, experiencesRes] = await Promise.all([
+          ApiService.get('/getBoats'),
+          ApiService.get('/getLocations?type=orientation'),
+          ApiService.get('/getExperiences')
+        ]);
+        if (boatsRes.data.status) {
+          setBoats(boatsRes.data.data.boats);
+        }
+        if (locationsRes.data.status) {
+          setLocations(locationsRes.data.data.locations);
+        }
+        if (experiencesRes.data.status) {
+          setExperiences(experiencesRes.data.data.experiences);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
+    
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        const name = parsedUser.full_name || parsedUser.fullName || parsedUser.name || "User";
+        setUserName(name);
+      } catch (e) {
+        console.error("Error parsing user data", e);
+      }
+    }
   }, []);
 
   const handleSelectSection = (sectionKey) => {
@@ -53,11 +97,46 @@ export default function Dashboard() {
     }
   };
 
-  const filteredCards = sampleCards.filter(
-    (c) =>
-      c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.ref.toLowerCase().includes(search.toLowerCase())
-  );
+  const marinaOptions = locations.map(loc => ({
+    label: loc.name,
+    value: loc.id
+  }));
+
+  let filteredCards;
+  if (selectedTab === "bookings") {
+    filteredCards = boats
+      .filter(boat => {
+        const matchesSearch = boat.name.toLowerCase().includes(search.toLowerCase());
+        const matchesMarina = selectedMarina ? boat.location_id === selectedMarina : true;
+        return matchesSearch && matchesMarina;
+      })
+      .map(boat => ({
+        ...boat,
+        id: boat.id,
+        title: boat.name,
+        ref: boat.ac_number || `#${boat.id}`,
+        date: boat.working_hours,
+        image: boat.main_image
+      }));
+  } else {
+    filteredCards = experiences
+      .filter(exp => {
+        const matchesSearch = exp.title.toLowerCase().includes(search.toLowerCase());
+        // For experiences, we might not have location_id in the same way, but if needed:
+        // const matchesMarina = selectedMarina ? exp.location_id === selectedMarina : true;
+        return matchesSearch;
+      })
+      .map(exp => ({
+        id: exp.id,
+        title: exp.title,
+        ref: exp.boat || "Subject to Availability",
+        date: `${exp.max_passengers} Passengers`, // Mapping max_passengers to date field for display reuse
+        image: exp.images && exp.images.length > 0 ? exp.images[0] : bookingShips, // Use first image or fallback
+        // Additional fields if needed by Experiences component
+        engine: exp.description ? exp.description.substring(0, 30) + "..." : "", // Mapping description to engine for display reuse
+        length: "" 
+      }));
+  }
 
   const profileComponent = (
     <div className="dashboard-user">
@@ -66,7 +145,7 @@ export default function Dashboard() {
       </div>
       <div className="dashboard-user-text">
         <p className="dashboard-welcome">Welcome</p>
-        <h5 className="dashboard-user-name">Saher !</h5>
+        <h5 className="dashboard-user-name">{userName} !</h5>
       </div>
     </div>
   );
@@ -124,6 +203,9 @@ export default function Dashboard() {
                 selectedMarina={selectedMarina}
                 setSelectedMarina={setSelectedMarina}
                 filteredCards={filteredCards}
+                marinaOptions={marinaOptions}
+                search={search}
+                setSearch={setSearch}
               />
             ) : (
               <Experiences
@@ -133,6 +215,9 @@ export default function Dashboard() {
                 selectedMarina={selectedMarina}
                 setSelectedMarina={setSelectedMarina}
                 filteredCards={filteredCards}
+                search={search}
+                setSearch={setSearch}
+                marinaOptions={marinaOptions}
               />
             )}
           </main>

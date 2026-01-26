@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import ApiService from "../services/ApiService";
 
 import landingBg from "../assets/images/experiences/experience-bg.png";
 
@@ -40,33 +41,94 @@ const Experiences = () => {
 
   const [activeTab, setActiveTab] = useState("romantic");
 
-  const experienceData = {
+  const [experienceData, setExperienceData] = useState({
     romantic: {
-      title: "ROMANTIC JOURNEY AT SEA",
-      description: "Embark on a romantic sea voyage with unforgettable views",
-      mainImage: romanticMain,
-      thumbs: [romanticThumb1, romanticThumb2],
+      title: "",
+      description: "",
+      mainImage: "",
+      thumbs: [],
     },
     adventure: {
-      title: "ADVENTURE AT SEA",
-      description:
-        "Experience thrilling adventures and adrenaline-filled moments",
-      mainImage: adventureMain,
-      thumbs: [adventureThumb1, adventureThumb2],
+      title: "",
+      description: "",
+      mainImage: "",
+      thumbs: [],
     },
     celebration: {
-      title: "CELEBRATE IN STYLE",
-      description: "Make your celebrations extraordinary on luxury yachts",
-      mainImage: celebrationMain,
-      thumbs: [celebrationThumb1, celebrationThumb2],
+      title: "",
+      description: "",
+      mainImage: "",
+      thumbs: [],
     },
     food: {
-      title: "FOOD & BEVERAGE EXPERIENCE",
-      description: "Indulge in premium dining and curated beverage selections",
-      mainImage: foodMain,
-      thumbs: [foodThumb1, foodThumb2],
+      title: "",
+      description: "",
+      mainImage: "",
+      thumbs: [],
     },
-  };
+  });
+
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        const response = await ApiService.get("/getExperiences");
+        if (response.data.status) {
+          const apiExperiences = response.data.data.experiences;
+          const cleanUrl = (url) => (url ? url.replace(/[`\s]/g, "") : "");
+
+          const getExp = (keywords) =>
+            apiExperiences.find((e) =>
+              keywords.some((k) => e.title.toLowerCase().includes(k))
+            );
+
+          const romantic = getExp(["romantic"]);
+          const adventure = getExp(["adventure", "wildlife"]);
+          const celebration = getExp(["celebrate", "birthday", "party"]);
+          const food = getExp(["food", "beverage", "dining", "emirates"]);
+
+          setExperienceData((prev) => ({
+            ...prev,
+            romantic: romantic
+              ? {
+                  title: romantic.title,
+                  description: romantic.description,
+                  mainImage: cleanUrl(romantic.images[0]),
+                  thumbs: romantic.images.slice(0, 2).map(cleanUrl),
+                }
+              : prev.romantic,
+            adventure: adventure
+              ? {
+                  title: adventure.title,
+                  description: adventure.description,
+                  mainImage: cleanUrl(adventure.images[0]),
+                  thumbs: adventure.images.slice(0, 2).map(cleanUrl),
+                }
+              : prev.adventure,
+            celebration: celebration
+              ? {
+                  title: celebration.title,
+                  description: celebration.description,
+                  mainImage: cleanUrl(celebration.images[0]),
+                  thumbs: celebration.images.slice(0, 2).map(cleanUrl),
+                }
+              : prev.celebration,
+            food: food
+              ? {
+                  title: food.title,
+                  description: food.description,
+                  mainImage: cleanUrl(food.images[0]),
+                  thumbs: food.images.slice(0, 2).map(cleanUrl),
+                }
+              : prev.food,
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch experiences", error);
+      }
+    };
+
+    fetchExperiences();
+  }, []);
   useEffect(() => {
     AOS.init({
       duration: 900,

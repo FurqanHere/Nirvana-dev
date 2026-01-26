@@ -1,4 +1,4 @@
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 import React, { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -124,8 +124,8 @@ const Membership = () => {
   const [currentView, setCurrentView] = useState("packages");
   const [selectedPackage, setSelectedPackage] = useState("SEALUX");
   const [selectedFrequency, setSelectedFrequency] = useState("Annual");
-  const [selectedDay, setSelectedDay] = useState(18);
-  const [selectedSlot, setSelectedSlot] = useState(1);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showAgreement, setShowAgreement] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(true);
@@ -151,6 +151,83 @@ const Membership = () => {
     passport: "",
   });
   const [personalDetailsErrors, setPersonalDetailsErrors] = useState({});
+
+  const [uploadedFiles, setUploadedFiles] = useState({
+    profileImage: null,
+    passportFront: null,
+    passportBack: null,
+    emiratesIdFront: null,
+    emiratesIdBack: null,
+    boatLicenseFront: null,
+    boatLicenseBack: null,
+    eyeTest: null
+  });
+
+  const handleDocumentSubmit = async () => {
+    const errors = [];
+
+    // Tab-specific validation
+    if (selectedDocType === "emiratesId") {
+      if (!uploadedFiles.emiratesIdFront || !uploadedFiles.emiratesIdBack) {
+        errors.push("Please upload both front and back sides of your Emirates ID");
+      }
+    } else if (selectedDocType === "passport") {
+      if (!uploadedFiles.passportFront || !uploadedFiles.passportBack) {
+        errors.push("Please upload both front and back sides of your Passport");
+      }
+    }
+
+    // Common validation
+    if (!uploadedFiles.boatLicenseFront || !uploadedFiles.boatLicenseBack) {
+      errors.push("Please upload both front and back sides of your Boat License");
+    }
+    if (!uploadedFiles.eyeTest) {
+      errors.push("Please upload your Eye Test");
+    }
+
+    if (errors.length > 0) {
+      errors.forEach((error) => toast.error(error));
+      return;
+    }
+
+
+    const formData = new FormData();
+    const appendIfExists = (key, file) => {
+      if (file) formData.append(key, file);
+    };
+
+    // Append document type
+    formData.append("document_type", selectedDocType === "emiratesId" ? "emirates_id" : "passport");
+
+    appendIfExists("profile-image", uploadedFiles.profileImage);
+    appendIfExists("passport-front", uploadedFiles.passportFront);
+    appendIfExists("passport-back", uploadedFiles.passportBack);
+    appendIfExists("emirates.id.front", uploadedFiles.emiratesIdFront);
+    appendIfExists("emirates.id.back", uploadedFiles.emiratesIdBack);
+    appendIfExists("boat.license.front", uploadedFiles.boatLicenseFront);
+    appendIfExists("boat.license.back", uploadedFiles.boatLicenseBack);
+    appendIfExists("eye-test", uploadedFiles.eyeTest);
+
+    try {
+      const response = await ApiService.post("/uploadDocuments", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.data.status) {
+        toast.success(response.data.message || "Documents uploaded successfully");
+        setCurrentView("orientationSession");
+      } else {
+        toast.error(response.data.message || "Failed to upload documents");
+      }
+    } catch (error) {
+      console.error("Upload Documents Error:", error);
+      toast.error(
+        error.response?.data?.message || "An error occurred while uploading documents"
+      );
+    }
+  };
 
   useEffect(() => {
     if (location.state?.showFinalReview) {
@@ -668,6 +745,10 @@ const Membership = () => {
             <Document
               selectedDocType={selectedDocType}
               onChangeDocType={setSelectedDocType}
+              uploadedFiles={uploadedFiles}
+              onFileChange={(key, file) =>
+                setUploadedFiles((prev) => ({ ...prev, [key]: file }))
+              }
               onClickDetail={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -676,7 +757,7 @@ const Membership = () => {
               onClickSubmit={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setCurrentView("orientationSession");
+                handleDocumentSubmit();
               }}
             />
           ) : currentView === "orientationSession" ? (
@@ -1027,7 +1108,7 @@ const Membership = () => {
               </div>
             </div>
           ) : currentView === "bookingsHome" ? (
-            <div className="bookings-home-view">
+            <div className="bookings-home-view boat-dashboard-screen">
               {/* Hero Image Section */}
               <div className="bookings-hero-section">
                 <img

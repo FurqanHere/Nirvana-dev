@@ -3862,7 +3862,7 @@ html {
 .membership-card-2 .membership-card-benefits li,
 .membership-card-3 .membership-card-benefits li,
 .membership-card-0 .membership-card-benefits li {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .membership-card-1 .membership-card-benefits li::before,
@@ -3944,8 +3944,18 @@ html {
 .membership-card-button:hover {
   transform: translateY(-3px) scale(1.02);
   box-shadow: 0 12px 30px rgba(74, 125, 232, 0.6);
-  background: linear-gradient(135deg, #4a7de8 0%, #2d5fc7 100%);
+  background: #020073;
   color: white !important;
+}
+
+.membership-card-2 .membership-card-button:hover {
+  background: #ffb700;
+  color: #000 !important;
+}
+
+.membership-card-3 .membership-card-button:hover {
+  background: #020073;
+  color: #fff !important;
 }
 
 .membership-card-button:hover::before {
@@ -11078,5 +11088,344 @@ html {
 @media (max-width: 992px) {
   .orientation-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
+   Profile Membership Screen Styling
+   ========================================= */
+
+.profile-membership-view {
+  padding: 20px;
+  color: #fff;
+  width: 100%;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.profile-membership-header {
+  margin-bottom: 20px;
+}
+
+.profile-membership-header .back-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s;
+}
+.profile-membership-header .back-btn:hover {
+  transform: translateX(-5px);
+}
+
+/* --- Membership Info Card --- */
+.membership-info-card {
+  background-color: #FCD34D; /* Default Yellow for Royal */
+  border-radius: 24px;
+  padding: 30px;
+  color: #1e1e1e;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Variant colors could be added here if dynamic classes were used */
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+.info-card-icon {
+  background: #fff;
+  border-radius: 16px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.info-card-icon img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.info-card-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.info-card-title-group h2 {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+  color: #0F172A;
+  line-height: 1.2;
+}
+
+.info-card-title-group .id-badge {
+  background: #fff;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.info-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.info-grid-item {
+  background: #002B5B; /* Dark Blue */
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #fff;
+  transition: transform 0.2s;
+}
+
+.info-grid-item:hover {
+  transform: translateY(-2px);
+}
+
+.info-grid-item .item-icon {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.info-grid-item .item-icon i {
+    color: #fff;
+}
+
+.info-grid-item .item-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.info-grid-item .label {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.info-grid-item .value {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.info-grid-item .value.green-text {
+  color: #4ADE80;
+}
+
+.info-grid-item .value.date-range {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.info-grid-item .days-badge {
+  background: #fff;
+  color: #002B5B;
+  border-radius: 10px;
+  padding: 6px 12px;
+  text-align: center;
+  font-weight: 800;
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  min-width: 60px;
+}
+
+.info-grid-item .days-badge small {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* --- Benefits Section --- */
+.benefits-section {
+  margin-top: 30px;
+}
+
+.benefits-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  margin-bottom: 25px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.benefit-title-icon {
+    background: rgba(255,255,255,0.15);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.benefit-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+}
+
+.benefit-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.benefit-icon-box {
+  background: rgba(255, 255, 255, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.benefit-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+}
+
+.benefit-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: 10px;
+  transition: width 1s ease-out;
+}
+
+.benefit-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: #0F172A;
+}
+
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stat-label .icon-box {
+  width: 22px;
+  height: 22px;
+  background: #002B5B;
+  color: #fff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+
+.stat-value {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .info-card-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .membership-info-card {
+    padding: 20px;
   }
 }

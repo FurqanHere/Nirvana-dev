@@ -1,4 +1,4 @@
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Header from "./Header";
@@ -44,12 +44,16 @@ const PhoneOTP = () => {
   };
 
   const handleResend = async () => {
-    if (email) {
+    if (email || phone) {
       try {
         const payload = {
-          email: email
+          email: email,
+          phone: phone
         };
-        const response = await ApiService.post("/resendOtp", payload);
+        
+        // Use sendContractPhoneOtp for contract flow, otherwise resendOtp
+        const endpoint = flow === "contract" ? "/sendContractPhoneOtp" : "/resendOtp";
+        const response = await ApiService.post(endpoint, payload);
         
         if (response.data.status) {
           toast.success(response.data.message || "OTP sent successfully.");
@@ -86,7 +90,7 @@ const PhoneOTP = () => {
         formData.append("otp", otpString);
         
         // Add required op parameter
-        formData.append("op", "1234");
+        // formData.append("op", "1234");
         
         // Add user_id if available
         const storedUser = localStorage.getItem("user");

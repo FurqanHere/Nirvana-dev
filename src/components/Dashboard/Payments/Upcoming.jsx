@@ -1,4 +1,4 @@
-import "../../../assets/css/style.base.css";
+import "../../../assets/css/base.css";
 import React, { useState, useMemo } from "react";
 
 const Upcoming = () => {

@@ -21,7 +21,7 @@ import wheel from "../assets/images/wheel-img.png";
 
 import grayStar from "../assets/images/gray-star.png";
 
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 
 
 const Membership = () => {

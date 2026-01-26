@@ -1,4 +1,4 @@
-import "../../../assets/css/style.base.css";
+import "../../../assets/css/base.css";
 import React from "react";
 import { Dropdown } from "primereact/dropdown";
 import { useNavigate } from "react-router-dom";
@@ -13,13 +13,11 @@ const Boats = ({
   selectedMarina,
   setSelectedMarina,
   filteredCards,
+  marinaOptions,
+  search,
+  setSearch,
 }) => {
   const navigate = useNavigate();
-  const marinaOptions = [
-    { label: "Royal M Marina", value: "royal-m" },
-    { label: "Marina 1", value: "marina-1" },
-    { label: "Marina 2", value: "marina-2" },
-  ];
 
   return (
     <div className="bookings-home-view boat-dashboard-screen">
@@ -81,6 +79,8 @@ const Boats = ({
             type="text"
             placeholder="Search"
             className="bookings-search-input"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
@@ -90,7 +90,7 @@ const Boats = ({
           <div
             key={card.id}
             className="bookings-listing-card"
-            onClick={() => navigate("/ship-details")}
+            onClick={() => navigate("/ship-details", { state: { boatData: card } })}
           >
             <div className="bookings-listing-image">
               <img src={card.image} alt="Boat" />

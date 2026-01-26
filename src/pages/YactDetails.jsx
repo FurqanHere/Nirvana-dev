@@ -1,4 +1,4 @@
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 import React from "react";
 import Header from "../components/Header";
 import tenderShip from "../assets/images/experiences-bg.png";

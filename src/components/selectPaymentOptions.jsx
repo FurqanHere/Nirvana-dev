@@ -1,4 +1,4 @@
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 import React from "react";
 import paymentBgImg from "../assets/images/payment-bg.png";
 import blueTickImg from "../assets/images/blue-tick.png";

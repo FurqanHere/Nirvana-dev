@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import ApiService from "../services/ApiService";
 import landingBg from "../assets/images/experiences/experience-bg.png";
 import { useTranslation } from "react-i18next";
-// import "../assets/css/style.base.css";
+// import "../assets/css/base.css";
 
 const ContactUs = () => {
   const { i18n } = useTranslation();

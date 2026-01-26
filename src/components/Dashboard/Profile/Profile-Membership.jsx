@@ -1,4 +1,4 @@
-import "../../../assets/css/style.base.css";
+import "../../../assets/css/base.css";
 import React from "react";
 import sidebarMembership from "../../../assets/images/sidebar-membership.png";
 import calendarIcon from "../../../assets/images/calender-date.png";

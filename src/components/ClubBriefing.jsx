@@ -1,6 +1,9 @@
-import "../assets/css/style.base.css";
-import React from "react";
+import "../assets/css/base.css";
+import React, { useState, useEffect } from "react";
 import { Dropdown } from "primereact/dropdown";
+import moment from "moment";
+import ApiService from "../services/ApiService";
+import { toast } from "react-toastify";
 import "../assets/css/club-briefing.css";
 
 const ClubBriefing = ({
@@ -12,11 +15,113 @@ const ClubBriefing = ({
   selectedMarina,
   onChangeMarina
 }) => {
-  const marinaOptions = [
-    { label: "Marina 1", value: "marina1" },
-    { label: "Marina 2", value: "marina2" },
-    { label: "Marina 3", value: "marina3" },
-  ];
+  const [locations, setLocations] = useState([]);
+  const [timeslots, setTimeslots] = useState([]);
+  const [currentMonth, setCurrentMonth] = useState(moment());
+  const [loadingLocations, setLoadingLocations] = useState(false);
+  const [loadingTimeslots, setLoadingTimeslots] = useState(false);
+
+  // Fetch Locations
+  useEffect(() => {
+    const fetchLocations = async () => {
+      setLoadingLocations(true);
+      try {
+        const response = await ApiService.get("/getLocations?type=orientation");
+        if (response.data.status) {
+          setLocations(response.data.data.locations);
+        } else {
+          toast.error(response.data.message || "Failed to fetch locations");
+        }
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+        toast.error("Error fetching locations");
+      } finally {
+        setLoadingLocations(false);
+      }
+    };
+    fetchLocations();
+  }, []);
+
+  // Fetch Timeslots when date or marina changes
+  useEffect(() => {
+    const fetchTimeslots = async () => {
+      if (!selectedDay || !selectedMarina) {
+        setTimeslots([]);
+        return;
+      }
+
+      setLoadingTimeslots(true);
+      // Format date as YYYY-MM-DD
+      const formattedDate = moment(selectedDay).format("YYYY-MM-DD");
+      
+      try {
+        const response = await ApiService.get(
+          `/getClubBriefingTimeslots?date=${formattedDate}&location_id=${selectedMarina}`
+        );
+        if (response.data.status) {
+          setTimeslots(response.data.data.timeslots || []);
+        } else {
+          setTimeslots([]);
+        }
+      } catch (error) {
+        console.error("Error fetching timeslots:", error);
+        setTimeslots([]);
+      } finally {
+        setLoadingTimeslots(false);
+      }
+    };
+
+    fetchTimeslots();
+  }, [selectedDay, selectedMarina]);
+
+  // Calendar Helpers
+  const startOfMonth = currentMonth.clone().startOf("month");
+  const daysInMonth = currentMonth.daysInMonth();
+  // Standard day(): Sun=0, Mon=1, ..., Sat=6.
+  // To shift to Mon-start: (day() + 6) % 7
+  const startDayOfWeek = (startOfMonth.day() + 6) % 7;
+
+  const handlePrevMonth = () => {
+    setCurrentMonth(currentMonth.clone().subtract(1, "month"));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(currentMonth.clone().add(1, "month"));
+  };
+
+  const renderCalendarDays = () => {
+    const days = [];
+    
+    // Empty slots for previous month days
+    for (let i = 0; i < startDayOfWeek; i++) {
+      days.push(<div key={`empty-${i}`} className="schedule-day empty" />);
+    }
+
+    // Days of current month
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = startOfMonth.clone().date(d);
+      const isSelected = selectedDay && moment(selectedDay).isSame(date, "day");
+      const isPast = date.isBefore(moment(), "day");
+
+      days.push(
+        <button
+          type="button"
+          key={d}
+          className={`schedule-day ${isSelected ? "selected" : ""} ${isPast ? "disabled" : ""}`}
+          onClick={() => !isPast && onChangeDay(date.toDate())}
+          disabled={isPast}
+        >
+          {d}
+        </button>
+      );
+    }
+    return days;
+  };
+
+  const marinaOptions = locations.map(loc => ({
+    label: loc.name,
+    value: loc.id
+  }));
 
   return (
     <div className="schedule-view club-briefing-page">
@@ -30,9 +135,10 @@ const ClubBriefing = ({
             onChange={(e) => onChangeMarina(e.value)}
             options={marinaOptions}
             optionLabel="label"
-            placeholder="Select Marina"
+            placeholder={loadingLocations ? "Loading..." : "Select Marina"}
             className="marina-dropdown-prime"
             style={{ width: "100%", marginBottom: "20px" }}
+            disabled={loadingLocations}
           />
         </div>
 
@@ -44,7 +150,11 @@ const ClubBriefing = ({
             </span>
             <span>Select date of briefing</span>
           </div>
-          <div className="schedule-month">November 2025</div>
+          <div className="schedule-month-nav" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <button type="button" onClick={handlePrevMonth} className="nav-btn">&lt;</button>
+              <div className="schedule-month">{currentMonth.format("MMMM YYYY")}</div>
+              <button type="button" onClick={handleNextMonth} className="nav-btn">&gt;</button>
+          </div>
           <div className="schedule-weekdays">
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
               <div key={d} className="schedule-weekday">
@@ -53,20 +163,7 @@ const ClubBriefing = ({
             ))}
           </div>
           <div className="schedule-days">
-            {[...Array(30)].map((_, idx) => {
-              const day = idx + 1;
-              const isSelected = day === selectedDay;
-              return (
-                <button
-                  type="button"
-                  key={day}
-                  className={`schedule-day ${isSelected ? "selected" : ""}`}
-                  onClick={() => onChangeDay(day)}
-                >
-                  {day}
-                </button>
-              );
-            })}
+            {renderCalendarDays()}
           </div>
         </div>
 
@@ -75,35 +172,37 @@ const ClubBriefing = ({
             <span role="img" aria-label="time">
               ⏱️
             </span>
-            <span>Select date of briefing</span>
+            <span>Select time of briefing</span>
           </div>
-          <div className="schedule-date">Dec 31, 2025</div>
-          <div className="schedule-slot-label">Choose a slot</div>
-          {[
-            "8 AM - 10 AM",
-            "10 AM - 12 PM",
-            "12 PM - 2 PM",
-            "8 AM - 10 AM",
-            "12 PM - 2 PM",
-            "8 AM - 10 AM",
-          ].map((slot, idx) => {
-            const isSelected = idx === selectedSlot;
-            return (
-              <button
-                type="button"
-                key={slot + idx}
-                className={`schedule-slot ${isSelected ? "selected" : ""}`}
-                onClick={() => onChangeSlot(idx)}
-              >
-                <span className="schedule-slot-text">{slot}</span>
-                <span
-                  className={`schedule-slot-check ${
-                    isSelected ? "selected" : ""
-                  }`}
-                />
-              </button>
-            );
-          })}
+          <div className="schedule-date">
+            {selectedDay ? moment(selectedDay).format("MMM D, YYYY") : "Select a date"}
+          </div>
+          <div className="schedule-slot-label">
+            {loadingTimeslots ? "Loading slots..." : (timeslots.length > 0 ? "Choose a slot" : "No slots available")}
+          </div>
+          <div className="schedule-slots-grid">
+            {timeslots.map((slot, idx) => {
+              const slotLabel = typeof slot === 'string' ? slot : (slot.time || slot.label || `${slot.start_time} - ${slot.end_time}`);
+              const slotValue = typeof slot === 'string' ? slot : (slot.id || slot.time || slotLabel);
+              const isSelected = selectedSlot === slotValue;
+              
+              return (
+                <button
+                  type="button"
+                  key={idx}
+                  className={`schedule-slot ${isSelected ? "selected" : ""}`}
+                  onClick={() => onChangeSlot(slotValue)}
+                >
+                  <span className="schedule-slot-text">{slotLabel}</span>
+                  <span
+                    className={`schedule-slot-check ${
+                      isSelected ? "selected" : ""
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

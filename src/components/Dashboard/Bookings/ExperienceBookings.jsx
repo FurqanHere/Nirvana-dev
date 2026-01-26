@@ -1,4 +1,4 @@
-import "../../../assets/css/style.base.css";
+import "../../../assets/css/base.css";
 import React, { useMemo, useState } from "react";
 import bookingShips from "../../../assets/images/bookingShips.png";
 import qrCodeImage from "../../../assets/images/qr-code-image.png";

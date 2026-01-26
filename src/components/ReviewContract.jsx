@@ -1,13 +1,16 @@
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import logo from "../assets/images/contract-logo.png";
 import membershipBgImg from "../assets/images/main-yact-bg.png";
+import ApiService from "../services/ApiService";
+import { toast } from "react-toastify";
 
 const ReviewContract = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const docRef = useRef(null);
@@ -126,21 +129,42 @@ const ReviewContract = () => {
             <button
               type="button"
               className="agreement-save review-contract-sign-btn"
-              disabled={!agreeTerms}
-              onClick={() => {
+              disabled={!agreeTerms || loading}
+              onClick={async () => {
                 if (!agreeTerms) return;
-                navigate("/phone-otp", { 
-                  state: { 
-                    flow: "contract",
-                    personalDetails: personalDetails,
-                    phone: personalDetails.phone,
+                
+                setLoading(true);
+                try {
+                  const payload = {
                     email: personalDetails.email,
-                    package: location.state?.package
-                  } 
-                });
+                    phone: personalDetails.phone
+                  };
+                  
+                  const response = await ApiService.post("/sendContractPhoneOtp", payload);
+                  
+                  if (response.data.status) {
+                    toast.success(response.data.message || "OTP sent successfully");
+                    navigate("/phone-otp", { 
+                      state: { 
+                        flow: "contract",
+                        personalDetails: personalDetails,
+                        phone: personalDetails.phone,
+                        email: personalDetails.email,
+                        package: location.state?.package
+                      } 
+                    });
+                  } else {
+                    toast.error(response.data.message || "Failed to send OTP");
+                  }
+                } catch (error) {
+                  console.error("Send OTP Error:", error);
+                  toast.error(error.response?.data?.message || "An error occurred while sending OTP");
+                } finally {
+                  setLoading(false);
+                }
               }}
             >
-              Sign Contract
+              {loading ? "Sending OTP..." : "Sign Contract"}
             </button>
           </div>
         </div>

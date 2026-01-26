@@ -1,4 +1,4 @@
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";

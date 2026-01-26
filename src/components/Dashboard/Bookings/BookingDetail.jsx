@@ -1,4 +1,4 @@
-import "../../../assets/css/style.base.css";
+import "../../../assets/css/base.css";
 import React from "react";
 import bookingImage from "../../../assets/images/bs-ship.png"; 
 import qrCodeImage from "../../../assets/images/qr-code-image.png";

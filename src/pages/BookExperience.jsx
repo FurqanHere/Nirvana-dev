@@ -1,4 +1,4 @@
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 import React, { useState } from "react";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";

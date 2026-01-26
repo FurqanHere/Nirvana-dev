@@ -1,4 +1,4 @@
-import "../../../assets/css/style.base.css";
+import "../../../assets/css/base.css";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
@@ -15,16 +15,14 @@ const Experiences = ({
   selectedMarina,
   setSelectedMarina,
   filteredCards,
+  search,
+  setSearch,
+  marinaOptions,
 }) => {
   const navigate = useNavigate();
-  const marinaOptions = [
-    { label: "Royal M Marina", value: "royal-m" },
-    { label: "Marina 1", value: "marina-1" },
-    { label: "Marina 2", value: "marina-2" },
-  ];
 
   return (
-    <div className="experiences-home-view">
+    <div className="experiences-home-view boat-dashboard-screen">
       <div className="experiences-hero-section">
         <img
           src={bdShipImg}
@@ -83,6 +81,8 @@ const Experiences = ({
             type="text"
             placeholder="Search"
             className="bookings-search-input"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
@@ -95,15 +95,19 @@ const Experiences = ({
             onClick={() => navigate("/yacht-details")}
           >
             <div className="experiences-listing-image">
-              <img src={index % 2 === 0 ? boat1 : boat2} alt={card.title} />
+              <img src={card.image} alt={card.title} />
               <div className="experiences-listing-content">
                 <div className="experiences-listing-content-left">
-                  <h3 className="experiences-listing-title">{card.title}</h3>
+                  <h3 className="experiences-listing-title">
+                    {card.title}
+                  </h3>
                   <p className="experiences-listing-engine">
-                    Mercury V8 (300 hp)
+                    {card.ref}
                   </p>
                 </div>
-                <p className="experiences-listing-length">25 ft</p>
+                <p className="experiences-listing-length">
+                  {card.date}
+                </p>
               </div>
             </div>
           </div>

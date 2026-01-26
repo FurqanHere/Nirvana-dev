@@ -1,4 +1,4 @@
-import "../assets/css/style.base.css";
+import "../assets/css/base.css";
 import React from "react";
 import Lottie from "lottie-react";
 import successLottie from "../assets/images/Succes.json";
