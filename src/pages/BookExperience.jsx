@@ -1,7 +1,8 @@
 import "../assets/css/base.css";
 import React, { useState } from "react";
 import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import ApiService from "../services/ApiService";
 import membershipBgImg from "../assets/images/experiences-bg.png";
 import yartShipImg1 from "../assets/images/ship-thumbnails1.png";
 import yartShipImg2 from "../assets/images/ship-thumbnails2.png";
@@ -12,13 +13,15 @@ import "../assets/css/book-experience.css";
 
 const BookExperience = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const experience = location.state?.experience;
   const [showBookingSuccess, setShowBookingSuccess] = useState(false);
 
   // Booking Form State
   const [formData, setFormData] = useState({
-    fullName: "Sheikh Bin Tamim",
-    email: "sheikh@bintamim.com",
-    phone: "+971 24 153 6987",
+    fullName: "",
+    email: "",
+    phone: "",
     emiratesId: "",
     promoCode: "",
     date: "",
@@ -29,10 +32,30 @@ const BookExperience = () => {
     specialRequests: "",
   });
 
-  const [addOns, setAddOns] = useState([
-    { id: "juice", name: "Fresh Juice", price: 5, quantity: 0, selected: true },
-    { id: "towel", name: "Towel", price: 10, quantity: 0, selected: false }, // Towel unchecked in Figma
-  ]);
+  const [addOns, setAddOns] = useState([]);
+
+  const [errors, setErrors] = useState({});
+
+  React.useEffect(() => {
+    const fetchAddOns = async () => {
+      try {
+        const response = await ApiService.get("/getAddons");
+        if (response.data.status) {
+          const formattedAddOns = response.data.data.addons.map((addon) => ({
+            id: addon.id,
+            name: addon.name,
+            price: parseFloat(addon.default_price),
+            quantity: 0,
+            selected: false,
+          }));
+          setAddOns(formattedAddOns);
+        }
+      } catch (error) {
+        console.error("Error fetching addons:", error);
+      }
+    };
+    fetchAddOns();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,16 +63,46 @@ const BookExperience = () => {
       ...prev,
       [name]: value,
     }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.fullName.trim()) newErrors.fullName = "Name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!formData.date) newErrors.date = "Date is required";
+    if (!formData.time) newErrors.time = "Time is required";
+    if (formData.adults < 1) newErrors.adults = "At least 1 adult is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleCounter = (field, operation) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]:
+    setFormData((prev) => {
+      const newValue =
         operation === "increment"
           ? prev[field] + 1
-          : Math.max(0, prev[field] - 1),
-    }));
+          : Math.max(0, prev[field] - 1);
+
+      // Clear error for adults if valid
+      if (field === "adults" && newValue >= 1 && errors.adults) {
+        setErrors((errs) => ({ ...errs, adults: "" }));
+      }
+
+      return {
+        ...prev,
+        [field]: newValue,
+      };
+    });
   };
 
   const handleAddOnCounter = (id, operation) => {
@@ -78,7 +131,33 @@ const BookExperience = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simplified validation for demo - mostly pre-filled
+
+    if (!validateForm()) {
+      return;
+    }
+
+    const selectedAddOns = addOns
+      .filter((addon) => addon.selected && addon.quantity > 0)
+      .map((addon) => ({
+        id: addon.id,
+        name: addon.name,
+        price: addon.price,
+        quantity: addon.quantity,
+      }));
+
+    const bookingData = {
+      experience: experience,
+      booking: formData,
+      addons: selectedAddOns,
+    };
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "experienceBookingDetails",
+        JSON.stringify(bookingData),
+      );
+    }
+
     setShowBookingSuccess(true);
   };
 
@@ -102,17 +181,17 @@ const BookExperience = () => {
 
         <div className="book-experience-card">
           <div className="book-experience-header">
-            <h1 className="book-experience-title">TENDER 9 (T9)</h1>
+            <h1 className="book-experience-title">
+              {experience?.title || "TENDER 9 (T9)"}
+            </h1>
             <p className="book-experience-subtitle">
-              Twin Mercury Verado V6 (2 x 225 hp)
+              {experience?.boat ||
+                experience?.ref ||
+                "Twin Mercury Verado V6 (2 x 225 hp)"}
             </p>
             <p className="book-experience-desc">
-              Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-              accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-              quae ab illo inventore veritatis et quasi architecto beatae vitae
-              dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-              aspernatur aut odit aut fugit, sed quia consequuntur magni dolores
-              eos qui ratione voluptatem sequi nesciunt.
+              {experience?.description ||
+                "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."}
             </p>
           </div>
 
@@ -124,30 +203,39 @@ const BookExperience = () => {
                 <input
                   type="text"
                   name="fullName"
-                  className="be-input"
+                  className={`be-input ${errors.fullName ? "error-border" : ""}`}
                   value={formData.fullName}
                   onChange={handleInputChange}
                 />
+                {errors.fullName && (
+                  <span className="error-text">{errors.fullName}</span>
+                )}
               </div>
               <div className="be-form-field">
                 <label className="be-label">Email</label>
                 <input
                   type="email"
                   name="email"
-                  className="be-input"
+                  className={`be-input ${errors.email ? "error-border" : ""}`}
                   value={formData.email}
                   onChange={handleInputChange}
                 />
+                {errors.email && (
+                  <span className="error-text">{errors.email}</span>
+                )}
               </div>
               <div className="be-form-field">
                 <label className="be-label">Phone Number</label>
                 <input
                   type="tel"
                   name="phone"
-                  className="be-input"
+                  className={`be-input ${errors.phone ? "error-border" : ""}`}
                   value={formData.phone}
                   onChange={handleInputChange}
                 />
+                {errors.phone && (
+                  <span className="error-text">{errors.phone}</span>
+                )}
               </div>
             </div>
 
@@ -195,7 +283,7 @@ const BookExperience = () => {
                   <input
                     type="text"
                     name="date"
-                    className="be-input"
+                    className={`be-input ${errors.date ? "error-border" : ""}`}
                     placeholder="Date"
                     value={formData.date}
                     onChange={handleInputChange}
@@ -204,13 +292,16 @@ const BookExperience = () => {
                   />
                   <i className="bi bi-calendar4 be-input-icon"></i>
                 </div>
+                {errors.date && (
+                  <span className="error-text">{errors.date}</span>
+                )}
               </div>
               <div className="be-form-field">
                 <div className="be-input-icon-wrapper">
                   <input
                     type="text"
                     name="time"
-                    className="be-input"
+                    className={`be-input ${errors.time ? "error-border" : ""}`}
                     placeholder="Time"
                     value={formData.time}
                     onChange={handleInputChange}
@@ -219,6 +310,9 @@ const BookExperience = () => {
                   />
                   <i className="bi bi-clock be-input-icon"></i>
                 </div>
+                {errors.time && (
+                  <span className="error-text">{errors.time}</span>
+                )}
               </div>
             </div>
 
@@ -234,22 +328,27 @@ const BookExperience = () => {
                 <div className="be-passenger-label">
                   <i className="bi bi-people-fill"></i> Adults
                 </div>
-                <div className="be-passenger-controls">
-                  <button
-                    type="button"
-                    className="be-counter-btn"
-                    onClick={() => handleCounter("adults", "decrement")}
-                  >
-                    -
-                  </button>
-                  <span className="be-counter-value">{formData.adults}</span>
-                  <button
-                    type="button"
-                    className="be-counter-btn"
-                    onClick={() => handleCounter("adults", "increment")}
-                  >
-                    +
-                  </button>
+                <div className="d-flex flex-column align-items-end">
+                  <div className="be-passenger-controls">
+                    <button
+                      type="button"
+                      className="be-counter-btn"
+                      onClick={() => handleCounter("adults", "decrement")}
+                    >
+                      -
+                    </button>
+                    <span className="be-counter-value">{formData.adults}</span>
+                    <button
+                      type="button"
+                      className="be-counter-btn"
+                      onClick={() => handleCounter("adults", "increment")}
+                    >
+                      +
+                    </button>
+                  </div>
+                  {errors.adults && (
+                    <span className="error-text text-end">{errors.adults}</span>
+                  )}
                 </div>
               </div>
 
@@ -417,7 +516,7 @@ const BookExperience = () => {
               className="success-primary"
               onClick={() => {
                 setShowBookingSuccess(false);
-                navigate("/membership");
+                navigate("/dashboard");
               }}
             >
               Done

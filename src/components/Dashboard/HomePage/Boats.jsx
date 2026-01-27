@@ -90,7 +90,7 @@ const Boats = ({
           <div
             key={card.id}
             className="bookings-listing-card"
-            onClick={() => navigate("/ship-details", { state: { boatData: card } })}
+            onClick={() => navigate("/boat-details", { state: { boatData: card } })}
           >
             <div className="bookings-listing-image">
               <img src={card.image} alt="Boat" />

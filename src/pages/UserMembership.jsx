@@ -85,10 +85,17 @@ const boatsData = [
   },
 ];
 
-const Membership = () => {
+const Membership = ({ view }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [packages, setPackages] = useState([]);
+  const [currentView, setCurrentView] = useState(view || "packages");
+
+  useEffect(() => {
+    if (view) {
+      setCurrentView(view);
+    }
+  }, [view]);
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -118,10 +125,11 @@ const Membership = () => {
     }
 
     setSelectedPackage(pkg.name);
-    setCurrentView("selectPayment");
+    // setCurrentView("paymentMethod");
+    navigate("/membership/payment-options");
   };
 
-  const [currentView, setCurrentView] = useState("packages");
+  // const [currentView, setCurrentView] = useState("packages");
   const [selectedPackage, setSelectedPackage] = useState("SEALUX");
   const [selectedFrequency, setSelectedFrequency] = useState("Annual");
   const [selectedDay, setSelectedDay] = useState(null);
@@ -140,6 +148,26 @@ const Membership = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [logoutLoading, setLogoutLoading] = useState(false);
+  const [contractDocUrl, setContractDocUrl] = useState(null);
+  const [clubSummaryUrl, setClubSummaryUrl] = useState(null);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+          const response = await ApiService.get("/getProfile");
+          if (response.data.status) {
+            setContractDocUrl(response.data.data.contract_doc);
+            setClubSummaryUrl(response.data.data.club_summary);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+    fetchProfileData();
+  }, []);
 
   // Personal Details Form State
   const [personalDetails, setPersonalDetails] = useState({
@@ -217,7 +245,7 @@ const Membership = () => {
 
       if (response.data.status) {
         toast.success(response.data.message || "Documents uploaded successfully");
-        setCurrentView("orientationSession");
+        navigate("/membership/orientation");
       } else {
         toast.error(response.data.message || "Failed to upload documents");
       }
@@ -230,14 +258,13 @@ const Membership = () => {
   };
 
   useEffect(() => {
-    if (location.state?.showFinalReview) {
-      if (location.state.personalDetails) {
-        setPersonalDetails(location.state.personalDetails);
-      }
-      if (location.state.package) {
-        setSelectedPackage(location.state.package.name || location.state.package);
-      }
-      setCurrentView("finalReview");
+    if (location.state?.personalDetails) {
+      setPersonalDetails(location.state.personalDetails);
+    }
+    if (location.state?.package) {
+      // If package is an object, get name, otherwise use it directly
+      const pkgName = location.state.package.name || location.state.package;
+      setSelectedPackage(pkgName);
     }
   }, [location.state]);
 
@@ -294,6 +321,17 @@ const Membership = () => {
   }, []);
 
   useEffect(() => {
+    if (userInfo) {
+      setPersonalDetails((prev) => ({
+        ...prev,
+        fullName: userInfo.name || userInfo.fullName || prev.fullName,
+        email: userInfo.email || prev.email,
+        phone: userInfo.phone || userInfo.phoneNumber || prev.phone,
+      }));
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
     if (location.state?.selectedPackage) {
       setIsLoggedIn(true);
       setSelectedPackage(location.state.selectedPackage);
@@ -304,8 +342,8 @@ const Membership = () => {
       navigate(location.pathname, { replace: true, state: {} });
     } else if (location.state?.showFinalReview) {
       setIsLoggedIn(true);
-      setCurrentView("finalReview");
-      navigate(location.pathname, { replace: true, state: {} });
+      // setCurrentView("finalReview");
+      navigate("/membership/final-review", { replace: true, state: {} });
     }
   }, [location.state, navigate, location.pathname]);
 
@@ -317,7 +355,53 @@ const Membership = () => {
   }, [currentView]);
 
   const handleButtonClick = (view) => {
-    setCurrentView(view);
+    // setCurrentView(view);
+    // Map view to route
+    switch (view) {
+      case "packages":
+        navigate("/membership/packages");
+        break;
+      case "paymentOptions":
+        navigate("/membership/payment-options");
+        break;
+      case "details":
+        navigate("/membership/personal-details");
+        break;
+      case "finalReview":
+        navigate("/membership/final-review");
+        break;
+      case "paymentMethod":
+        navigate("/membership/payment-method");
+        break;
+      case "cardInfo":
+        navigate("/membership/payment");
+        break;
+      case "documentUpload":
+        navigate("/membership/document-upload");
+        break;
+      case "orientationSession":
+        navigate("/membership/orientation");
+        break;
+      case "schedule":
+        navigate("/membership/club-briefing");
+        break;
+      case "summary":
+        if (clubSummaryUrl) {
+          // Create a temporary link to trigger download
+          const link = document.createElement('a');
+          link.href = clubSummaryUrl;
+          link.setAttribute('download', 'Club_Summary.pdf'); // Set suggested filename
+          link.setAttribute('target', '_blank'); // Open in new tab as fallback
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          toast.info("Club Summary is not available at the moment.");
+        }
+        break;
+      default:
+        navigate("/membership");
+    }
   };
 
   const validatePhone = (phone) => {
@@ -461,7 +545,7 @@ const Membership = () => {
       if (response.data.status) {
         toast.success(response.data.message || "Package subscription created successfully.");
         if (selectedPaymentMethod === "online") {
-          setCurrentView("cardInfo");
+          navigate("/membership/payment");
         } else {
           setShowPaymentSuccess(true);
         }
@@ -674,7 +758,7 @@ const Membership = () => {
                 </div>
               )}
             </>
-          ) : currentView === "schedule" ? (
+          ) : currentView === "schedule" || currentView === "clubBriefing" ? (
             <ClubBriefing
               selectedMarina={selectedMarina}
               onChangeMarina={setSelectedMarina}
@@ -683,6 +767,14 @@ const Membership = () => {
               onChangeDay={setSelectedDay}
               onChangeSlot={setSelectedSlot}
               onBook={() => setShowSuccess(true)}
+            />
+          ) : currentView === "paymentOptions" ? (
+            <SelectPaymentOptions
+              selectedPackage={selectedPackage}
+              selectedPackageData={packages.find((p) => p.name === selectedPackage)}
+              selectedFrequency={selectedFrequency}
+              onFrequencyChange={setSelectedFrequency}
+              onContinue={() => navigate("/membership/personal-details")}
             />
           ) : currentView === "details" ? (
             <PersonalDetail
@@ -694,7 +786,8 @@ const Membership = () => {
                   navigate("/review-contract", { 
                     state: { 
                       personalDetails,
-                      package: selectedPackage
+                      package: selectedPackage,
+                      contractDocUrl
                     } 
                   });
                 }
@@ -705,7 +798,14 @@ const Membership = () => {
                   e.stopPropagation();
                 }
                 if (validatePersonalDetails()) {
-                  setCurrentView("finalReview");
+                  // Navigate to contract review/signing instead of directly to agreement/final review
+                  navigate("/review-contract", {
+                    state: {
+                      personalDetails,
+                      package: selectedPackage,
+                      contractDocUrl
+                    }
+                  });
                 }
               }}
             />
@@ -713,13 +813,20 @@ const Membership = () => {
             <FinalReview 
               personalDetails={personalDetails}
               pkg={packages.find((p) => p.name === selectedPackage)}
-              onProceed={() => setCurrentView("paymentMethod")} 
+              // onProceed={() => setCurrentView("paymentMethod")} 
+              onProceed={() => navigate("/membership/payment-method")} 
             />
           ) : currentView === "paymentMethod" ? (
             <Payment
               selectedPaymentMethod={selectedPaymentMethod}
               onChangeMethod={setSelectedPaymentMethod}
               onProceed={handlePaymentProceed}
+              showPaymentSuccess={showPaymentSuccess}
+              onClosePaymentSuccess={() => setShowPaymentSuccess(false)}
+              onContinue={() => {
+                setShowPaymentSuccess(false);
+                navigate("/membership/document-upload");
+              }}
             />
           ) : currentView === "cardInfo" ? (
             <InsertCardDetails
@@ -734,11 +841,13 @@ const Membership = () => {
               onClosePaymentSuccess={() => setShowPaymentSuccess(false)}
               onViewInvoice={() => {
                 setShowPaymentSuccess(false);
-                setCurrentView("documentUpload");
+                // setCurrentView("documentUpload");
+                navigate("/membership/document-upload");
               }}
               onBackToPackages={() => {
                 setShowPaymentSuccess(false);
-                setCurrentView("packages");
+                // setCurrentView("packages");
+                navigate("/membership/packages");
               }}
             />
           ) : currentView === "documentUpload" ? (
@@ -752,7 +861,10 @@ const Membership = () => {
               onClickDetail={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setCurrentView("detailPage");
+                // setCurrentView("detailPage");
+                // TODO: Define a route for detailPage if needed, or keep it as a view if it's a modal/internal state
+                // Assuming it's a view change for now, but navigation should be handled if URL update is required
+                setCurrentView("detailPage"); 
               }}
               onClickSubmit={(e) => {
                 e.preventDefault();
@@ -773,7 +885,8 @@ const Membership = () => {
               onCloseOrientationSuccess={() => setShowOrientationSuccess(false)}
               onContinueOrientation={() => {
                 setShowOrientationSuccess(false);
-                setCurrentView("packages");
+                // setCurrentView("packages");
+                navigate("/membership/packages");
               }}
             />
           ) : currentView === "bookingManagement" ? (

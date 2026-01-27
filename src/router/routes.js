@@ -20,7 +20,7 @@ import CreateAccount from "../pages/CreateAccount";
 import UserMembership from "../pages/UserMembership";
 import YactDetails from "../pages/YactDetails";
 import BookExperience from "../pages/BookExperience";
-import ShipDetails from "../pages/ShipDetails";
+import ShipDetails from "../pages/BoatDetails.jsx";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import ReviewContract from "../components/ReviewContract";
 import PhoneOTP from "../components/phoneOTP";
@@ -50,9 +50,18 @@ const AppRouter = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<CreateAccount />} />
           <Route path="/membership" element={<UserMembership />} />
+          <Route path="/membership/packages" element={<UserMembership view="packages" />} />
+          <Route path="/membership/payment-options" element={<UserMembership view="paymentOptions" />} />
+          <Route path="/membership/personal-details" element={<UserMembership view="details" />} />
+          <Route path="/membership/final-review" element={<UserMembership view="finalReview" />} />
+          <Route path="/membership/payment-method" element={<UserMembership view="paymentMethod" />} />
+          <Route path="/membership/payment" element={<UserMembership view="cardInfo" />} />
+          <Route path="/membership/document-upload" element={<UserMembership view="documentUpload" />} />
+          <Route path="/membership/orientation" element={<UserMembership view="orientationSession" />} />
+          <Route path="/membership/club-briefing" element={<UserMembership view="clubBriefing" />} />
           <Route path="/yacht-details" element={<YactDetails />} />
           <Route path="/book-experience" element={<BookExperience />} />
-          <Route path="/ship-details" element={<ShipDetails />} />
+          <Route path="/boat-details" element={<ShipDetails />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/review-contract" element={<ReviewContract />} />
           <Route path="/phone-otp" element={<PhoneOTP />} />

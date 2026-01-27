@@ -1,12 +1,9 @@
 import "../../../assets/css/base.css";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
 import bdShipImg from "../../../assets/images/bs-ship.png";
 import whiteBlueShip from "../../../assets/images/white-blue-ship.png";
 import blueThumbsUp from "../../../assets/images/blueThumbsUp.png";
-import boat1 from "../../../assets/images/boat1.png";
-import boat2 from "../../../assets/images/boat2.png";
 
 const Experiences = ({
   selectedTab,
@@ -88,11 +85,11 @@ const Experiences = ({
       </div>
 
       <div className="experiences-listings-grid">
-        {filteredCards.map((card, index) => (
+        {filteredCards.map((card) => (
           <div
             key={card.id}
             className="experiences-listing-card"
-            onClick={() => navigate("/yacht-details")}
+            onClick={() => navigate("/yacht-details", { state: { experience: card } })}
           >
             <div className="experiences-listing-image">
               <img src={card.image} alt={card.title} />

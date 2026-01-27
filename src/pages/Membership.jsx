@@ -121,7 +121,7 @@ const Membership = () => {
   };
 
   return (
-    <div className="landing-page">
+    <div className="landing-page" style={{ overflowX: "hidden", overflowY: "hidden" }}>
       <Header />
       <section
         className="landing-hero"

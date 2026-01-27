@@ -40,12 +40,8 @@ const PersonalDetail = ({
               </label>
               <input
                 value={personalDetails.email}
-                onChange={(e) =>
-                  onChangePersonalDetails({
-                    ...personalDetails,
-                    email: e.target.value,
-                  })
-                }
+                readOnly
+                style={{ backgroundColor: "#e9ecef", cursor: "not-allowed", opacity: 0.7 }}
                 className={personalDetailsErrors.email ? "error" : ""}
               />
               {personalDetailsErrors.email && (
@@ -62,12 +58,8 @@ const PersonalDetail = ({
               </label>
               <input
                 value={personalDetails.phone}
-                onChange={(e) =>
-                  onChangePersonalDetails({
-                    ...personalDetails,
-                    phone: e.target.value,
-                  })
-                }
+                readOnly
+                style={{ backgroundColor: "#e9ecef", cursor: "not-allowed", opacity: 0.7 }}
                 className={personalDetailsErrors.phone ? "error" : ""}
               />
               {personalDetailsErrors.phone && (

@@ -5,6 +5,7 @@ import "aos/dist/aos.css";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ApiService from "../services/ApiService";
 
 import featureShip from "../assets/images/about-us/ship.png";
 import featureLiscence from "../assets/images/about-us/liscence.png";
@@ -61,30 +62,25 @@ const services = [
   },
 ];
 
-const boats = [
-  {
-    title: "250 DAUNTLESS #1",
-    engine: "Location: Royal M Marina",
-    length: "Length:16m",
-    image: boatCard1,
-  },
-  {
-    title: "250 DAUNTLESS #2",
-    engine: "Location: Royal M Marina",
-    length: "Length:16m",
-    image: boatCard2,
-  },
-  {
-    title: "250 DAUNTLESS #3",
-    engine: "Location: Royal M Marina",
-    length: "Length:16m",
-    image: boatCard3,
-  },
-];
-
 const LandingPageAboutus = () => {
+  const [boats, setBoats] = useState([]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    const fetchBoats = async () => {
+      try {
+        const response = await ApiService.get("/getBoats");
+        if (response.data.status) {
+          setBoats(response.data.data.boats);
+        }
+      } catch (error) {
+        console.error("Error fetching boats:", error);
+      }
+    };
+    fetchBoats();
   }, []);
 
   useEffect(() => {
@@ -302,18 +298,18 @@ const LandingPageAboutus = () => {
           {boats.map((boat, index) => (
             <div
               className="boat-card"
-              key={boat.title}
+              key={boat.id || index}
               data-aos="fade-up"
               data-aos-delay={index * 150}
             >
               <div
                 className="boat-card-image"
-                style={{ backgroundImage: `url(${boat.image})` }}
+                style={{ backgroundImage: `url(${boat.main_image})` }}
               />
               <div className="boat-card-body">
-                <div className="boat-card-title">{boat.title}</div>
+                <div className="boat-card-title">{boat.name}</div>
                 <div className="boat-card-meta">
-                  <span>{boat.engine}</span>
+                  <span>Location: {boat.location?.name || "N/A"}</span>
                 </div>
               </div>
             </div>

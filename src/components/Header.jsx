@@ -26,6 +26,7 @@ export default function Navbar({ background = "", profile = null, showAuthButton
   const location = useLocation();
   const [activeLink, setActiveLink] = useState("home");
   const [isScrolled, setIsScrolled] = useState(false);
+  const user = typeof window !== "undefined" ? localStorage.getItem("user") : null;
 
   useEffect(() => {
     // Set active link based on current route
@@ -65,7 +66,7 @@ export default function Navbar({ background = "", profile = null, showAuthButton
   return (
     <div className="header-wrapper" style={{ position: 'fixed', top: 0, left: 0, right: 0, width: '100%', zIndex: 1100 }}>
       {/* Top Bar - Desktop Only */}
-      {!profile && showAuthButtons && (
+      {!profile && showAuthButtons && !user && (
         <div className="d-none d-lg-flex justify-content-end align-items-center px-5 py-2" style={{ background: isScrolled ? 'rgba(6, 15, 24, 0.98)' : 'rgba(0,0,0,0.2)', transition: 'background 0.3s ease' }}>
            <div className="d-flex align-items-center gap-3">
                 <Link to="/login" className="text-decoration-none">

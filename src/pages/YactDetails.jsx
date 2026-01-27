@@ -1,5 +1,4 @@
 import "../assets/css/base.css";
-import React from "react";
 import Header from "../components/Header";
 import tenderShip from "../assets/images/experiences-bg.png";
 // import membershipBgImg from "../assets/images/main-yact-bg.png";
@@ -8,10 +7,20 @@ import passengerImg from "../assets/images/passenger.png";
 import yartShipImg1 from "../assets/images/ship-thumbnails1.png";
 import yartShipImg2 from "../assets/images/ship-thumbnails2.png";
 import yartShipImg3 from "../assets/images/ship-thumbnails3.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const YactDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const experience = location.state?.experience;
+
+  const title = experience?.title || "TENDER 9 (T9)";
+  const boatName =
+    experience?.boat || experience?.ref || "Subject to availability";
+  const maxPassengers =
+    typeof experience?.max_passengers === "number"
+      ? experience.max_passengers
+      : 10;
 
   return (
     <div className="membership-page">
@@ -27,10 +36,10 @@ const YactDetails = () => {
       >
         <div className="membership-packages-container">
           <div className="experience-detail-view">
-            <div className="experience-hero-section">
+              <div className="experience-hero-section">
               <div className="experience-hero-bg"></div>
               <div className="experience-info-card">
-                <h1 className="experience-info-title">TENDER 9 (T9)</h1>
+                <h1 className="experience-info-title">{title}</h1>
                 <p
                   className="experience-info-subtitle"
                   style={{
@@ -62,7 +71,7 @@ const YactDetails = () => {
                     <div className="experience-detail-text">
                       <span className="experience-detail-label">Boat</span>
                       <span className="experience-detail-sub">
-                        Subject to availability
+                        {boatName}
                       </span>
                     </div>
                   </div>
@@ -76,7 +85,9 @@ const YactDetails = () => {
                     </div>
 
                     <div className="experience-detail-text">
-                      <span className="experience-detail-label">10</span>
+                      <span className="experience-detail-label">
+                        {maxPassengers}
+                      </span>
                       <span className="experience-detail-sub">
                         Max Passengers
                       </span>
@@ -87,7 +98,7 @@ const YactDetails = () => {
                   <button
                     type="button"
                     className="experience-book-btn"
-                    onClick={() => navigate("/book-experience")} // Placeholder
+                    onClick={() => navigate("/book-experience", { state: { experience } })}
                   >
                     Book Experience
                   </button>

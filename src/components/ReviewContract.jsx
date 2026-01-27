@@ -17,6 +17,7 @@ const ReviewContract = () => {
   const thumbRef = useRef(null);
   
   const personalDetails = location.state?.personalDetails || {};
+  const contractDocUrl = location.state?.contractDocUrl;
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -61,8 +62,18 @@ const ReviewContract = () => {
                 className="review-contract-document"
                 ref={docRef}
                 onScroll={handleScroll}
+                style={contractDocUrl ? { overflow: 'hidden', padding: 0 } : {}}
               >
-                <div className="review-contract-doc-inner">
+                {contractDocUrl ? (
+                  <iframe 
+                    src={contractDocUrl} 
+                    title="Contract Document"
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 'none', minHeight: '400px' }}
+                  />
+                ) : (
+                  <div className="review-contract-doc-inner">
                   <div className="review-contract-doc-logo">
                     <img 
                       src={logo} 
@@ -107,10 +118,13 @@ const ReviewContract = () => {
                     IT IS HEREBY AGREED AS FOLLOWS:
                   </p>
                 </div>
+                )}
               </div>
-              <div className="review-contract-scrollbar">
-                <span className="review-contract-scroll-thumb" ref={thumbRef} />
-              </div>
+              {!contractDocUrl && (
+                <div className="review-contract-scrollbar">
+                  <span className="review-contract-scroll-thumb" ref={thumbRef} />
+                </div>
+              )}
             </div>
 
             <label className="agreement-toggle-row review-contract-toggle-row">

@@ -270,9 +270,8 @@ const PhoneOTP = () => {
                   if (isSignup) {
                     navigate("/membership");
                   } else {
-                    navigate("/membership", {
+                    navigate("/membership/final-review", {
                       state: { 
-                        showFinalReview: true,
                         personalDetails: location.state?.personalDetails,
                         package: location.state?.package
                       },

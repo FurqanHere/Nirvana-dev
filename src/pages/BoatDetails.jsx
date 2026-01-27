@@ -1,17 +1,19 @@
 import "../assets/css/base.css";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import membershipBgImg from "../assets/images/experiences-bg.png";
 import Lottie from "lottie-react";
 import successLottie from "../assets/images/Succes.json";
-import "../assets/css/ship-details.css";
+import "../assets/css/boat-details.css";
 import yartShipImg1 from "../assets/images/ship-thumbnails1.png";
 import yartShipImg2 from "../assets/images/ship-thumbnails2.png";
 import yartShipImg3 from "../assets/images/ship-thumbnails3.png";
+import ApiService from "../services/ApiService";
+import { Dropdown } from "primereact/dropdown";
 
 // Fix Leaflet icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -23,7 +25,45 @@ L.Icon.Default.mergeOptions({
 
 const ShipDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const initialBoatData = location.state?.boatData;
+  const [boatData, setBoatData] = useState(initialBoatData || {});
+  const [isFavourite, setIsFavourite] = useState(initialBoatData?.is_favourite || false);
   const [showBookingSuccess, setShowBookingSuccess] = useState(false);
+  const [benefits, setBenefits] = useState([]);
+  const [locations, setLocations] = useState([]);
+
+  useEffect(() => {
+    if (initialBoatData?.id) {
+      const fetchBoatDetails = async () => {
+        try {
+          const response = await ApiService.get(`/getBoatDetails/${initialBoatData.id}`);
+          if (response.data.status) {
+            const details = response.data.data;
+            setBoatData(prev => ({ ...prev, ...details }));
+            setIsFavourite(details.is_favourite);
+          }
+        } catch (error) {
+          console.error("Error fetching boat details:", error);
+        }
+      };
+      fetchBoatDetails();
+    }
+  }, [initialBoatData?.id]);
+
+  const toggleFavourite = async () => {
+    if (!boatData?.id) return;
+    
+    try {
+      const response = await ApiService.post("/toggleBoatFavourite", { boat_id: boatData.id });
+      if (response.data.status) {
+        setIsFavourite(response.data.data.is_favourite);
+        // toast.success(response.data.message); // ApiService already handles errors, success toast optional
+      }
+    } catch (error) {
+      console.error("Error toggling favourite:", error);
+    }
+  };
 
   // Booking Form State
   const [formData, setFormData] = useState({
@@ -33,15 +73,11 @@ const ShipDetails = () => {
     children: 0,
     marinaLocation: "",
     captain: "In-House Captain",
-    selectedBenefit: "In-House Captain",
+    selectedBenefit: "",
     specialRequests: "",
   });
 
-  const [addOns, setAddOns] = useState([
-    { id: "juice", name: "Fresh Juice", price: 5, quantity: 0, selected: true },
-    { id: "ice", name: "ICE", price: 15, quantity: 0, selected: false },
-    { id: "towel", name: "Towel", price: 10, quantity: 0, selected: false },
-  ]);
+  const [addOns, setAddOns] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -87,8 +123,96 @@ const ShipDetails = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const selectedAddOns = addOns
+      .filter((addon) => addon.selected && addon.quantity > 0)
+      .map((addon) => ({
+        id: addon.id,
+        name: addon.name,
+        price: addon.price,
+        quantity: addon.quantity,
+      }));
+
+    const bookingData = {
+      boat: {
+        id: boatData?.id || null,
+        title: boatData?.title || "",
+        ref: boatData?.ref || "",
+        dateLabel: boatData?.date || "",
+      },
+      booking: {
+        date: formData.date,
+        time: formData.time,
+        adults: formData.adults,
+        children: formData.children,
+        marinaLocation: formData.marinaLocation,
+        captain: formData.captain,
+        selectedBenefit: formData.selectedBenefit,
+        specialRequests: formData.specialRequests,
+      },
+      addons: selectedAddOns,
+    };
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("boatBookingDetails", JSON.stringify(bookingData));
+    }
+
     setShowBookingSuccess(true);
   };
+
+  useEffect(() => {
+    const fetchBenefits = async () => {
+      try {
+        const response = await ApiService.get("/getBookingBenefits", {
+          type: "boat",
+        });
+        const list = response?.data?.data?.booking_benefits || [];
+        setBenefits(list);
+        if (list.length > 0) {
+          setFormData((prev) => ({
+            ...prev,
+            selectedBenefit: list[0].name || "",
+          }));
+        }
+      } catch (error) {
+        // handled globally by ApiService
+      }
+    };
+
+    const fetchAddons = async () => {
+      try {
+        const response = await ApiService.get("/getAddons");
+        const list = response?.data?.data?.addons || [];
+        setAddOns(
+          list.map((a) => ({
+            id: a.id,
+            name: a.name,
+            price: Number(a.default_price) || 0,
+            quantity: 0,
+            selected: false,
+          })),
+        );
+      } catch (error) {
+        // handled globally by ApiService
+      }
+    };
+    
+    const fetchLocations = async () => {
+      try {
+        const response = await ApiService.get("/getLocations", {
+          type: "orientation",
+        });
+        const list = response?.data?.data?.locations || [];
+        setLocations(list);
+      } catch (error) {
+        // handled globally by ApiService
+      }
+    };
+
+    fetchBenefits();
+    fetchAddons();
+    fetchLocations();
+  }, []);
 
   return (
     <div
@@ -109,11 +233,15 @@ const ShipDetails = () => {
         </button>
 
         <div className="ship-details-card">
-          <i className="bi bi-heart ship-details-heart-icon"></i>
+          <i 
+            className={`bi ${isFavourite ? 'bi-heart-fill' : 'bi-heart'} ship-details-heart-icon`}
+            onClick={toggleFavourite}
+            style={{ cursor: 'pointer', color: isFavourite ? 'red' : 'inherit' }}
+          ></i>
 
           <div className="ship-details-header">
             <div className="ship-details-title-section">
-              <h1 className="ship-details-title">TENDER 9 (T9)</h1>
+              <h1 className="ship-details-title">{boatData?.title || "TENDER 9 (T9)"}</h1>
               <p className="ship-details-subtitle">
                 Twin Mercury Verado V6 (2 x 225 hp)
               </p>
@@ -252,12 +380,22 @@ const ShipDetails = () => {
               <div className="sd-form-field">
                 <label className="sd-label">Marina Location</label>
                 <div className="sd-input-icon-wrapper">
-                  <input
-                    type="text"
-                    name="marinaLocation"
-                    className="sd-input"
+                  <Dropdown
                     value={formData.marinaLocation}
-                    onChange={handleInputChange}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        marinaLocation: e.value,
+                      }))
+                    }
+                    options={locations.map((l) => ({
+                      label: l.name,
+                      value: l.name,
+                    }))}
+                    placeholder="Select Marina"
+                    className="marina-dropdown-prime"
+                    appendTo={typeof document !== "undefined" ? document.body : undefined}
+                    style={{ width: "100%" }}
                   />
                   <i className="bi bi-geo-alt-fill sd-input-icon"></i>
                 </div>
@@ -287,36 +425,18 @@ const ShipDetails = () => {
                   Select Benefits
                 </label>
                 <div className="sd-benefits-group">
-                  <label className="sd-benefit-item">
-                    <input
-                      type="radio"
-                      name="selectedBenefit"
-                      value="In-House Captain"
-                      checked={formData.selectedBenefit === "In-House Captain"}
-                      onChange={handleInputChange}
-                    />
-                    In-House Captain
-                  </label>
-                  <label className="sd-benefit-item">
-                    <input
-                      type="radio"
-                      name="selectedBenefit"
-                      value="Camping"
-                      checked={formData.selectedBenefit === "Camping"}
-                      onChange={handleInputChange}
-                    />
-                    Camping
-                  </label>
-                  <label className="sd-benefit-item">
-                    <input
-                      type="radio"
-                      name="selectedBenefit"
-                      value="Late Arrival"
-                      checked={formData.selectedBenefit === "Late Arrival"}
-                      onChange={handleInputChange}
-                    />
-                    Late Arrival
-                  </label>
+                  {benefits.map((b) => (
+                    <label className="sd-benefit-item" key={b.id}>
+                      <input
+                        type="radio"
+                        name="selectedBenefit"
+                        value={b.name}
+                        checked={formData.selectedBenefit === b.name}
+                        onChange={handleInputChange}
+                      />
+                      {b.name}
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -451,7 +571,7 @@ const ShipDetails = () => {
               className="success-primary"
               onClick={() => {
                 setShowBookingSuccess(false);
-                navigate("/membership");
+                navigate("/dashboard");
               }}
             >
               Done

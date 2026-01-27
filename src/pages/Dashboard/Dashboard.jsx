@@ -127,14 +127,12 @@ export default function Dashboard() {
         return matchesSearch;
       })
       .map(exp => ({
+        ...exp,
         id: exp.id,
         title: exp.title,
         ref: exp.boat || "Subject to Availability",
-        date: `${exp.max_passengers} Passengers`, // Mapping max_passengers to date field for display reuse
-        image: exp.images && exp.images.length > 0 ? exp.images[0] : bookingShips, // Use first image or fallback
-        // Additional fields if needed by Experiences component
-        engine: exp.description ? exp.description.substring(0, 30) + "..." : "", // Mapping description to engine for display reuse
-        length: "" 
+        date: `${exp.max_passengers} Passengers`,
+        image: exp.images && exp.images.length > 0 ? exp.images[0] : bookingShips
       }));
   }
 
@@ -223,7 +221,6 @@ export default function Dashboard() {
           </main>
         </div>
       </section>
-      <Footer />
     </div>
   );
 }
