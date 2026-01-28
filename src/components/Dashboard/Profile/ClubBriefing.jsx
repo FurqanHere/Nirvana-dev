@@ -1,30 +1,84 @@
 import "../../../assets/css/base.css";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import qrCodeImg from '../../../assets/images/qr-code-image.png';
+import ApiService from "../../../services/ApiService";
+import { toast } from "react-toastify";
 
 const ClubBriefing = () => {
   const [activeTab, setActiveTab] = useState('active');
+  const [activeBriefings, setActiveBriefings] = useState([]);
+  const [pastBriefings, setPastBriefings] = useState([]);
+  const [loadingActive, setLoadingActive] = useState(true);
+  const [loadingPast, setLoadingPast] = useState(false);
 
-  const activeBriefings = Array(5).fill({
-    title: "Club Briefing",
-    duration: "",
-    date: "Dec 20, 2025 - 10 AM - 12 PM",
-    location: "Albateen Marina",
-    status: "Pending",
-    statusColor: "#fff"
-  });
+  const formatDate = (dateString, timeSlot) => {
+    if (!dateString) return "";
+    const d = new Date(dateString);
+    const ds = d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    return timeSlot ? `${ds} - ${timeSlot}` : ds;
+  };
 
-  const pastBriefings = Array(5).fill({
-    title: "Club Briefing",
-    duration: "",
-    date: "Dec 19, 2025 - 10 AM - 12 PM",
-    location: "Albateen Marina",
-    status: "Completed", // or Canceled, No Show based on screenshot
-    statusColor: "#fff"
-  }).map((item, index) => ({
-    ...item,
-    status: index % 3 === 0 ? "Cancelled" : index % 3 === 1 ? "Completed" : "No Show"
-  }));
+  const mapBriefings = (list) =>
+    (list || []).map((item) => ({
+      id: item.id,
+      title: "Club Briefing",
+      duration: "",
+      date: formatDate(item.briefing_date, item.time_slot),
+      location: item.location?.name || "",
+      status: item.status,
+      qr_code: item.qr_code,
+    }));
+
+  const fetchBriefings = async (status) => {
+    const setLoading = status === "upcoming" ? setLoadingActive : setLoadingPast;
+    setLoading(true);
+    try {
+      console.log(`Fetching briefings for status: ${status}`); // Debug log
+      const response = await ApiService.get("/getMyClubBriefings", { status });
+      console.log(`API Response for ${status}:`, response.data); // Debug log
+
+      if (response.data.status) {
+        const list = response.data.data?.briefings || [];
+        console.log(`Parsed list for ${status}:`, list); // Debug log
+        const mapped = mapBriefings(list);
+        if (status === "upcoming") setActiveBriefings(mapped);
+        else setPastBriefings(mapped);
+      } else {
+        toast.error(response.data.message || "Failed to fetch club briefings");
+      }
+    } catch (e) {
+      console.error(`Error fetching ${status} briefings:`, e); // Debug log
+      toast.error("Error fetching club briefings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = async (id) => {
+    try {
+      const response = await ApiService.delete(`/cancelClubBriefing/${id}`);
+      if (response.data.status) {
+        toast.success(response.data.message || "Briefing cancelled");
+        fetchBriefings("upcoming");
+        fetchBriefings("past");
+      } else {
+        toast.error(response.data.message || "Unable to cancel briefing");
+      }
+    } catch (e) {
+      toast.error("Error cancelling briefing");
+    }
+  };
+
+  useEffect(() => {
+    fetchBriefings("upcoming");
+    fetchBriefings("past");
+  }, []);
+
+  // useEffect(() => {
+  //   if (activeTab === "past" && pastBriefings.length === 0) {
+  //     fetchBriefings("past");
+  //   }
+  // }, [activeTab]);
 
   const renderBriefingCard = (briefing, type) => (
     <div className="briefing-card">
@@ -50,10 +104,10 @@ const ClubBriefing = () => {
       
       <div className="briefing-actions">
         <div className="qr-code-container">
-          <img src={qrCodeImg} alt="QR Code" />
+          <img src={briefing.qr_code || qrCodeImg} alt="QR Code" />
         </div>
         {type === 'active' && (
-          <button className="cancel-btn">Cancel</button>
+          <button className="cancel-btn" onClick={() => handleCancel(briefing.id)}>Cancel</button>
         )}
       </div>
     </div>
@@ -84,18 +138,31 @@ const ClubBriefing = () => {
       </div>
 
       <div className="briefing-grid">
-        {activeTab === 'active' 
-          ? activeBriefings.map((briefing, index) => (
-              <React.Fragment key={index}>
+        {activeTab === 'active' ? (
+          loadingActive ? (
+            <div className="text-center text-white w-100 mt-5">Loading...</div>
+          ) : activeBriefings.length > 0 ? (
+            activeBriefings.map((briefing) => (
+              <React.Fragment key={briefing.id}>
                 {renderBriefingCard(briefing, 'active')}
               </React.Fragment>
             ))
-          : pastBriefings.map((briefing, index) => (
-              <React.Fragment key={index}>
+          ) : (
+            <div className="text-center text-white w-100 mt-5">No Active Briefings Found</div>
+          )
+        ) : (
+          loadingPast ? (
+            <div className="text-center text-white w-100 mt-5">Loading...</div>
+          ) : pastBriefings.length > 0 ? (
+            pastBriefings.map((briefing) => (
+              <React.Fragment key={briefing.id}>
                 {renderBriefingCard(briefing, 'past')}
               </React.Fragment>
             ))
-        }
+          ) : (
+            <div className="text-center text-white w-100 mt-5">No Past Briefings Found</div>
+          )
+        )}
       </div>
     </div>
   );

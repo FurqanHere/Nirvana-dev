@@ -20,6 +20,7 @@ const ClubBriefing = ({
   const [currentMonth, setCurrentMonth] = useState(moment());
   const [loadingLocations, setLoadingLocations] = useState(false);
   const [loadingTimeslots, setLoadingTimeslots] = useState(false);
+  const [bookingLoading, setBookingLoading] = useState(false);
 
   // Fetch Locations
   useEffect(() => {
@@ -123,6 +124,49 @@ const ClubBriefing = ({
     value: loc.id
   }));
 
+  const handleBook = async () => {
+    if (!selectedMarina || !selectedDay || !selectedSlot) {
+      toast.error("Please select marina, date and time slot");
+      return;
+    }
+    // Validate date must be today or future
+    if (moment(selectedDay).isBefore(moment(), "day")) {
+      toast.error("Please select a date that is today or in the future");
+      return;
+    }
+    try {
+      setBookingLoading(true);
+      const formattedDate = moment(selectedDay).format("YYYY-MM-DD");
+      // Resolve selected slot label (backend expects text like "10 AM - 12 PM")
+      const slotObj = timeslots.find(
+        (s) =>
+          s?.id === selectedSlot ||
+          s?.time_slot === selectedSlot ||
+          s?.time === selectedSlot ||
+          s?.label === selectedSlot
+      );
+      const resolvedSlot =
+        (slotObj && (slotObj.time_slot || slotObj.time || slotObj.label || (slotObj.start_time && slotObj.end_time && `${slotObj.start_time} - ${slotObj.end_time}`))) ||
+        selectedSlot;
+      const formData = new FormData();
+      formData.append("briefing_date", formattedDate);
+      formData.append("time_slot", resolvedSlot);
+      formData.append("location_id", selectedMarina);
+      // Correct endpoint: POST /clubBriefing
+      const response = await ApiService.post("/clubBriefing", formData);
+      if (response.data?.status) {
+        toast.success(response.data.message || "Club briefing booked successfully");
+        if (typeof onBook === "function") onBook();
+      } else {
+        toast.error(response.data?.message || "Failed to book club briefing");
+      }
+    } catch (error) {
+      toast.error("Error booking club briefing");
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
   return (
     <div className="schedule-view club-briefing-page">
       <h2 className="schedule-title">Club Briefing</h2>
@@ -182,8 +226,8 @@ const ClubBriefing = ({
           </div>
           <div className="schedule-slots-grid">
             {timeslots.map((slot, idx) => {
-              const slotLabel = typeof slot === 'string' ? slot : (slot.time || slot.label || `${slot.start_time} - ${slot.end_time}`);
-              const slotValue = typeof slot === 'string' ? slot : (slot.id || slot.time || slotLabel);
+              const slotLabel = typeof slot === 'string' ? slot : (slot.time_slot || slot.time || slot.label || `${slot.start_time} - ${slot.end_time}`);
+              const slotValue = typeof slot === 'string' ? slot : (slot.id || slot.time_slot || slot.time || slotLabel);
               const isSelected = selectedSlot === slotValue;
               
               return (
@@ -207,8 +251,8 @@ const ClubBriefing = ({
       </div>
 
       <div className="schedule-submit-wrap">
-        <button className="schedule-submit-btn" onClick={onBook}>
-          Book
+        <button className="schedule-submit-btn" onClick={handleBook} disabled={bookingLoading}>
+          {bookingLoading ? "Booking..." : "Book"}
         </button>
       </div>
     </div>

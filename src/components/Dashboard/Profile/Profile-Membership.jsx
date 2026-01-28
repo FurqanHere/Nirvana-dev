@@ -1,75 +1,65 @@
 import "../../../assets/css/base.css";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import ApiService from "../../../services/ApiService";
 import sidebarMembership from "../../../assets/images/sidebar-membership.png";
 import calendarIcon from "../../../assets/images/calender-date.png";
 import boatIcon from "../../../assets/images/sidebar-ship.png";
 
 const ProfileMembership = () => {
-  const benefits = [
-    {
-      title: "Boat Bookings",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-    {
-      title: "Rolling Bookings",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-    {
-      title: "Freezing Days",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-    {
-      title: "In-House Captain",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-    {
-      title: "Weekends Access",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-    {
-      title: "Houseboat Access",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-    {
-      title: "Session Merging",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-    {
-      title: "Weekday Access",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-    {
-      title: "Boat Bookings",
-      progress: 20.0,
-      used: 10,
-      remaining: 5,
-      total: 15,
-    },
-  ];
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      const response = await ApiService.get('/getProfile');
+      if (response.data.status) {
+        setProfileData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching profile data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
+  const formatCurrency = (amount) => {
+    if (!amount) return "0 AED";
+    return `${parseFloat(amount).toLocaleString()} AED`;
+  };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+        <div className="spinner-border text-light" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const subscription = profileData?.subscription_status?.subscription;
+  const user = profileData?.user;
+  const benefits = profileData?.benefits || subscription?.benefits || [];
+
+  const getCardStyle = () => {
+    const bgColor = subscription?.package?.bg_color;
+    if (!bgColor) return {};
+
+    if (bgColor.includes(',')) {
+      return { background: `linear-gradient(to right, ${bgColor})` };
+    }
+    return { backgroundColor: bgColor };
+  };
 
   return (
     <div className="profile-membership-view">
@@ -81,15 +71,15 @@ const ProfileMembership = () => {
       </div>
 
       {/* Royal Card */}
-      <div className="membership-info-card">
+      <div className="membership-info-card" style={getCardStyle()}>
         <div className="info-card-header">
           <div className="info-card-icon">
-            <img src={sidebarMembership} alt="Membership" />
+             <i className="bi bi-person-vcard-fill"></i>
           </div>
           <div className="info-card-title-group">
-            <h2>Royal</h2>
+            <h2>{subscription?.package?.name || "Membership"}</h2>
             <span className="id-badge">
-              <i className="bi bi-person-badge"></i> ID: NBC-00051
+              <i className="bi bi-person-badge"></i> ID: {user?.membership_id || "N/A"}
             </span>
           </div>
         </div>
@@ -100,9 +90,9 @@ const ProfileMembership = () => {
             <div className="item-icon">
               <i className="bi bi-tag-fill"></i>
             </div>
-            <div className="item-content">
+            <div className="item-content row-layout">
               <span className="label">Price</span>
-              <span className="value">10,000 AED</span>
+              <span className="value">{formatCurrency(subscription?.total_amount)}</span>
             </div>
           </div>
 
@@ -111,9 +101,11 @@ const ProfileMembership = () => {
             <div className="item-icon">
               <i className="bi bi-check-circle-fill"></i>
             </div>
-            <div className="item-content">
+            <div className="item-content row-layout">
               <span className="label">Status</span>
-              <span className="value green-text">Active</span>
+              <span className="value green-text" style={{ textTransform: 'capitalize' }}>
+                {profileData?.subscription_status?.status || "Inactive"}
+              </span>
             </div>
           </div>
 
@@ -124,7 +116,7 @@ const ProfileMembership = () => {
             </div>
             <div className="item-content">
               <span className="label">Boat Access</span>
-              <span className="value">A,B</span>
+              <span className="value">{subscription?.allowed_categories || "None"}</span>
             </div>
           </div>
 
@@ -136,11 +128,11 @@ const ProfileMembership = () => {
             <div className="item-content">
               <span className="label">Current period</span>
               <span className="value date-range">
-                Nov 20, 2025 <br /> to Nov 2, 2025
+                {formatDate(subscription?.start_date)} <br /> to {formatDate(subscription?.end_date)}
               </span>
             </div>
             <div className="days-badge">
-              348 <small>days</small>
+              {subscription?.days_remaining || 0} <small>days</small>
             </div>
           </div>
         </div>
@@ -155,57 +147,60 @@ const ProfileMembership = () => {
             Benefits
         </h3>
         <div className="benefits-grid">
-          {benefits.map((benefit, index) => (
-            <div className="benefit-card" key={index}>
-              <div className="benefit-header">
-                <div className="benefit-icon-box">
-                    <i className="bi bi-star-fill"></i>
-                </div>
-                <span className="benefit-name">{benefit.title}</span>
-              </div>
-              <div className="benefit-progress">
-                <div className="progress-labels">
-                  <span>Progress</span>
-                  <span>{benefit.progress}%</span>
-                </div>
-                <div className="progress-bar-bg">
-                  <div
-                    className="progress-bar-fill"
-                    style={{ width: `${benefit.progress}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div className="benefit-stats">
-                <div className="stat-row used">
-                  <div className="stat-label">
-                    <div className="icon-box">
-                      <i className="bi bi-check-lg"></i>
-                    </div>{" "}
-                    Used
+          {benefits.map((benefit, index) => {
+            const progress = benefit.progress;
+            return (
+              <div className="benefit-card" key={index}>
+                <div className="benefit-header">
+                  <div className="benefit-icon-box">
+                      <i className="bi bi-star-fill"></i>
                   </div>
-                  <div className="stat-value">{benefit.used}</div>
+                  <span className="benefit-name">{benefit.title}</span>
                 </div>
-                <div className="stat-row remaining">
-                  <div className="stat-label">
-                    <div className="icon-box">
-                      <i className="bi bi-pie-chart-fill"></i>
-                    </div>{" "}
-                    Remaining
+                <div className="benefit-progress">
+                  <div className="progress-labels">
+                    <span>Progress</span>
+                    <span>{progress}%</span>
                   </div>
-                  <div className="stat-value">{benefit.remaining}</div>
+                  <div className="progress-bar-bg">
+                    <div
+                      className="progress-bar-fill"
+                      style={{ width: `${progress === '--' ? 0 : parseFloat(progress)}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="stat-row total">
-                  <div className="stat-label">
-                    <div className="icon-box">
-                      <i className="bi bi-grid-fill"></i>
-                    </div>{" "}
-                    Total
+                <div className="benefit-stats">
+                  <div className="stat-row used">
+                    <div className="stat-label">
+                      <div className="icon-box">
+                        <i className="bi bi-check-lg"></i>
+                      </div>
+                      Used
+                    </div>
+                    <div className="stat-value">{benefit.used}</div>
                   </div>
-                  <div className="stat-value">{benefit.total}</div>
+                  <div className="stat-row remaining">
+                    <div className="stat-label">
+                      <div className="icon-box">
+                        <i className="bi bi-pie-chart-fill"></i>
+                      </div>
+                      Remaining
+                    </div>
+                    <div className="stat-value">{benefit.remaining}</div>
+                  </div>
+                  <div className="stat-row total">
+                    <div className="stat-label">
+                      <div className="icon-box">
+                        <i className="bi bi-grid-fill"></i>
+                      </div>
+                      Total
+                    </div>
+                    <div className="stat-value">{benefit.total}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

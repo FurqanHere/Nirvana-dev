@@ -5,7 +5,7 @@ import profilePic from "../../../assets/images/profile-pic.png";
 import { toast } from "react-toastify";
 
 const PersonalInformation = () => {
-  const [currentView, setCurrentView] = useState("details"); // details | edit
+  const [currentView, setCurrentView] = useState("details");
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef(null);
 

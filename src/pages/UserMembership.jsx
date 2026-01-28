@@ -228,13 +228,13 @@ const Membership = ({ view }) => {
     formData.append("document_type", selectedDocType === "emiratesId" ? "emirates_id" : "passport");
 
     appendIfExists("profile-image", uploadedFiles.profileImage);
-    appendIfExists("passport-front", uploadedFiles.passportFront);
-    appendIfExists("passport-back", uploadedFiles.passportBack);
-    appendIfExists("emirates.id.front", uploadedFiles.emiratesIdFront);
-    appendIfExists("emirates.id.back", uploadedFiles.emiratesIdBack);
-    appendIfExists("boat.license.front", uploadedFiles.boatLicenseFront);
-    appendIfExists("boat.license.back", uploadedFiles.boatLicenseBack);
-    appendIfExists("eye-test", uploadedFiles.eyeTest);
+    appendIfExists("passport_front", uploadedFiles.passportFront);
+    appendIfExists("passport_back", uploadedFiles.passportBack);
+    appendIfExists("emirates_id_front", uploadedFiles.emiratesIdFront);
+    appendIfExists("emirates_id_back", uploadedFiles.emiratesIdBack);
+    appendIfExists("boat_license_front", uploadedFiles.boatLicenseFront);
+    appendIfExists("boat_license_back", uploadedFiles.boatLicenseBack);
+    appendIfExists("eye_test", uploadedFiles.eyeTest);
 
     try {
       const response = await ApiService.post("/uploadDocuments", formData, {
@@ -657,6 +657,7 @@ const Membership = ({ view }) => {
         }}
       >
         {currentView !== "schedule" &&
+          currentView !== "clubBriefing" &&
           currentView !== "details" &&
           currentView !== "cardInfo" &&
           currentView !== "documentUpload" &&

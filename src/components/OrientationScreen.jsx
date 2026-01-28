@@ -94,30 +94,34 @@ const OrientationScreen = ({
       return;
     }
 
+    // date must be today or future
+    if (moment(selectedDay).isBefore(moment(), "day")) {
+      toast.error("Please select a date that is today or in the future");
+      return;
+    }
     setIsBooking(true);
     try {
       // Find the selected slot object to get the time string if selectedSlot is an ID
       let timeSlotToSend = selectedSlot;
       const selectedSlotObj = timeslots.find(t => {
-          const val = typeof t === 'string' ? t : (t.id || t.time || (t.start_time ? `${t.start_time} - ${t.end_time}` : null));
+          const val = typeof t === 'string' ? t : (t.id || t.time_slot || t.time || (t.start_time ? `${t.start_time} - ${t.end_time}` : null));
           return val === selectedSlot;
       });
 
       if (selectedSlotObj) {
           // If we found the object, prioritize sending the time string
-          timeSlotToSend = typeof selectedSlotObj === 'string' ? selectedSlotObj : (selectedSlotObj.time || selectedSlotObj.label || `${selectedSlotObj.start_time} - ${selectedSlotObj.end_time}`);
+          timeSlotToSend = typeof selectedSlotObj === 'string' ? selectedSlotObj : (selectedSlotObj.time_slot || selectedSlotObj.time || selectedSlotObj.label || `${selectedSlotObj.start_time} - ${selectedSlotObj.end_time}`);
       } else {
           // Fallback: ensure it is a string
           timeSlotToSend = String(selectedSlot);
       }
 
-      const payload = {
-        location_id: selectedMarina,
-        orientation_date: moment(selectedDay).format("YYYY-MM-DD"),
-        time_slot: timeSlotToSend, 
-      };
+      const formData = new FormData();
+      formData.append("orientation_date", moment(selectedDay).format("YYYY-MM-DD"));
+      formData.append("time_slot", timeSlotToSend);
+      formData.append("location_id", selectedMarina);
 
-      const response = await ApiService.post("/saveOrientation", payload);
+      const response = await ApiService.post("/saveOrientation", formData);
 
       if (response.data.status) {
         onBook(); // Trigger success popup in parent
@@ -250,8 +254,8 @@ const OrientationScreen = ({
               // Or just a string "10:00 - 12:00".
               // Let's handle both string and object cases safely.
               
-              const slotLabel = typeof slot === 'string' ? slot : (slot.time || slot.label || `${slot.start_time} - ${slot.end_time}`);
-              const slotValue = typeof slot === 'string' ? slot : (slot.id || slot.time || slotLabel);
+              const slotLabel = typeof slot === 'string' ? slot : (slot.time_slot || slot.time || slot.label || `${slot.start_time} - ${slot.end_time}`);
+              const slotValue = typeof slot === 'string' ? slot : (slot.id || slot.time_slot || slot.time || slotLabel);
               
               const isSelected = selectedSlot === slotValue;
               
@@ -315,7 +319,7 @@ const OrientationScreen = ({
                 {selectedDay ? moment(selectedDay).format("MMM D, YYYY") : ""} 
                 {/* We need to display time slot too. Since selectedSlot is a value, we might need to find the label. */}
                 {/* For simplicity, if selectedSlot is string, show it. If ID, we can't easily show label without looking up in timeslots. */}
-                 – {timeslots.find(t => (t.id || t) === selectedSlot)?.time || selectedSlot}
+                 – {timeslots.find(t => (t.id || t.time_slot || t) === selectedSlot)?.time_slot || timeslots.find(t => (t.id || t) === selectedSlot)?.time || selectedSlot}
               </div>
               {/* <div className="success-detail-ref">Ref #: 3265</div> */}
             </div>

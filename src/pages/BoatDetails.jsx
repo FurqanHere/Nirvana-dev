@@ -13,9 +13,9 @@ import yartShipImg1 from "../assets/images/ship-thumbnails1.png";
 import yartShipImg2 from "../assets/images/ship-thumbnails2.png";
 import yartShipImg3 from "../assets/images/ship-thumbnails3.png";
 import ApiService from "../services/ApiService";
+import { toast } from "react-toastify";
 import { Dropdown } from "primereact/dropdown";
 
-// Fix Leaflet icon issue
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
@@ -121,43 +121,70 @@ const ShipDetails = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.date) {
+      toast.error("Please select a date");
+      return;
+    }
+    if (!formData.time) {
+      toast.error("Please select a time");
+      return;
+    }
+    if (formData.adults < 1) {
+      toast.error("At least 1 adult is required");
+      return;
+    }
 
     const selectedAddOns = addOns
       .filter((addon) => addon.selected && addon.quantity > 0)
       .map((addon) => ({
         id: addon.id,
-        name: addon.name,
-        price: addon.price,
         quantity: addon.quantity,
       }));
 
-    const bookingData = {
-      boat: {
-        id: boatData?.id || null,
-        title: boatData?.title || "",
-        ref: boatData?.ref || "",
-        dateLabel: boatData?.date || "",
-      },
-      booking: {
-        date: formData.date,
-        time: formData.time,
-        adults: formData.adults,
-        children: formData.children,
-        marinaLocation: formData.marinaLocation,
-        captain: formData.captain,
-        selectedBenefit: formData.selectedBenefit,
-        specialRequests: formData.specialRequests,
-      },
-      addons: selectedAddOns,
-    };
+    // Find location ID from selected name
+    const selectedLoc = locations.find(l => l.name === formData.marinaLocation);
+    const locationId = selectedLoc ? selectedLoc.id : (boatData.location_id || 5);
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("boatBookingDetails", JSON.stringify(bookingData));
+    try {
+      const payload = new FormData();
+      payload.append("boat_id", boatData.id);
+      payload.append("booking_date", formData.date);
+      payload.append("booking_time", formData.time);
+      payload.append("adults", formData.adults);
+      payload.append("children", formData.children);
+      payload.append("location_id", locationId);
+      payload.append("special_requests", formData.specialRequests || formData.captain);
+      
+      // Handle benefits
+      if (formData.selectedBenefit) {
+        const benefit = benefits.find(b => b.name === formData.selectedBenefit);
+        if (benefit) {
+          payload.append("benefit_ids[0]", benefit.id);
+        }
+      }
+
+      // Handle addons as array keys
+      if (selectedAddOns.length > 0) {
+        selectedAddOns.forEach((addon, index) => {
+          payload.append(`addons[${index}][id]`, addon.id);
+          payload.append(`addons[${index}][quantity]`, addon.quantity);
+        });
+      }
+
+      const response = await ApiService.post("/createBooking", payload);
+
+      if (response.data.status) {
+        setShowBookingSuccess(true);
+      } else {
+        toast.error(response.data.message || "Failed to create booking");
+      }
+    } catch (error) {
+      console.error("Booking error:", error);
+      toast.error("An error occurred while creating booking");
     }
-
-    setShowBookingSuccess(true);
   };
 
   useEffect(() => {
@@ -571,7 +598,7 @@ const ShipDetails = () => {
               className="success-primary"
               onClick={() => {
                 setShowBookingSuccess(false);
-                navigate("/dashboard");
+                navigate("/dashboard/bookings/boat");
               }}
             >
               Done

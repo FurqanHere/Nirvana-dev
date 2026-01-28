@@ -1,5 +1,6 @@
 import "../../assets/css/base.css";
 import React, { useEffect, useState } from "react";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../services/ApiService";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -21,7 +22,6 @@ import OrientationSessions from "../../components/Dashboard/Profile/OrientationS
 import Notifications from "../../components/Dashboard/Profile/Notifications";
 import Boats from "../../components/Dashboard/HomePage/Boats";
 import Experiences from "../../components/Dashboard/HomePage/Experiences";
-import HomeBoatsDetail from "../HomeBoatsDetail";
 import bookingShips from "../../assets/images/bookingShips.png";
 import profilePic from "../../assets/images/profile-pic.png";
 
@@ -34,11 +34,11 @@ const sampleCards = Array.from({ length: 8 }).map((_, i) => ({
 }));
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [selectedTab, setSelectedTab] = useState("bookings");
-  const [selectedSection, setSelectedSection] = useState("boats");
   const [selectedMarina, setSelectedMarina] = useState("");
   const [search, setSearch] = useState("");
-  const [selectedBooking, setSelectedBooking] = useState(null);
   const [userName, setUserName] = useState("User");
   const [boats, setBoats] = useState([]);
   const [experiences, setExperiences] = useState([]);
@@ -87,13 +87,72 @@ export default function Dashboard() {
     }
   }, []);
 
-  const handleSelectSection = (sectionKey) => {
-    setSelectedSection(sectionKey);
-    if (sectionKey === "experiences") {
+  // Update selectedTab based on URL for Boats/Experiences views
+  useEffect(() => {
+    if (location.pathname.includes("/dashboard/experiences")) {
       setSelectedTab("experiences");
-    }
-    if (sectionKey === "boats" && selectedTab === "experiences") {
+    } else if (location.pathname.includes("/dashboard/boats")) {
       setSelectedTab("bookings");
+    }
+  }, [location.pathname]);
+
+  const getActiveSection = (pathname) => {
+    if (pathname.includes("/dashboard/experiences")) return "experiences";
+    if (pathname.includes("/dashboard/bookings/boat")) return "boat-bookings";
+    if (pathname.includes("/dashboard/bookings/experience")) return "experience-bookings";
+    if (pathname.includes("/dashboard/bookings/detail")) return "boat-bookings"; // Fallback parent
+    if (pathname.includes("/dashboard/payments/upcoming")) return "upcoming";
+    if (pathname.includes("/dashboard/payments/past")) return "past";
+    if (pathname.includes("/dashboard/profile/membership")) return "membership";
+    if (pathname.includes("/dashboard/profile/personal")) return "personal";
+    if (pathname.includes("/dashboard/profile/favorites")) return "favorites";
+    if (pathname.includes("/dashboard/profile/documents")) return "documents";
+    if (pathname.includes("/dashboard/profile/penalty")) return "penalty";
+    if (pathname.includes("/dashboard/profile/briefing")) return "briefing";
+    if (pathname.includes("/dashboard/profile/orientation")) return "orientation";
+    if (pathname.includes("/dashboard/notifications")) return "notifications";
+    if (pathname.includes("/dashboard/boat/boat-detail")) return "boats";
+    if (pathname.includes("/dashboard/boats")) return "boats";
+    return "boats";
+  };
+
+  const selectedSection = getActiveSection(location.pathname);
+
+  const handleSelectSection = (key) => {
+    if (key === "logout") {
+      localStorage.removeItem("user");
+      navigate("/login");
+      return;
+    }
+
+    let path = "/dashboard/boats";
+    switch(key) {
+        case "boats": path = "/dashboard/boats"; break;
+        case "experiences": path = "/dashboard/experiences"; break;
+        case "boat-bookings": path = "/dashboard/bookings/boat"; break;
+        case "experience-bookings": path = "/dashboard/bookings/experience"; break;
+        case "upcoming": path = "/dashboard/payments/upcoming"; break;
+        case "past": path = "/dashboard/payments/past"; break;
+        case "membership": path = "/dashboard/profile/membership"; break;
+        case "personal": path = "/dashboard/profile/personal"; break;
+        case "favorites": path = "/dashboard/profile/favorites"; break;
+        case "documents": path = "/dashboard/profile/documents"; break;
+        case "penalty": path = "/dashboard/profile/penalty"; break;
+        case "briefing": path = "/dashboard/profile/briefing"; break;
+        case "orientation": path = "/dashboard/profile/orientation"; break;
+        case "notifications": path = "/dashboard/notifications"; break;
+        case "boat-detail": path = "/dashboard/boat/boat-detail"; break;
+        default: path = "/dashboard/boats";
+    }
+    navigate(path);
+  };
+
+  const handleSetSelectedTab = (tab) => {
+    setSelectedTab(tab);
+    if (tab === "experiences") {
+        navigate("/dashboard/experiences");
+    } else if (tab === "bookings") {
+        navigate("/dashboard/boats");
     }
   };
 
@@ -102,6 +161,7 @@ export default function Dashboard() {
     value: loc.id
   }));
 
+  // Filter logic remains the same, used by Boats/Experiences components
   let filteredCards;
   if (selectedTab === "bookings") {
     filteredCards = boats
@@ -122,8 +182,6 @@ export default function Dashboard() {
     filteredCards = experiences
       .filter(exp => {
         const matchesSearch = exp.title.toLowerCase().includes(search.toLowerCase());
-        // For experiences, we might not have location_id in the same way, but if needed:
-        // const matchesMarina = selectedMarina ? exp.location_id === selectedMarina : true;
         return matchesSearch;
       })
       .map(exp => ({
@@ -148,9 +206,21 @@ export default function Dashboard() {
     </div>
   );
 
+  const BookingDetailWrapper = () => {
+    const loc = useLocation();
+    const nav = useNavigate();
+    const booking = loc.state?.booking;
+    
+    if (!booking) {
+        return <Navigate to="/dashboard/bookings/boat" replace />;
+    }
+    
+    return <BookingDetail booking={booking} onBack={() => nav(-1)} />;
+  };
+
   return (
     <div className="dashboard-page">
-      <Header profile={profileComponent} onNotificationClick={() => setSelectedSection("notifications")} />
+      <Header profile={profileComponent} onNotificationClick={() => handleSelectSection("notifications")} />
       <section className="dashboard-section">
         <div className="dashboard-layout">
           <Sidebar
@@ -159,65 +229,52 @@ export default function Dashboard() {
           />
 
           <main className="dashboard-content">
-            {selectedSection === "boat-bookings" ? (
-              selectedBooking ? (
-                <BookingDetail booking={selectedBooking} onBack={() => setSelectedBooking(null)} />
-              ) : (
-                <BoatBookingDetail onViewBooking={(booking) => setSelectedBooking(booking)} />
-              )
-            ) : selectedSection === "experience-bookings" ? (
-              selectedBooking ? (
-                <BookingDetail booking={selectedBooking} onBack={() => setSelectedBooking(null)} />
-              ) : (
-                <ExperienceBookings onViewBooking={(booking) => setSelectedBooking(booking)} />
-              )
-            ) : selectedSection === "upcoming" ? (
-              <Upcoming />
-            ) : selectedSection === "past" ? (
-              <Previous />
-            ) : selectedSection === "membership" ? (
-              <ProfileMembership />
-            ) : selectedSection === "personal" ? (
-              <PersonalInformation />
-            ) : selectedSection === "favorites" ? (
-              <FavouriteYacts />
-            ) : selectedSection === "documents" ? (
-              <PersonalDocuments />
-            ) : selectedSection === "penalty" ? (
-              <PenaltyReports />
-            ) : selectedSection === "briefing" ? (
-              <ClubBriefing />
-            ) : selectedSection === "orientation" ? (
-              <OrientationSessions />
-            ) : selectedSection === "notifications" ? (
-              <Notifications />
-            ) : selectedSection === "boat-detail" ? (
-              <HomeBoatsDetail />
-            ) : selectedTab === "bookings" ? (
-              <Boats
-                selectedTab={selectedTab}
-                setSelectedTab={setSelectedTab}
-                setSelectedSection={setSelectedSection}
-                selectedMarina={selectedMarina}
-                setSelectedMarina={setSelectedMarina}
-                filteredCards={filteredCards}
-                marinaOptions={marinaOptions}
-                search={search}
-                setSearch={setSearch}
-              />
-            ) : (
-              <Experiences
-                selectedTab={selectedTab}
-                setSelectedTab={setSelectedTab}
-                setSelectedSection={setSelectedSection}
-                selectedMarina={selectedMarina}
-                setSelectedMarina={setSelectedMarina}
-                filteredCards={filteredCards}
-                search={search}
-                setSearch={setSearch}
-                marinaOptions={marinaOptions}
-              />
-            )}
+            <Routes>
+                <Route path="/" element={<Navigate to="boats" replace />} />
+                <Route path="boats" element={
+                    <Boats
+                        selectedTab={selectedTab}
+                        setSelectedTab={handleSetSelectedTab}
+                        setSelectedSection={handleSelectSection}
+                        selectedMarina={selectedMarina}
+                        setSelectedMarina={setSelectedMarina}
+                        filteredCards={filteredCards}
+                        marinaOptions={marinaOptions}
+                        search={search}
+                        setSearch={setSearch}
+                    />
+                } />
+                <Route path="experiences" element={
+                    <Experiences
+                        selectedTab={selectedTab}
+                        setSelectedTab={handleSetSelectedTab}
+                        setSelectedSection={handleSelectSection}
+                        selectedMarina={selectedMarina}
+                        setSelectedMarina={setSelectedMarina}
+                        filteredCards={filteredCards}
+                        search={search}
+                        setSearch={setSearch}
+                        marinaOptions={marinaOptions}
+                    />
+                } />
+                <Route path="bookings/boat" element={
+                    <BoatBookingDetail onViewBooking={(booking) => navigate('/dashboard/bookings/detail', { state: { booking } })} />
+                } />
+                <Route path="bookings/experience" element={
+                    <ExperienceBookings onViewBooking={(booking) => navigate('/dashboard/bookings/detail', { state: { booking } })} />
+                } />
+                <Route path="bookings/detail" element={<BookingDetailWrapper />} />
+                <Route path="payments/upcoming" element={<Upcoming />} />
+                <Route path="payments/past" element={<Previous />} />
+                <Route path="profile/membership" element={<ProfileMembership />} />
+                <Route path="profile/personal" element={<PersonalInformation />} />
+                <Route path="profile/favorites" element={<FavouriteYacts />} />
+                <Route path="profile/documents" element={<PersonalDocuments />} />
+                <Route path="profile/penalty" element={<PenaltyReports />} />
+                <Route path="profile/briefing" element={<ClubBriefing />} />
+                <Route path="profile/orientation" element={<OrientationSessions />} />
+                <Route path="notifications" element={<Notifications />} />
+            </Routes>
           </main>
         </div>
       </section>

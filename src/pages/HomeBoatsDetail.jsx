@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { toast } from "react-toastify";
+import ApiService from "../services/ApiService";
+import { useLocation } from "react-router-dom";
 // import Header from "../components/Header";
 // import Footer from "../components/Footer";
 
@@ -30,18 +33,22 @@ const redIcon = new L.Icon({
 });
 
 const HomeBoatsDetail = () => {
+  const locationState = useLocation();
+  const boatData = locationState.state?.boatData || {};
+
   const [bookingData, setBookingData] = useState({
     date: "",
     time: "",
     adults: "",
     children: "",
-    location: "",
+    location: boatData.location?.name || "",
     captain: "In-House Captain",
     selectedOption: "In-House Captain"
   });
   
   // eslint-disable-next-line no-unused-vars
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,25 +59,45 @@ const HomeBoatsDetail = () => {
     setBookingData({ ...bookingData, selectedOption: e.target.value });
   };
 
-  // const validateForm = () => {
-  //   const newErrors = {};
-  //   if (!bookingData.date) newErrors.date = "Date is required";
-  //   if (!bookingData.time) newErrors.time = "Time is required";
-  //   if (!bookingData.adults) newErrors.adults = "Adults count is required";
-  //   if (!bookingData.location) newErrors.location = "Location is required";
+  const validateForm = () => {
+    const newErrors = {};
+    if (!bookingData.date) newErrors.date = "Date is required";
+    if (!bookingData.time) newErrors.time = "Time is required";
+    if (!bookingData.adults) newErrors.adults = "Adults count is required";
     
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
-  const handleBook = () => {
-    // if (validateForm()) {
-      console.log("Booking Data:", bookingData);
-      // Proceed with booking logic here
-      setShowSuccessPopup(true);
-    // }
+  const handleBook = async () => {
+    if (validateForm()) {
+      setIsLoading(true);
+      try {
+        const payload = new FormData();
+        payload.append("boat_id", boatData.id);
+        payload.append("booking_date", bookingData.date);
+        payload.append("booking_time", bookingData.time);
+        payload.append("adults", bookingData.adults);
+        payload.append("children", bookingData.children || 0);
+        payload.append("location_id", boatData.location_id || 5); // Default to 5 if not available
+        payload.append("special_requests", bookingData.selectedOption);
+
+        const response = await ApiService.post("/createBooking", payload);
+        
+        if (response.data.status) {
+          setShowSuccessPopup(true);
+        } else {
+          toast.error(response.data.message || "Failed to create booking");
+        }
+      } catch (error) {
+        console.error("Booking error:", error);
+        toast.error("An error occurred while creating booking");
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -122,7 +149,7 @@ const HomeBoatsDetail = () => {
               Boat Booked<br />Successfully!
             </h2>
             <button 
-              onClick={() => setShowSuccessPopup(false)}
+              onClick={() => navigate('/dashboard/bookings/boat')}
               style={{
                 backgroundColor: 'white',
                 color: '#1E40AF',
@@ -148,16 +175,16 @@ const HomeBoatsDetail = () => {
           <div className="detail-top">
             <div className="detail-header">
               <div>
-                <p className="detail-kicker">250 DAUNTLESS #3</p>
+                <p className="detail-kicker">{boatData.name || "Boat Name"}</p>
                 <p className="detail-subtitle">
-                  Twin Mercury Verado V6 (2 x 225 hp)
+                  {boatData.description || "Luxury Boat Experience"}
                 </p>
               </div>
               <div className="detail-specs">
                 {[
-                  { img: lengthImg, label: "Length:16m" },
-                  { img: personIcon, label: "10 Person" },
-                  { img: bedImg, label: "2 Bed" },
+                  { img: lengthImg, label: `Length:${boatData.length_meters || "N/A"}m` },
+                  { img: personIcon, label: `${boatData.max_persons || "N/A"} Person` },
+                  { img: bedImg, label: `${boatData.num_beds || "N/A"} Bed` },
                 ].map((item) => (
                   <div key={item.label} className="detail-spec-card">
                     <img src={item.img} alt={item.label} />
@@ -169,13 +196,7 @@ const HomeBoatsDetail = () => {
           </div>
 
           <p className="detail-description">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-            accusantium doloremque laudantium, totam rem aperiam, eaque
-            ipsa quae ab illo inventore veritatis et quasi architecto
-            beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem
-            quia voluptas sit aspernatur aut odit aut fugit, sed quia
-            consequuntur magni dolores eos qui ratione voluptatem sequi
-            nesciunt.
+            {boatData.description || "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."}
           </p>
 
           <div className="detail-form">
