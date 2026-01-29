@@ -27,9 +27,6 @@ import paymentImg from "../assets/images/payment-img.png";
 import bookingImg from "../assets/images/booking-img.png";
 import memberBg from "../assets/images/member-bg.png";
 import orientationBg from "../assets/images/orientation-bg.png";
-import boatCard1 from "../assets/images/boat1.png";
-import boatCard2 from "../assets/images/boat2.png";
-import boatCard3 from "../assets/images/boat3.png";
 
 const services = [
   {

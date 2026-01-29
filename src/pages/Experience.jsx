@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import ApiService from "../services/ApiService";
@@ -8,25 +9,11 @@ import landingBg from "../assets/images/experiences/experience-bg.png";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-import romanticMain from "../assets/images/experiences/romantic-bg.png";
-import romanticThumb1 from "../assets/images/experiences/romantic-img1.png";
-import romanticThumb2 from "../assets/images/experiences/romantic-img2.png";
-
-import adventureMain from "../assets/images/experiences/sun-cruise.png";
-import adventureThumb1 from "../assets/images/experiences/romantic-img1.png";
-import adventureThumb2 from "../assets/images/experiences/romantic-img2.png";
-
-import celebrationMain from "../assets/images/experiences/photography.png";
-import celebrationThumb1 from "../assets/images/experiences/romantic-img1.png";
-import celebrationThumb2 from "../assets/images/experiences/romantic-img2.png";
-
-import foodMain from "../assets/images/experiences/enjoyment.png";
-import foodThumb1 from "../assets/images/experiences/romantic-img1.png";
-import foodThumb2 from "../assets/images/experiences/romantic-img2.png";
-
 import "../assets/css/base.css"
 
 const Experiences = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -208,6 +195,7 @@ const Experiences = () => {
             className="experience-bg"
             style={{
               backgroundImage: `url(${experienceData[activeTab].mainImage})`,
+              borderRadius: "0px",
             }}
             data-aos="zoom-in"
           >
@@ -245,7 +233,7 @@ const Experiences = () => {
               your needs.
             </p>
             <div className="experince-contactus-btn d-flex justify-content-center align-items-center">
-              <button className="btn bg-white">Contact Us</button>
+              <button className="btn bg-white" onClick={() => navigate("/contact-us")}>Contact Us</button>
             </div>
           </div>
         </div>

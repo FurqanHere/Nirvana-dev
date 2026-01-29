@@ -150,6 +150,15 @@ const Membership = ({ view }) => {
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [contractDocUrl, setContractDocUrl] = useState(null);
   const [clubSummaryUrl, setClubSummaryUrl] = useState(null);
+ 
+   const getPkgStyle = (bg) => {
+     if (!bg) return undefined;
+     const parts = String(bg).split(/[,\s]+/).filter(Boolean);
+     if (parts.length >= 2) {
+       return { background: `linear-gradient(135deg, ${parts[0]}, ${parts[1]})` };
+     }
+     return { background: parts[0] };
+   };
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -698,6 +707,7 @@ const Membership = ({ view }) => {
                     className={`membership-card membership-card-${index}`}
                     data-aos="fade-up"
                     data-aos-delay={index * 150}
+                    style={getPkgStyle(pkg.bg_color)}
                   >
                     <div className="membership-card-star">
                       {/* Strap Image */}

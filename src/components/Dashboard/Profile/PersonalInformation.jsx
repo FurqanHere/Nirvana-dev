@@ -99,6 +99,18 @@ const PersonalInformation = () => {
             toast.success(response.data.message || "Profile updated successfully.");
             // Update local state with response data to ensure consistency
             const user = response.data.data.user;
+
+            // Update localStorage to keep header sync
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+                try {
+                    const parsedUser = JSON.parse(storedUser);
+                    const updatedUser = { ...parsedUser, ...user };
+                    localStorage.setItem("user", JSON.stringify(updatedUser));
+                } catch (e) {
+                    console.error("Error updating local storage", e);
+                }
+            }
             
             // Fix phone formatting logic to avoid duplication (same as fetch)
             let formattedPhone = user.phone || "";

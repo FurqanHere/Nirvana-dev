@@ -129,7 +129,7 @@ const BookExperience = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -145,20 +145,36 @@ const BookExperience = () => {
         quantity: addon.quantity,
       }));
 
-    const bookingData = {
-      experience: experience,
-      booking: formData,
-      addons: selectedAddOns,
+    const payload = {
+      experience_id: experience?.id,
+      full_name: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      emirates_id: formData.emiratesId,
+      promo_code: formData.promoCode,
+      booking_date: formData.date,
+      booking_time: formData.time,
+      adults: formData.adults,
+      children: formData.children,
+      is_captain: formData.captain ? 1 : 0,
+      special_requests: formData.specialRequests,
+      addons: selectedAddOns.map((addon) => ({
+        addon_id: addon.id,
+        quantity: addon.quantity,
+      })),
     };
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        "experienceBookingDetails",
-        JSON.stringify(bookingData),
-      );
+    try {
+      const response = await ApiService.post("/createExperience", payload);
+      if (response.data.status) {
+        setShowBookingSuccess(true);
+      } else {
+        // Handle error (optional: show toast)
+        console.error("Booking failed:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error creating experience:", error);
     }
-
-    setShowBookingSuccess(true);
   };
 
   return (

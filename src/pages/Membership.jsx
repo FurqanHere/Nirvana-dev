@@ -202,11 +202,23 @@ const Membership = () => {
           ) : (
             packages.map((pkg, idx) => {
               const style = styles[idx % styles.length];
+              
+              let backgroundStyle = {};
+              if (pkg.bg_color) {
+                const colors = pkg.bg_color.split(/[\s,]+/).filter(c => c);
+                if (colors.length > 1) {
+                  backgroundStyle = { background: `linear-gradient(135deg, ${colors[0]}, ${colors[1]})` };
+                } else if (colors.length === 1) {
+                  backgroundStyle = { background: colors[0] };
+                }
+              }
+
               return (
                 <div
                   className={`pkg-card ${style.theme}`}
                   key={pkg.id || idx}
                   data-aos="fade-up"
+                  style={backgroundStyle}
                 >
                   <div className="pkg-corner">
                     <img className="pkg-strap" src={style.strap} alt="" />

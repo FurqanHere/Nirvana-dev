@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import logo from "../assets/images/logo.png";
+import profilePic from "../assets/images/profile-pic.png";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -24,9 +25,29 @@ const rightLinks = [
 
 export default function Navbar({ background = "", profile = null, showAuthButtons = true }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState("home");
   const [isScrolled, setIsScrolled] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
   const user = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+
+  useEffect(() => {
+    if (user) {
+      try {
+        setUserInfo(JSON.parse(user));
+      } catch (e) {
+        console.error("Error parsing user data", e);
+      }
+    } else {
+      setUserInfo(null);
+    }
+  }, [user]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUserInfo(null);
+    navigate("/");
+  };
 
   useEffect(() => {
     // Set active link based on current route
@@ -87,9 +108,30 @@ export default function Navbar({ background = "", profile = null, showAuthButton
         <div className="navbar-container">
           {/* Left Group */}
           <div className="d-flex align-items-center justify-content-start w-100" data-aos="fade-right">
-            {profile && (
-              <div className="navbar-profile-section me-2">
-                {profile}
+            {(profile || userInfo) && (
+              <div className="navbar-profile-section me-2 d-flex align-items-center">
+                {profile ? profile : (
+                  <>
+                    <Link to="/dashboard/boats" className="text-decoration-none">
+                      <div className="dashboard-user">
+                        <div className="dashboard-avatar">
+                          <img src={userInfo?.picture || profilePic} alt="" className="w-100" />
+                        </div>
+                        <div className="dashboard-user-text">
+                          <p className="dashboard-welcome" style={{ color: isScrolled ? '#888' : '#ddd' }}>Welcome</p>
+                          <h5 className="dashboard-user-name" style={{ color: isScrolled ? '#000' : '#fff' }}>{userInfo?.full_name || userInfo?.name || "User"} !</h5>
+                        </div>
+                      </div>
+                    </Link>
+                    <button 
+                      onClick={handleLogout} 
+                      className="btn btn-link p-0 ms-2" 
+                      title="Logout"
+                    >
+                      <i className="bi bi-box-arrow-right" style={{ fontSize: '1.3rem', color: isScrolled ? '#fff' : '#fff' }}></i>
+                    </button>
+                  </>
+                )}
               </div>
             )}
             
@@ -155,7 +197,7 @@ export default function Navbar({ background = "", profile = null, showAuthButton
               ))}
             </div>
             
-            {profile && (
+            {(profile || userInfo) && (
               <div className="navbar-bell ms-3 d-none d-lg-flex align-items-center justify-content-center hoverable">
                 <i className="bi bi-bell-fill" style={{ fontSize: '1.2rem', color: '#fff', cursor: 'pointer' }}></i>
               </div>
@@ -234,7 +276,7 @@ export default function Navbar({ background = "", profile = null, showAuthButton
             ))}
           </ul>
 
-          {!profile && showAuthButtons && (
+          {!profile && !userInfo && showAuthButtons && (
             <div className="d-flex flex-column gap-3 mt-4">
               <Link to="/login" className="text-decoration-none w-100" data-bs-dismiss="offcanvas">
                 <button className="btn bg-white text-dark w-100 py-2 fw-bold rounded-3 border-0">
@@ -246,6 +288,19 @@ export default function Navbar({ background = "", profile = null, showAuthButton
                   Sign Up
                 </button>
               </Link>
+            </div>
+          )}
+
+          {userInfo && !profile && (
+            <div className="d-flex flex-column gap-3 mt-4">
+              <Link to="/dashboard/boats" className="text-decoration-none w-100" data-bs-dismiss="offcanvas">
+                <button className="btn bg-white text-dark w-100 py-2 fw-bold rounded-3 border-0">
+                  Dashboard
+                </button>
+              </Link>
+              <button onClick={handleLogout} className="btn w-100 py-2 fw-bold rounded-3 border-0" style={{ backgroundColor: '#FAD090', color: '#1A1A1A' }}>
+                Logout
+              </button>
             </div>
           )}
         </div>

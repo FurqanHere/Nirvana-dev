@@ -1,26 +1,53 @@
 import "../../../assets/css/base.css";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import bookingShips from "../../../assets/images/bookingShips.png";
 import qrCodeImage from "../../../assets/images/qr-code-image.png";
+import ApiService from "../../../services/ApiService";
+import { toast } from "react-toastify";
 
 const ExperienceBookings = ({ onViewBooking }) => {
   const [search, setSearch] = useState("");
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const bookings = useMemo(
-    () =>
-      Array.from({ length: 6 }).map((_, index) => ({
-        id: index + 1,
-        title: "TENDER 9 (T9)",
-        status: "Upcoming",
-        sessionLabel: "Session",
-        dateLabel: "Fri 18 October",
-      })),
-    []
-  );
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
-  const filteredBookings = bookings.filter((booking) =>
-    booking.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const fetchBookings = async () => {
+    setLoading(true);
+    try {
+      const response = await ApiService.get("/getExperienceBookings");
+      if (response.data.status) {
+        setBookings(response.data.data.bookings || []);
+      }
+    } catch (error) {
+      console.error("Error fetching experience bookings:", error);
+      // toast.error("Failed to fetch experience bookings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredBookings = useMemo(() => {
+    return bookings
+      .filter((booking) =>
+        booking.experience?.title?.toLowerCase().includes(search.toLowerCase())
+      )
+      .map((booking) => ({
+        id: booking.id,
+         title: booking.experience?.title || "Experience",
+         ref: booking.booking_reference || `#${booking.id}`,
+         status: booking.status || "Upcoming",
+         sessionLabel: booking.booking_time || "Session",
+        dateLabel: new Date(booking.booking_date).toLocaleDateString("en-US", {
+          weekday: "short",
+          day: "numeric",
+          month: "long",
+        }),
+        image: (booking.experience?.images?.length > 0 ? booking.experience.images[0] : booking.experience?.image) || bookingShips,
+      }));
+  }, [bookings, search]);
 
   return (
     <div className="booking-management-view">
@@ -45,7 +72,10 @@ const ExperienceBookings = ({ onViewBooking }) => {
       </div>
 
       <div className="booking-cards-grid">
-        {filteredBookings.map((booking) => (
+        {loading ? (
+           <p>Loading...</p>
+        ) : filteredBookings.length > 0 ? (
+          filteredBookings.map((booking) => (
           <div 
             key={booking.id} 
             className="booking-card"
@@ -55,7 +85,7 @@ const ExperienceBookings = ({ onViewBooking }) => {
               <span className="booking-status-badge">
                 {booking.status}
               </span>
-              <img src={bookingShips} alt={booking.title} className="booking-main-image" />
+              <img src={booking.image} alt={booking.title} className="booking-main-image" />
               <div className="booking-qr-overlay">
                 <img src={qrCodeImage} alt="QR Code" />
               </div>
@@ -85,7 +115,10 @@ const ExperienceBookings = ({ onViewBooking }) => {
               </div>
             </div>
           </div>
-        ))}
+        ))
+        ) : (
+            <p>No bookings found.</p>
+        )}
       </div>
     </div>
   );

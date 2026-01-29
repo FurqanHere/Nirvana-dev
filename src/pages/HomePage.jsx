@@ -119,6 +119,15 @@ const HomePage = () => {
   const themes = ["pkg-dark", "pkg-brown", "pkg-blue", "pkg-navy"];
   const straps = [whiteStrap, whiteStrap, yellowStrap, blueStrap];
   const stars = [grayStar, yellowStar, whiteStar, whiteStar];
+ 
+   const getPkgStyle = (bg) => {
+     if (!bg) return undefined;
+     const parts = String(bg).split(/[,\s]+/).filter(Boolean);
+     if (parts.length >= 2) {
+       return { background: `linear-gradient(135deg, ${parts[0]}, ${parts[1]})` };
+     }
+     return { background: parts[0] };
+   };
 
   return (
     <div className="landing-page">
@@ -227,6 +236,7 @@ const HomePage = () => {
               className={`pkg-card ${themes[index % themes.length]}`}
               key={pkg.id || index}
               data-aos="fade-up"
+              style={getPkgStyle(pkg.bg_color)}
             >
               <div className="pkg-corner">
                 <img

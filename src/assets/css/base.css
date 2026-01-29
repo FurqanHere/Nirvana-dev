@@ -691,8 +691,15 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
-.pkg-brown {
+
+.pkg-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+/* .pkg-brown {
   background: #ce9c70;
 }
 .pkg-blue {
@@ -704,12 +711,12 @@ body {
 .pkg-yellow {
   background: #ffae00;
   color: #fff;
-}
+} 
 
 .pkg-dark {
   background: #9CAEB5;
   color: #fff;
-}
+} */
 
 .pkg-yellow .pkg-button,
 .pkg-dark .pkg-button {
@@ -10186,7 +10193,7 @@ html {
 
 .dashboard-welcome {
   margin: 0;
-  font-size: 11px; /* Smaller font */
+  font-size: 11px;
   color: #fff;
   line-height: 1.1;
   font-weight: 500;
@@ -10194,10 +10201,10 @@ html {
 
 .dashboard-user-name {
   margin: 0;
-  font-size: 14px; /* Smaller font */
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.1;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .sidebar-label {
@@ -12077,4 +12084,239 @@ html {
   .membership-info-card {
     padding: 20px;
   }
+}
+
+/* Experience Page Styles */
+.experience-tabs-section {
+  padding: 40px 0;
+  position: relative;
+  z-index: 2;
+  margin-top: -60px;
+}
+
+.experience-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  overflow: hidden;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #e0e0e0;
+  margin-top: 40px;
+}
+
+.experience-tabs button {
+  background: transparent;
+  border: none;
+  width: 100%;
+  height: 80px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #c59d5f;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Montserrat", sans-serif;
+  border-right: 1px solid #e0e0e0;
+  letter-spacing: 1px;
+}
+
+.experience-tabs button:last-child {
+  border-right: none;
+}
+
+.experience-tabs button:hover {
+  background-color: #f9f9f9;
+}
+
+.experience-tabs button.active {
+  background-color: #c59d5f;
+  color: white;
+}
+
+/* Experience Background Card */
+.experience-bg {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  margin-bottom: 60px;
+}
+
+.experience-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.experience-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  max-width: 600px;
+  padding-left: 80px;
+}
+
+.experience-content h2 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.experience-content p {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0.9;
+  max-width: 500px;
+}
+
+.experience-thumbs {
+  position: absolute;
+  bottom: 40px;
+  left: 80px;
+  display: flex;
+  gap: 20px;
+  z-index: 2;
+}
+
+.experience-thumbs img {
+  width: 120px;
+  height: 120px;
+  border-radius: 15px;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Responsive adjustments for Experience Page */
+@media (max-width: 992px) {
+  .experience-tabs {
+    flex-wrap: wrap;
+    width: 90%;
+  }
+  
+  .experience-tabs button {
+    flex: 1 1 auto;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 20px;
+  }
+  
+  .experience-bg {
+    height: 500px;
+  }
+  
+  .experience-content h2 {
+    font-size: 36px;
+  }
+  
+  .experience-content {
+    padding-left: 40px;
+  }
+  
+  .experience-thumbs {
+    left: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .experience-bg {
+    height: 600px;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+  
+  .experience-content {
+    padding: 0 20px;
+    text-align: center;
+    margin: 0 auto;
+  }
+  
+  .experience-thumbs {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+  }
+  
+  .experience-tabs button {
+    padding: 15px 10px;
+    font-size: 12px;
+  }
+}
+
+/* Experience Page - Contact Section */
+.experiences-sets-stats {
+  background-image: url('../images/experiences/experience-section.png');
+  background-size: cover;
+  background-position: center;
+  padding: 80px 20px;
+  position: relative;
+  margin-top: 80px;
+}
+
+.experiences-sets-stats::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(10, 10, 10, 0.1) 0%, rgba(206, 156, 112, 0.1) 100%);
+  z-index: 1;
+}
+
+.experience-sets-stats-grid {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.experience-sets-stats-grid h3 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.experience-sets-stats-grid p {
+  font-size: 18px;
+  margin-bottom: 30px;
+  font-family: "Montserrat", sans-serif;
+  opacity: 0.9;
+}
+
+.experince-contactus-btn button {
+  padding: 15px 40px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: #5a3e2b;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  font-family: "Montserrat", sans-serif;
+  text-transform: uppercase;
+}
+
+.experince-contactus-btn button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  background: #f8f8f8 !important;
 }

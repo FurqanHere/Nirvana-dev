@@ -10,6 +10,7 @@ import Sidebar from "./Sidebar";
 import BoatBookingDetail from "../../components/Dashboard/Bookings/BoatBookingDetail";
 import ExperienceBookings from "../../components/Dashboard/Bookings/ExperienceBookings";
 import BookingDetail from "../../components/Dashboard/Bookings/BookingDetail";
+import ViewExperienceBookingDetail from "../../components/Dashboard/Bookings/ViewExperienceBookingDetail";
 import Upcoming from "../../components/Dashboard/Payments/Upcoming";
 import Previous from "../../components/Dashboard/Payments/Previous";
 import ProfileMembership from "../../components/Dashboard/Profile/Profile-Membership";
@@ -33,6 +34,30 @@ const sampleCards = Array.from({ length: 8 }).map((_, i) => ({
   image: bookingShips,
 }));
 
+const BookingDetailRoute = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const booking = location.state?.booking;
+  
+  if (!booking) {
+      return <Navigate to="/dashboard/bookings/boat" replace />;
+  }
+  
+  return <BookingDetail booking={booking} onBack={() => navigate(-1)} />;
+};
+
+const ExperienceBookingDetailRoute = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const booking = location.state?.booking;
+  
+  if (!booking) {
+      return <Navigate to="/dashboard/bookings/experience" replace />;
+  }
+  
+  return <ViewExperienceBookingDetail booking={booking} onBack={() => navigate(-1)} />;
+};
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,6 +65,7 @@ export default function Dashboard() {
   const [selectedMarina, setSelectedMarina] = useState("");
   const [search, setSearch] = useState("");
   const [userName, setUserName] = useState("User");
+  const [userImage, setUserImage] = useState(profilePic);
   const [boats, setBoats] = useState([]);
   const [experiences, setExperiences] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -81,6 +107,9 @@ export default function Dashboard() {
         const parsedUser = JSON.parse(storedUser);
         const name = parsedUser.full_name || parsedUser.fullName || parsedUser.name || "User";
         setUserName(name);
+        if (parsedUser.picture) {
+          setUserImage(parsedUser.picture);
+        }
       } catch (e) {
         console.error("Error parsing user data", e);
       }
@@ -100,6 +129,7 @@ export default function Dashboard() {
     if (pathname.includes("/dashboard/experiences")) return "experiences";
     if (pathname.includes("/dashboard/bookings/boat")) return "boat-bookings";
     if (pathname.includes("/dashboard/bookings/experience")) return "experience-bookings";
+    if (pathname.includes("/dashboard/bookings/experience-detail")) return "experience-bookings";
     if (pathname.includes("/dashboard/bookings/detail")) return "boat-bookings"; // Fallback parent
     if (pathname.includes("/dashboard/payments/upcoming")) return "upcoming";
     if (pathname.includes("/dashboard/payments/past")) return "past";
@@ -197,7 +227,7 @@ export default function Dashboard() {
   const profileComponent = (
     <div className="dashboard-user">
       <div className="dashboard-avatar">
-        <img src={ profilePic } alt="" className="w-100" />
+        <img src={ userImage } alt="" className="w-100" />
       </div>
       <div className="dashboard-user-text">
         <p className="dashboard-welcome">Welcome</p>
@@ -205,18 +235,6 @@ export default function Dashboard() {
       </div>
     </div>
   );
-
-  const BookingDetailWrapper = () => {
-    const loc = useLocation();
-    const nav = useNavigate();
-    const booking = loc.state?.booking;
-    
-    if (!booking) {
-        return <Navigate to="/dashboard/bookings/boat" replace />;
-    }
-    
-    return <BookingDetail booking={booking} onBack={() => nav(-1)} />;
-  };
 
   return (
     <div className="dashboard-page">
@@ -258,12 +276,17 @@ export default function Dashboard() {
                     />
                 } />
                 <Route path="bookings/boat" element={
-                    <BoatBookingDetail onViewBooking={(booking) => navigate('/dashboard/bookings/detail', { state: { booking } })} />
+                    <BoatBookingDetail 
+                        onViewBooking={(booking) => navigate('/dashboard/bookings/detail', { state: { booking } })} 
+                    />
                 } />
                 <Route path="bookings/experience" element={
-                    <ExperienceBookings onViewBooking={(booking) => navigate('/dashboard/bookings/detail', { state: { booking } })} />
+                    <ExperienceBookings 
+                        onViewBooking={(booking) => navigate('/dashboard/bookings/experience-detail', { state: { booking } })} 
+                    />
                 } />
-                <Route path="bookings/detail" element={<BookingDetailWrapper />} />
+                <Route path="bookings/detail" element={<BookingDetailRoute />} />
+                <Route path="bookings/experience-detail" element={<ExperienceBookingDetailRoute />} />
                 <Route path="payments/upcoming" element={<Upcoming />} />
                 <Route path="payments/past" element={<Previous />} />
                 <Route path="profile/membership" element={<ProfileMembership />} />
